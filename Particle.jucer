@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="CHi4he" name="Particle" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
+              cppLanguageStandard="17" pluginManufacturerCode="NATP" pluginCode="PART"
+              headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/examples&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/Particle"
+              defines="DSP_USE_JUCE">
+  <MAINGROUP id="eKrb8w" name="Particle">
+    <GROUP id="{54499037-BEDC-6E52-0116-A28125330971}" name="Source">
+      <GROUP id="{DD21DDB7-C8F3-EED2-4E43-801094F2CCB9}" name="DSP">
+        <GROUP id="{BB87CC22-11CD-1444-83D5-AB618C7636D0}" name="lib">
+          <GROUP id="{2FB36E37-A9F9-C23D-0EE1-50C3E7439D60}" name="FFTConvolver">
+            <FILE id="FWwCqo" name="AudioFFT.cpp" compile="1" resource="0" file="Source/DSP/lib/FFTConvolver/AudioFFT.cpp"/>
+            <FILE id="jSQQy1" name="AudioFFT.h" compile="0" resource="0" file="Source/DSP/lib/FFTConvolver/AudioFFT.h"/>
+            <FILE id="UwnTAd" name="FFTConvolver.cpp" compile="1" resource="0"
+                  file="Source/DSP/lib/FFTConvolver/FFTConvolver.cpp"/>
+            <FILE id="Uc3oqy" name="FFTConvolver.h" compile="0" resource="0" file="Source/DSP/lib/FFTConvolver/FFTConvolver.h"/>
+            <FILE id="kncZhj" name="LICENSE" compile="0" resource="1" file="Source/DSP/lib/FFTConvolver/LICENSE"/>
+            <FILE id="UiMV9i" name="TwoStageFFTConvolver.cpp" compile="1" resource="0"
+                  file="Source/DSP/lib/FFTConvolver/TwoStageFFTConvolver.cpp"/>
+            <FILE id="GzW0Ye" name="TwoStageFFTConvolver.h" compile="0" resource="0"
+                  file="Source/DSP/lib/FFTConvolver/TwoStageFFTConvolver.h"/>
+            <FILE id="KpD3IX" name="Utilities.cpp" compile="1" resource="0" file="Source/DSP/lib/FFTConvolver/Utilities.cpp"/>
+            <FILE id="m7m7YG" name="Utilities.h" compile="0" resource="0" file="Source/DSP/lib/FFTConvolver/Utilities.h"/>
+          </GROUP>
+        </GROUP>
+        <GROUP id="{6233DD64-F0E8-3FC8-5DF8-995E39ABA828}" name="src">
+          <GROUP id="{BB3F0208-BD41-2F36-06FD-B7BA964BD165}" name="Nodes">
+            <GROUP id="{2C20F4DA-8C45-DADC-6C2B-214AC7E7DA79}" name="Analyzers">
+              <FILE id="YUvxGb" name="Recorder.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Analyzers/Recorder.cpp"/>
+              <FILE id="nvkdYC" name="Recorder.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Analyzers/Recorder.h"/>
+            </GROUP>
+            <GROUP id="{5D25DDCA-2611-9933-57C9-A0DD917C7806}" name="Channel">
+              <FILE id="Dj8M10" name="ChannelMerger.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Channel/ChannelMerger.cpp"/>
+              <FILE id="ytckM3" name="ChannelMerger.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/ChannelMerger.h"/>
+              <FILE id="AETItI" name="ChannelSplitter.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Channel/ChannelSplitter.cpp"/>
+              <FILE id="U3fyQE" name="ChannelSplitter.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Channel/ChannelSplitter.h"/>
+              <FILE id="zccLtd" name="MidSide.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Channel/MidSide.cpp"/>
+              <FILE id="XPQflQ" name="MidSide.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/MidSide.h"/>
+              <FILE id="kMNE76" name="StereoPanner.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Channel/StereoPanner.cpp"/>
+              <FILE id="gJJ1PD" name="StereoPanner.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/StereoPanner.h"/>
+            </GROUP>
+            <GROUP id="{04E93F2B-D042-62E9-EA53-44AB5F9AF8CD}" name="Core">
+              <FILE id="AqTBzK" name="Consumer.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Core/Consumer.cpp"/>
+              <FILE id="oWdwfz" name="Consumer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Core/Consumer.h"/>
+              <FILE id="S5T7q0" name="Producer.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Core/Producer.cpp"/>
+              <FILE id="bHFwkb" name="Producer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Core/Producer.h"/>
+              <FILE id="mQBtfZ" name="Transformer.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Core/Transformer.cpp"/>
+              <FILE id="C9kuyK" name="Transformer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Core/Transformer.h"/>
+            </GROUP>
+            <GROUP id="{B3126B39-12D7-25C8-1857-6202C38CBEF8}" name="Delays">
+              <FILE id="RIHtPz" name="Convolver.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Delays/Convolver.cpp"/>
+              <FILE id="YNsLh8" name="Convolver.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Delays/Convolver.h"/>
+              <FILE id="i5C9Jl" name="VariableDelay.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Delays/VariableDelay.cpp"/>
+              <FILE id="I5zPr2" name="VariableDelay.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Delays/VariableDelay.h"/>
+            </GROUP>
+            <GROUP id="{E661119F-CD4F-58CF-46CC-53395D944103}" name="Dynamics">
+              <FILE id="cq6VRD" name="CompressorGate.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Dynamics/CompressorGate.cpp"/>
+              <FILE id="xh4OvT" name="CompressorGate.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Dynamics/CompressorGate.h"/>
+              <FILE id="k1vtxj" name="Distortion.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Distortion.cpp"/>
+              <FILE id="x20PMu" name="Distortion.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Distortion.h"/>
+              <FILE id="K0F5OH" name="DryWet.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.cpp"/>
+              <FILE id="p8qW5h" name="DryWet.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.h"/>
+              <FILE id="tcJ9qP" name="Envelope.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.cpp"/>
+              <FILE id="QuKqWu" name="Envelope.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.h"/>
+              <FILE id="q1DGRk" name="HardClip.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/HardClip.cpp"/>
+              <FILE id="EwuqGN" name="HardClip.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/HardClip.h"/>
+            </GROUP>
+            <GROUP id="{51AF1DF7-6246-DBF0-0552-B4C1BBE212B1}" name="External">
+              <FILE id="mgMPH7" name="MidiInput.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/External/MidiInput.cpp"/>
+              <FILE id="t5nEaA" name="MidiInput.h" compile="0" resource="0" file="Source/DSP/src/Nodes/External/MidiInput.h"/>
+              <FILE id="TVltFE" name="MidiOutput.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/External/MidiOutput.cpp"/>
+              <FILE id="JeXYc2" name="MidiOutput.h" compile="0" resource="0" file="Source/DSP/src/Nodes/External/MidiOutput.h"/>
+            </GROUP>
+            <GROUP id="{FBE4D84D-E646-9ACA-6332-AE78F1D6234D}" name="Filters">
+              <FILE id="F0HBFN" name="Biquad.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Filters/Biquad.cpp"/>
+              <FILE id="dyxzt9" name="Biquad.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Filters/Biquad.h"/>
+              <FILE id="waQwA7" name="Crossover.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Filters/Crossover.cpp"/>
+              <FILE id="FwGyt8" name="Crossover.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Filters/Crossover.h"/>
+              <FILE id="nvt6iF" name="OnePole.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Filters/OnePole.cpp"/>
+              <FILE id="O7ic5D" name="OnePole.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Filters/OnePole.h"/>
+            </GROUP>
+            <GROUP id="{98D2A6ED-4850-944A-6F94-E2780EA57A23}" name="Generators">
+              <FILE id="o5ES0v" name="FunctionOscillator.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/FunctionOscillator.cpp"/>
+              <FILE id="aLSq0B" name="FunctionOscillator.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/FunctionOscillator.h"/>
+              <FILE id="O3cQjy" name="MoorerOscillator.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/MoorerOscillator.cpp"/>
+              <FILE id="jwfBNw" name="MoorerOscillator.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/MoorerOscillator.h"/>
+              <FILE id="GWMIg1" name="Phasor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/Phasor.cpp"/>
+              <FILE id="QlQDA3" name="Phasor.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/Phasor.h"/>
+              <FILE id="Qc2v0v" name="PinkNoise.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/PinkNoise.cpp"/>
+              <FILE id="Nxze6g" name="PinkNoise.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/PinkNoise.h"/>
+              <FILE id="v25iij" name="SamplePlayer.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/SamplePlayer.cpp"/>
+              <FILE id="LweQLg" name="SamplePlayer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/SamplePlayer.h"/>
+              <FILE id="TWJaez" name="TableOscillator.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/TableOscillator.cpp"/>
+              <FILE id="xgyjhr" name="TableOscillator.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Generators/TableOscillator.h"/>
+              <FILE id="sND3WS" name="WhiteNoise.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/WhiteNoise.cpp"/>
+              <FILE id="NgfKPI" name="WhiteNoise.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/WhiteNoise.h"/>
+            </GROUP>
+            <GROUP id="{569150CB-E1AF-272A-B8B7-1C66CBF15FDD}" name="Math">
+              <FILE id="zx34fF" name="AbsoluteValue.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/AbsoluteValue.cpp"/>
+              <FILE id="gJcB1k" name="AbsoluteValue.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/AbsoluteValue.h"/>
+              <FILE id="wkGayR" name="Comparison.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.cpp"/>
+              <FILE id="hUlzke" name="Comparison.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.h"/>
+              <FILE id="wVo1jn" name="Exp2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.cpp"/>
+              <FILE id="XlE6fb" name="Exp2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.h"/>
+              <FILE id="VQUmEM" name="Floor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Floor.cpp"/>
+              <FILE id="Yx6ylU" name="Floor.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Floor.h"/>
+              <FILE id="uPZgkm" name="ForwardFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/ForwardFFT.cpp"/>
+              <FILE id="GFeiig" name="ForwardFFT.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/ForwardFFT.h"/>
+              <FILE id="QeqwAn" name="InverseFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.cpp"/>
+              <FILE id="fvHbMQ" name="InverseFFT.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.h"/>
+              <FILE id="AySFSz" name="Log2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Log2.cpp"/>
+              <FILE id="zqtYYh" name="Log2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Log2.h"/>
+              <FILE id="C6pVOA" name="LogarithmicToRatio.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/LogarithmicToRatio.cpp"/>
+              <FILE id="qUB5Eg" name="LogarithmicToRatio.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Math/LogarithmicToRatio.h"/>
+              <FILE id="VpAU6B" name="Modulo.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.cpp"/>
+              <FILE id="cR8XeK" name="Modulo.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.h"/>
+              <FILE id="t1802f" name="Multiply.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.cpp"/>
+              <FILE id="xt2keG" name="Multiply.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.h"/>
+              <FILE id="TjEGPI" name="MultiplyHertzSeconds.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/MultiplyHertzSeconds.cpp"/>
+              <FILE id="YOs1g4" name="MultiplyHertzSeconds.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Math/MultiplyHertzSeconds.h"/>
+              <FILE id="QpLfO6" name="NotGate.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.cpp"/>
+              <FILE id="fkNA7H" name="NotGate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.h"/>
+              <FILE id="pEVd8L" name="OneOver.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/OneOver.cpp"/>
+              <FILE id="XfSOVd" name="OneOver.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/OneOver.h"/>
+              <FILE id="hHeQ0N" name="PassThrough.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/PassThrough.cpp"/>
+              <FILE id="x6UJUP" name="PassThrough.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/PassThrough.h"/>
+            </GROUP>
+            <GROUP id="{B9444817-B1D0-18D3-7B2A-7113FB81DB4C}" name="Trigger">
+              <FILE id="ANha4R" name="BeatTrigger.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/BeatTrigger.cpp"/>
+              <FILE id="fDWv9h" name="BeatTrigger.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/BeatTrigger.h"/>
+              <FILE id="yY5U8q" name="Counter.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/Counter.cpp"/>
+              <FILE id="EItuNO" name="Counter.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/Counter.h"/>
+              <FILE id="zgzAhY" name="OnOff.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/OnOff.cpp"/>
+              <FILE id="q9EaGW" name="OnOff.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/OnOff.h"/>
+              <FILE id="lFixEv" name="ResetTrigger.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Trigger/ResetTrigger.cpp"/>
+              <FILE id="WB4ju4" name="ResetTrigger.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/ResetTrigger.h"/>
+              <FILE id="OKaRuC" name="SampleAndHold.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Trigger/SampleAndHold.cpp"/>
+              <FILE id="RL03NA" name="SampleAndHold.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/SampleAndHold.h"/>
+              <FILE id="kus6lM" name="Sequencer.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/Sequencer.cpp"/>
+              <FILE id="ENGPbp" name="Sequencer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/Sequencer.h"/>
+            </GROUP>
+            <GROUP id="{EE46FB73-4603-43AF-00B8-7885FB36A254}" name="Variables">
+              <FILE id="NEjJuX" name="BufferDuration.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Variables/BufferDuration.cpp"/>
+              <FILE id="sCTFf4" name="BufferDuration.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Variables/BufferDuration.h"/>
+              <FILE id="WAcSlO" name="BufferRate.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Variables/BufferRate.cpp"/>
+              <FILE id="SawgRt" name="BufferRate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Variables/BufferRate.h"/>
+              <FILE id="MzzmKW" name="SampleDuration.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Variables/SampleDuration.cpp"/>
+              <FILE id="lPyPFH" name="SampleDuration.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Variables/SampleDuration.h"/>
+              <FILE id="q97yEO" name="SampleRate.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Variables/SampleRate.cpp"/>
+              <FILE id="k5Czxo" name="SampleRate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Variables/SampleRate.h"/>
+            </GROUP>
+          </GROUP>
+          <FILE id="tNLLie" name="AudioBuffer.cpp" compile="1" resource="0" file="Source/DSP/src/AudioBuffer.cpp"/>
+          <FILE id="tfAXTj" name="AudioBuffer.h" compile="0" resource="0" file="Source/DSP/src/AudioBuffer.h"/>
+          <FILE id="uz3QJ8" name="AudioWrapper.cpp" compile="1" resource="0"
+                file="Source/DSP/src/AudioWrapper.cpp"/>
+          <FILE id="K9efIa" name="AudioWrapper.h" compile="0" resource="0" file="Source/DSP/src/AudioWrapper.h"/>
+          <FILE id="zsEinm" name="Buffer.cpp" compile="1" resource="0" file="Source/DSP/src/Buffer.cpp"/>
+          <FILE id="GsXPKq" name="Buffer.h" compile="0" resource="0" file="Source/DSP/src/Buffer.h"/>
+          <FILE id="y4ejTB" name="Constants.h" compile="0" resource="0" file="Source/DSP/src/Constants.h"/>
+          <FILE id="iKSD8s" name="DSP.h" compile="0" resource="0" file="Source/DSP/src/DSP.h"/>
+          <FILE id="Ns8pJg" name="Engine.cpp" compile="1" resource="0" file="Source/DSP/src/Engine.cpp"/>
+          <FILE id="qv07AC" name="Engine.h" compile="0" resource="0" file="Source/DSP/src/Engine.h"/>
+          <FILE id="KNUNMH" name="Functions.cpp" compile="1" resource="0" file="Source/DSP/src/Functions.cpp"/>
+          <FILE id="ui4qjg" name="Functions.h" compile="0" resource="0" file="Source/DSP/src/Functions.h"/>
+          <FILE id="W7wXnh" name="Lockable.cpp" compile="1" resource="0" file="Source/DSP/src/Lockable.cpp"/>
+          <FILE id="Oq5yRd" name="Lockable.h" compile="0" resource="0" file="Source/DSP/src/Lockable.h"/>
+          <FILE id="klpIsq" name="MidiBuffer.cpp" compile="1" resource="0" file="Source/DSP/src/MidiBuffer.cpp"/>
+          <FILE id="KHlfdd" name="MidiBuffer.h" compile="0" resource="0" file="Source/DSP/src/MidiBuffer.h"/>
+          <FILE id="ykh8LN" name="MidiMessage.cpp" compile="1" resource="0" file="Source/DSP/src/MidiMessage.cpp"/>
+          <FILE id="ZCou51" name="MidiMessage.h" compile="0" resource="0" file="Source/DSP/src/MidiMessage.h"/>
+          <FILE id="pMxjYn" name="MidiProcessor.cpp" compile="1" resource="0"
+                file="Source/DSP/src/MidiProcessor.cpp"/>
+          <FILE id="MMJdHd" name="MidiProcessor.h" compile="0" resource="0" file="Source/DSP/src/MidiProcessor.h"/>
+          <FILE id="SSqflL" name="Node.cpp" compile="1" resource="0" file="Source/DSP/src/Node.cpp"/>
+          <FILE id="d3j4fq" name="Node.h" compile="0" resource="0" file="Source/DSP/src/Node.h"/>
+          <FILE id="bWGDw0" name="NodeProcessor.cpp" compile="1" resource="0"
+                file="Source/DSP/src/NodeProcessor.cpp"/>
+          <FILE id="tK9wzM" name="NodeProcessor.h" compile="0" resource="0" file="Source/DSP/src/NodeProcessor.h"/>
+        </GROUP>
+        <FILE id="S5AGLe" name="LICENSE" compile="0" resource="1" file="Source/DSP/LICENSE"/>
+        <FILE id="KPUFcA" name="README.md" compile="0" resource="1" file="Source/DSP/README.md"/>
+      </GROUP>
+      <GROUP id="{02ACD0F2-EBF2-AA90-0B5A-4A7CD196B6B5}" name="imgui">
+        <FILE id="P6QbTK" name="imconfig.h" compile="0" resource="0" file="Source/imgui/imconfig.h"/>
+        <FILE id="ooUULN" name="imgui.cpp" compile="1" resource="0" file="Source/imgui/imgui.cpp"/>
+        <FILE id="hSgMsN" name="imgui.h" compile="0" resource="0" file="Source/imgui/imgui.h"/>
+        <FILE id="Mr72p7" name="imgui_demo.cpp" compile="1" resource="0" file="Source/imgui/imgui_demo.cpp"/>
+        <FILE id="Z92iVS" name="imgui_draw.cpp" compile="1" resource="0" file="Source/imgui/imgui_draw.cpp"/>
+        <FILE id="PPuf6F" name="imgui_impl_metal.h" compile="0" resource="0"
+              file="Source/imgui/examples/imgui_impl_metal.h"/>
+        <FILE id="L2QuC5" name="imgui_impl_metal.mm" compile="1" resource="0"
+              file="Source/imgui/examples/imgui_impl_metal.mm"/>
+        <FILE id="aeUNIE" name="imgui_impl_opengl3.cpp" compile="1" resource="0"
+              file="Source/imgui/examples/imgui_impl_opengl3.cpp"/>
+        <FILE id="KfIYhw" name="imgui_impl_opengl3.h" compile="0" resource="0"
+              file="Source/imgui/examples/imgui_impl_opengl3.h"/>
+        <FILE id="JjLUs6" name="imgui_internal.h" compile="0" resource="0"
+              file="Source/imgui/imgui_internal.h"/>
+        <FILE id="Fcfmuc" name="imgui_widgets.cpp" compile="1" resource="0"
+              file="Source/imgui/imgui_widgets.cpp"/>
+        <FILE id="z6tpZW" name="imstb_rectpack.h" compile="0" resource="0"
+              file="Source/imgui/imstb_rectpack.h"/>
+        <FILE id="rwN0LS" name="imstb_textedit.h" compile="0" resource="0"
+              file="Source/imgui/imstb_textedit.h"/>
+        <FILE id="LT4lSO" name="imstb_truetype.h" compile="0" resource="0"
+              file="Source/imgui/imstb_truetype.h"/>
+        <FILE id="oA2kuk" name="LICENSE.txt" compile="0" resource="1" file="Source/imgui/LICENSE.txt"/>
+      </GROUP>
+      <GROUP id="{472D6E6F-B9FB-9EC4-6F2D-64809786DDBF}" name="imgui_juce">
+        <FILE id="uA7YrS" name="imgui_impl_juce.cpp" compile="1" resource="0"
+              file="Source/imgui_juce/imgui_impl_juce.cpp"/>
+        <FILE id="xwtcmn" name="imgui_impl_juce.h" compile="0" resource="0"
+              file="Source/imgui_juce/imgui_impl_juce.h"/>
+      </GROUP>
+      <GROUP id="{EB6FAC15-57B1-AA3E-5F9E-9D1EC52F59A4}" name="imnodes">
+        <GROUP id="{CAB82811-4EC0-0126-757C-8374F1164EB5}" name="dependencies">
+          <GROUP id="{A8EF8B4D-15FC-4A11-2021-FC503A2948CA}" name="gl3w">
+            <GROUP id="{71BC774E-44BD-CFF9-493E-A35D77A0EDF7}" name="include">
+              <GROUP id="{8455E9A5-13AD-1559-B3CA-6FEE26939EB5}" name="GL">
+                <FILE id="qYH8q2" name="gl3w.h" compile="0" resource="0" file="Source/imnodes/dependencies/gl3w/include/GL/gl3w.h"/>
+                <FILE id="L9YGBG" name="glcorearb.h" compile="0" resource="0" file="Source/imnodes/dependencies/gl3w/include/GL/glcorearb.h"/>
+              </GROUP>
+            </GROUP>
+            <GROUP id="{DE2829A0-F5C8-9923-7EDB-8851E7A16200}" name="src">
+              <FILE id="CAKJQK" name="gl3w.c" compile="1" resource="0" file="Source/imnodes/dependencies/gl3w/src/gl3w.c"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+        <FILE id="yOiu03" name="imnodes.cpp" compile="1" resource="0" file="Source/imnodes/imnodes.cpp"/>
+        <FILE id="Ww5piT" name="imnodes.h" compile="0" resource="0" file="Source/imnodes/imnodes.h"/>
+        <FILE id="NwiklF" name="LICENSE.md" compile="0" resource="1" file="Source/imnodes/LICENSE.md"/>
+        <FILE id="suJJ4G" name="premake5.lua" compile="0" resource="1" file="Source/imnodes/premake5.lua"/>
+        <FILE id="Fs2CRA" name="README.md" compile="0" resource="1" file="Source/imnodes/README.md"/>
+      </GROUP>
+      <GROUP id="{1F5B1442-3985-09FD-49E6-D14B0B66D9FE}" name="Particle">
+        <GROUP id="{5019B814-6E56-D04F-18B1-6F6BA2ADE900}" name="Frames">
+          <FILE id="bDEVYt" name="NodeEditor.cpp" compile="1" resource="0" file="Source/Particle/Frames/NodeEditor.cpp"/>
+          <FILE id="wBaleJ" name="NodeEditor.h" compile="0" resource="0" file="Source/Particle/Frames/NodeEditor.h"/>
+          <FILE id="qNuVMZ" name="Preferences.cpp" compile="1" resource="0" file="Source/Particle/Frames/Preferences.cpp"/>
+          <FILE id="Hj21mw" name="Preferences.h" compile="0" resource="0" file="Source/Particle/Frames/Preferences.h"/>
+          <FILE id="TUX5yH" name="StatusBar.cpp" compile="1" resource="0" file="Source/Particle/Frames/StatusBar.cpp"/>
+          <FILE id="X43X0k" name="StatusBar.h" compile="0" resource="0" file="Source/Particle/Frames/StatusBar.h"/>
+        </GROUP>
+        <GROUP id="{23F2FC7E-4719-67FD-0F34-39427197D64A}" name="Nodes">
+          <GROUP id="{BEC1D8F9-3A61-24F1-3C2A-66C7B69A3EED}" name="Variables">
+            <FILE id="lLxY9d" name="BeatDuration.cpp" compile="1" resource="0"
+                  file="Source/Particle/Nodes/Variables/BeatDuration.cpp"/>
+            <FILE id="VMl7mw" name="BeatDuration.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatDuration.h"/>
+            <FILE id="k3VAeE" name="BeatRate.cpp" compile="1" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.cpp"/>
+            <FILE id="G2ioJ5" name="BeatRate.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.h"/>
+          </GROUP>
+        </GROUP>
+        <FILE id="Tz6GqY" name="Frame.cpp" compile="1" resource="0" file="Source/Particle/Frame.cpp"/>
+        <FILE id="x5Lp7u" name="Frame.h" compile="0" resource="0" file="Source/Particle/Frame.h"/>
+        <FILE id="ULfcsm" name="Particle.h" compile="0" resource="0" file="Source/Particle/Particle.h"/>
+      </GROUP>
+      <FILE id="vWgZYd" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="Hvkbuf" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="pVyvaq" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="vit5cU" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <ANDROIDSTUDIO targetFolder="Builds/Android" microphonePermissionNeeded="1"
+                   androidExternalWriteNeeded="1" androidExternalReadNeeded="1"
+                   androidInAppBilling="1" androidBluetoothNeeded="0">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Particle" optimisation="3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Particle"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Particle" optimisation="3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Particle"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <VS2019 targetFolder="Builds/VisualStudio2019" extraLinkerFlags="glew32.lib">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Particle" optimisation="3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Particle"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+    <XCODE_IPHONE targetFolder="Builds/iOS" microphonePermissionNeeded="1" iosInAppPurchases="1"
+                  iCloudPermissions="1" iosPushNotifications="1" iosBackgroundAudio="1"
+                  UIFileSharingEnabled="1" UISupportsDocumentBrowser="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Particle" optimisation="3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Particle"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+    <XCODE_MAC targetFolder="Builds/MacOSX" microphonePermissionNeeded="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Particle" optimisation="3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Particle"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_box2d" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_product_unlocking" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
