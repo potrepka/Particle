@@ -51,7 +51,7 @@ void ParticleAudioProcessorEditor::renderOpenGL() {
     ImGui_ImplJUCE_NewFrame(this);
 
     ImGuiIO &io = ImGui::GetIO();
-    const float scale = openGLContext.getRenderingScale();
+    const float scale = static_cast<float>(openGLContext.getRenderingScale());
     io.DisplayFramebufferScale = ImVec2(scale, scale);
 
     ImGui::NewFrame();
