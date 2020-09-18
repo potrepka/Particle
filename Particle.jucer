@@ -206,7 +206,6 @@
           <FILE id="tK9wzM" name="NodeProcessor.h" compile="0" resource="0" file="Source/DSP/src/NodeProcessor.h"/>
         </GROUP>
         <FILE id="S5AGLe" name="LICENSE" compile="0" resource="1" file="Source/DSP/LICENSE"/>
-        <FILE id="KPUFcA" name="README.md" compile="0" resource="1" file="Source/DSP/README.md"/>
       </GROUP>
       <GROUP id="{02ACD0F2-EBF2-AA90-0B5A-4A7CD196B6B5}" name="imgui">
         <FILE id="P6QbTK" name="imconfig.h" compile="0" resource="0" file="Source/imgui/imconfig.h"/>
@@ -257,8 +256,6 @@
         <FILE id="yOiu03" name="imnodes.cpp" compile="1" resource="0" file="Source/imnodes/imnodes.cpp"/>
         <FILE id="Ww5piT" name="imnodes.h" compile="0" resource="0" file="Source/imnodes/imnodes.h"/>
         <FILE id="NwiklF" name="LICENSE.md" compile="0" resource="1" file="Source/imnodes/LICENSE.md"/>
-        <FILE id="suJJ4G" name="premake5.lua" compile="0" resource="1" file="Source/imnodes/premake5.lua"/>
-        <FILE id="Fs2CRA" name="README.md" compile="0" resource="1" file="Source/imnodes/README.md"/>
       </GROUP>
       <GROUP id="{1F5B1442-3985-09FD-49E6-D14B0B66D9FE}" name="Particle">
         <GROUP id="{5019B814-6E56-D04F-18B1-6F6BA2ADE900}" name="Frames">
