@@ -19,7 +19,8 @@ public:
     void renderOpenGL() override;
     void openGLContextClosing() override;
 
-    bool keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent) override;
+    bool keyPressed(const juce::KeyPress &key, Component *originatingComponent) override;
+    bool keyStateChanged(bool isKeyDown, Component *originatingComponent) override;
 
     void mouseMove(const juce::MouseEvent &event) override;
     void mouseEnter(const juce::MouseEvent &event) override;

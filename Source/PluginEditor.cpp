@@ -65,6 +65,25 @@ void ParticleAudioProcessorEditor::renderOpenGL() {
     ImGui::Text("DOUBLE PRECISON for audio device processing: %d", audioProcessor.isUsingDoublePrecision());
     ImGui::End();
 
+    static ImGuiID dockspaceID = 0;
+    if (ImGui::Begin("Master Window" /*, nullptr, ImGuiWindowFlags_MenuBar*/)) {
+        ImGui::TextUnformatted("DockSpace below");
+
+        // Declare Central dockspace
+        dockspaceID = ImGui::GetID("HUB_DockSpace");
+        ImGui::DockSpace(dockspaceID,
+                         ImVec2(0.0f, 0.0f),
+                         ImGuiDockNodeFlags_None |
+                                 ImGuiDockNodeFlags_PassthruCentralNode /*|ImGuiDockNodeFlags_NoResize*/);
+    }
+    ImGui::End();
+
+    ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("Dockable Window")) {
+        ImGui::TextUnformatted("Test");
+    }
+    ImGui::End();
+
     ImGui::Render();
 
     glViewport(0, 0, getScreenBounds().getWidth(), getScreenBounds().getHeight());
@@ -78,9 +97,12 @@ void ParticleAudioProcessorEditor::openGLContextClosing() {
     ImGui_ImplOpenGL3_Shutdown();
 }
 
-bool ParticleAudioProcessorEditor::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent) {
-    ImGui_ImplJUCE_HandleKeyPress(key);
-    return true;
+bool ParticleAudioProcessorEditor::keyPressed(const juce::KeyPress& key, Component* originatingComponent) {
+    return ImGui_ImplJUCE_HandleKeyPressed(key, originatingComponent);
+}
+
+bool ParticleAudioProcessorEditor::keyStateChanged(bool isKeyDown, Component *originatingComponent) {
+    return ImGui_ImplJUCE_HandleKeyStateChanged(isKeyDown, originatingComponent);
 }
 
 void ParticleAudioProcessorEditor::mouseMove(const juce::MouseEvent &event) {

@@ -4,6 +4,8 @@
 static juce::int64 g_Time = 0;
 static juce::MouseCursor::StandardCursorType g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
 static bool g_MouseCursorHidden = false;
+static bool g_MouseJustPressed[ImGuiMouseButton_COUNT] = {};
+static bool g_MouseDown[ImGuiMouseButton_COUNT] = {};
 
 void ImGui_ImplJUCE_Init() {
     ImGuiIO &io = ImGui::GetIO();
@@ -11,8 +13,11 @@ void ImGui_ImplJUCE_Init() {
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     // io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
     // io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
+    // io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports;
     // io.BackendFlags |= ImGuiBackendFlags_HasMouseHoveredViewport;
     io.BackendPlatformName = "imgui_impl_juce";
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     const int offset_for_function_keys = 256 - 0xF700;
     io.KeyMap[ImGuiKey_Tab] = juce::KeyPress::tabKey;
@@ -64,8 +69,12 @@ void ImGui_ImplJUCE_Init() {
 
 void ImGui_ImplJUCE_Shutdown() {}
 
-static void ImGui_ImplJUCE_UpdateMouseCursor(juce::Component *component) {
+static void ImGui_ImplJUCE_UpdateMouseCursorAndButtons(juce::Component *component) {
     ImGuiIO &io = ImGui::GetIO();
+    for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
+        io.MouseDown[i] = g_MouseJustPressed[i] || g_MouseDown[i];
+        g_MouseJustPressed[i] = false;
+    }
     if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) {
         return;
     }
@@ -99,42 +108,40 @@ void ImGui_ImplJUCE_NewFrame(juce::Component *component) {
     }
     g_Time = current_time;
 
-    ImGui_ImplJUCE_UpdateMouseCursor(component);
+    ImGui_ImplJUCE_UpdateMouseCursorAndButtons(component);
 }
 
-static int mapCharacterToKey(int c) {
-    if (c >= 'a' && c <= 'z') {
-        return c - 'a' + 'A';
-    }
-    if (c >= 0 && c < 256) {
-        return c;
-    }
-    if (c >= 0xF700 && c < 0xF700 + 256) {
-        return c - 0xF700 + 256;
-    }
-    return -1;
-}
-
-static void resetKeys() {
+bool ImGui_ImplJUCE_HandleKeyPressed(const juce::KeyPress &key, juce::Component *originatingComponent) {
     ImGuiIO &io = ImGui::GetIO();
-    for (int n = 0; n < IM_ARRAYSIZE(io.KeysDown); ++n) {
-        io.KeysDown[n] = false;
-    }
+    unsigned int c = static_cast<unsigned int>(key.getTextCharacter());
+    io.AddInputCharacter(c);
+    return c == '\t' || io.WantCaptureKeyboard;
 }
 
-void ImGui_ImplJUCE_HandleKeyPress(const juce::KeyPress &key) {
+bool ImGui_ImplJUCE_HandleKeyStateChanged(const bool isKeyDown, juce::Component *originatingComponent) {
     ImGuiIO &io = ImGui::GetIO();
-    juce::juce_wchar c = key.getTextCharacter();
-    if (key.isCurrentlyDown() && c >= 32 && c < 127) {
-        io.AddInputCharacter((unsigned int)c);
+    io.KeyShift = juce::KeyPress::isKeyCurrentlyDown(16);
+    io.KeyCtrl = juce::KeyPress::isKeyCurrentlyDown(17);
+    io.KeyAlt = juce::KeyPress::isKeyCurrentlyDown(18);
+    io.KeySuper = juce::KeyPress::isKeyCurrentlyDown(91) || juce::KeyPress::isKeyCurrentlyDown(92) ||
+                  juce::KeyPress::isKeyCurrentlyDown(93);
+    io.KeyMods = ImGuiKeyModFlags_None;
+    if (io.KeyShift) {
+        io.KeyMods |= ImGuiKeyModFlags_Shift;
     }
-    int keyCode = mapCharacterToKey(c);
-    if (keyCode != -1) {
-        if (key.isCurrentlyDown() && !io.KeyCtrl) {
-            resetKeys();
-        }
-        io.KeysDown[keyCode] = true;
+    if (io.KeyCtrl) {
+        io.KeyMods |= ImGuiKeyModFlags_Ctrl;
     }
+    if (io.KeyAlt) {
+        io.KeyMods |= ImGuiKeyModFlags_Alt;
+    }
+    if (io.KeySuper) {
+        io.KeyMods |= ImGuiKeyModFlags_Super;
+    }
+    for (int i = 8; i < IM_ARRAYSIZE(io.KeysDown); ++i) {
+        io.KeysDown[i] = juce::KeyPress::isKeyCurrentlyDown(i);
+    }
+    return io.WantCaptureKeyboard;
 }
 
 void ImGui_ImplJUCE_HandleMouseMove(const juce::MouseEvent &event) {
@@ -147,30 +154,17 @@ void ImGui_ImplJUCE_HandleMouseEnter(const juce::MouseEvent &event) {}
 void ImGui_ImplJUCE_HandleMouseExit(const juce::MouseEvent &event) {}
 
 void ImGui_ImplJUCE_HandleMouseDown(const juce::MouseEvent &event) {
-    ImGuiIO &io = ImGui::GetIO();
-
-    bool oldKeyCtrl = io.KeyCtrl;
-    bool oldKeyShift = io.KeyShift;
-    bool oldKeyAlt = io.KeyAlt;
-    bool oldKeySuper = io.KeySuper;
-    io.KeyCtrl = event.mods.isCtrlDown();
-    io.KeyShift = event.mods.isShiftDown();
-    io.KeyAlt = event.mods.isAltDown();
-    io.KeySuper = event.mods.isCommandDown();
-
-    if ((oldKeyShift && !io.KeyShift) || (oldKeyCtrl && !io.KeyCtrl) || (oldKeyAlt && !io.KeyAlt) ||
-        (oldKeySuper && !io.KeySuper)) {
-        resetKeys();
-    }
-
     if (event.mods.isLeftButtonDown()) {
-        io.MouseDown[0] = true;
+        g_MouseJustPressed[0] = true;
+        g_MouseDown[0] = true;
     }
     if (event.mods.isRightButtonDown()) {
-        io.MouseDown[0] = true;
+        g_MouseJustPressed[1] = true;
+        g_MouseDown[1] = true;
     }
     if (event.mods.isMiddleButtonDown()) {
-        io.MouseDown[0] = true;
+        g_MouseJustPressed[2] = true;
+        g_MouseDown[2] = true;
     }
 }
 
@@ -180,30 +174,14 @@ void ImGui_ImplJUCE_HandleMouseDrag(const juce::MouseEvent &event) {
 }
 
 void ImGui_ImplJUCE_HandleMouseUp(const juce::MouseEvent &event) {
-    ImGuiIO &io = ImGui::GetIO();
-
-    bool oldKeyCtrl = io.KeyCtrl;
-    bool oldKeyShift = io.KeyShift;
-    bool oldKeyAlt = io.KeyAlt;
-    bool oldKeySuper = io.KeySuper;
-    io.KeyCtrl = event.mods.isCtrlDown();
-    io.KeyShift = event.mods.isShiftDown();
-    io.KeyAlt = event.mods.isAltDown();
-    io.KeySuper = event.mods.isCommandDown();
-
-    if ((oldKeyShift && !io.KeyShift) || (oldKeyCtrl && !io.KeyCtrl) || (oldKeyAlt && !io.KeyAlt) ||
-        (oldKeySuper && !io.KeySuper)) {
-        resetKeys();
-    }
-
     if (event.mods.isLeftButtonDown()) {
-        io.MouseDown[0] = false;
+        g_MouseDown[0] = false;
     }
     if (event.mods.isRightButtonDown()) {
-        io.MouseDown[0] = false;
+        g_MouseDown[1] = false;
     }
     if (event.mods.isMiddleButtonDown()) {
-        io.MouseDown[0] = false;
+        g_MouseDown[2] = false;
     }
 }
 
@@ -212,10 +190,10 @@ void ImGui_ImplJUCE_HandleMouseDoubleClick(const juce::MouseEvent &event) {}
 void ImGui_ImplJUCE_HandleMouseWheelMove(const juce::MouseEvent &event, const juce::MouseWheelDetails &wheel) {
     ImGuiIO &io = ImGui::GetIO();
     if (fabs(wheel.deltaX) > 0.0) {
-        io.MouseWheelH += wheel.deltaX * 0.1f;
+        io.MouseWheelH += wheel.deltaX * 2.5;
     }
     if (fabs(wheel.deltaY) > 0.0) {
-        io.MouseWheel += wheel.deltaY * 0.1f;
+        io.MouseWheel += wheel.deltaY * 2.5;
     }
 }
 
