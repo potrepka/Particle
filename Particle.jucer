@@ -213,10 +213,6 @@
         <FILE id="hSgMsN" name="imgui.h" compile="0" resource="0" file="Source/imgui/imgui.h"/>
         <FILE id="Mr72p7" name="imgui_demo.cpp" compile="1" resource="0" file="Source/imgui/imgui_demo.cpp"/>
         <FILE id="Z92iVS" name="imgui_draw.cpp" compile="1" resource="0" file="Source/imgui/imgui_draw.cpp"/>
-        <FILE id="PPuf6F" name="imgui_impl_metal.h" compile="0" resource="0"
-              file="Source/imgui/examples/imgui_impl_metal.h"/>
-        <FILE id="L2QuC5" name="imgui_impl_metal.mm" compile="1" resource="0"
-              file="Source/imgui/examples/imgui_impl_metal.mm"/>
         <FILE id="aeUNIE" name="imgui_impl_opengl3.cpp" compile="1" resource="0"
               file="Source/imgui/examples/imgui_impl_opengl3.cpp"/>
         <FILE id="KfIYhw" name="imgui_impl_opengl3.h" compile="0" resource="0"
