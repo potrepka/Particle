@@ -1,10 +1,13 @@
 [submodule "Source/DSP"]
 	path = Source/DSP
 	url = https://github.com/nspotrepka/DSP.git
+	branch = master
 [submodule "Source/imnodes"]
 	path = Source/imnodes
 	url = https://github.com/Nelarius/imnodes.git
+	branch = master
 [submodule "Source/imgui"]
 	path = Source/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+	
