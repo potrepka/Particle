@@ -1,6 +1,28 @@
 #pragma once
 
+#include "imgui_impl_opengl3.h"
+
+#if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3)
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 #include <GL/gl3w.h>
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#include <GL/glew.h>
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#include <glad/glad.h>
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD2)
+#include <glad/gl.h>
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
+#include <glbinding/Binding.h>
+
+#include <glbinding/gl/gl.h>
+using namespace gl;
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
+#include <glbinding/glbinding.h>
+
+#include <glbinding/gl/gl.h>
+using namespace gl;
+#endif
+#endif
 
 #include "DSP.h"
 #include "Particle.h"

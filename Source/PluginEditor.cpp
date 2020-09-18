@@ -25,19 +25,21 @@ void ParticleAudioProcessorEditor::paint(juce::Graphics &g) {}
 void ParticleAudioProcessorEditor::resized() {}
 
 void ParticleAudioProcessorEditor::newOpenGLContextCreated() {
-    #if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3)
-    #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-        gl3wInit();
-    #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-        glewInit();
-    #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-        gladLoadGL();
-    #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
-        glbinding::Binding::initialize();
-    #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
-        glbinding::initialize();
-    #endif
-    #endif
+#if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3)
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+    gl3wInit();
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+    glewInit();
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+    gladLoadGL();
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD2)
+    gladLoaderLoadGL();
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
+    glbinding::Binding::initialize();
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
+    glbinding::initialize();
+#endif
+#endif
 
     std::cout << "GL VERSION: " << glGetString(GL_VERSION) << std::endl;
 
