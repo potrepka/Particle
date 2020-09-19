@@ -11,10 +11,8 @@ void ImGui_ImplJUCE_Init() {
     ImGuiIO &io = ImGui::GetIO();
 
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-    // io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
     // io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
     // io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports;
-    // io.BackendFlags |= ImGuiBackendFlags_HasMouseHoveredViewport;
     io.BackendPlatformName = "imgui_impl_juce";
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
