@@ -37,7 +37,7 @@ private:
 
     juce::OpenGLContext openGLContext;
 
-    ImVec4 backgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    particle::Root root;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticleAudioProcessorEditor)
 };

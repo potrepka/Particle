@@ -1,12 +1,18 @@
 #pragma once
 
+#include "Frame.h"
+
+#include "imnodes.h"
+
 namespace particle {
 
-class NodeEditor {
+class NodeEditor : public Frame {
 
 public:
-    NodeEditor();
+    NodeEditor(Data &data);
 
+private:
+    void drawInternal() override;
 };
 
 } // namespace particle

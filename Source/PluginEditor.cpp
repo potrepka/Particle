@@ -48,6 +48,7 @@ void ParticleAudioProcessorEditor::newOpenGLContextCreated() {
 
 void ParticleAudioProcessorEditor::renderOpenGL() {
     ImGui_ImplOpenGL3_NewFrame();
+
     ImGui_ImplJUCE_NewFrame(this);
 
     ImGuiIO &io = ImGui::GetIO();
@@ -55,39 +56,14 @@ void ParticleAudioProcessorEditor::renderOpenGL() {
     io.DisplayFramebufferScale = ImVec2(scale, scale);
 
     ImGui::NewFrame();
-
-    static bool show_demo_window = true;
-    if (show_demo_window) {
-        ImGui::ShowDemoWindow(&show_demo_window);
-    }
-    ImGui::Begin("FPS Window");
-    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-    ImGui::Text("DOUBLE PRECISON for audio device processing: %d", audioProcessor.isUsingDoublePrecision());
-    ImGui::End();
-
-    static ImGuiID dockspaceID = 0;
-    if (ImGui::Begin("Master Window" /*, nullptr, ImGuiWindowFlags_MenuBar*/)) {
-        ImGui::TextUnformatted("DockSpace below");
-
-        // Declare Central dockspace
-        dockspaceID = ImGui::GetID("HUB_DockSpace");
-        ImGui::DockSpace(dockspaceID,
-                         ImVec2(0.0f, 0.0f),
-                         ImGuiDockNodeFlags_None |
-                                 ImGuiDockNodeFlags_PassthruCentralNode /*|ImGuiDockNodeFlags_NoResize*/);
-    }
-    ImGui::End();
-
-    ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Dockable Window")) {
-        ImGui::TextUnformatted("Test");
-    }
-    ImGui::End();
-
+    root.draw();
     ImGui::Render();
 
     glViewport(0, 0, getScreenBounds().getWidth(), getScreenBounds().getHeight());
-    glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+    glClearColor(root.getData().backgroundColor.x,
+                 root.getData().backgroundColor.y,
+                 root.getData().backgroundColor.z,
+                 root.getData().backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
