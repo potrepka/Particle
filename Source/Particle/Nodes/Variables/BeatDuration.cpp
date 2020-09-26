@@ -1,14 +1,14 @@
 #include "BeatDuration.h"
 
-dsp::BeatDuration::BeatDuration(juce::AudioPlayHead *playHead)
+dsp::BeatDuration::BeatDuration(juce::AudioProcessor *audioProcessor)
         : Producer(Type::SECONDS) {
-    this->playHead = playHead;
+    this->audioProcessor = audioProcessor;
 }
 
 void dsp::BeatDuration::processNoLock() {
-    if (playHead) {
+    if (audioProcessor) {
         juce::AudioPlayHead::CurrentPositionInfo info;
-        playHead->getCurrentPosition(info);
+        audioProcessor->getPlayHead()->getCurrentPosition(info);
         getOutput()->getWrapper().fill(60.0 / info.bpm);
     }
 }

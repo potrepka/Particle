@@ -13,6 +13,11 @@ class Frame {
 public:
     Frame(Data &data, std::string title);
 
+    Data &getData();
+
+    std::string getTitle();
+    void setTitle(std::string title);
+
     void draw();
 
 private:

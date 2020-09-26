@@ -2,8 +2,6 @@
 
 #include "Frame.h"
 
-#include "imnodes.h"
-
 namespace particle {
 
 class NodeEditor : public Frame {

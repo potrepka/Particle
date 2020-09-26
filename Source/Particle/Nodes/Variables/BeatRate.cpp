@@ -1,14 +1,12 @@
 #include "BeatRate.h"
 
-dsp::BeatRate::BeatRate(juce::AudioPlayHead *playHead)
-        : Producer(Type::HERTZ) {
-    this->playHead = playHead;
-}
+dsp::BeatRate::BeatRate(juce::AudioProcessor *audioProcessor)
+        : Producer(Type::HERTZ) {}
 
 void dsp::BeatRate::processNoLock() {
-    if (playHead) {
+    if (audioProcessor) {
         juce::AudioPlayHead::CurrentPositionInfo info;
-        playHead->getCurrentPosition(info);
+        audioProcessor->getPlayHead()->getCurrentPosition(info);
         getOutput()->getWrapper().fill(info.bpm / 60.0);
     }
 }

@@ -56,14 +56,16 @@ void ParticleAudioProcessorEditor::renderOpenGL() {
     io.DisplayFramebufferScale = ImVec2(scale, scale);
 
     ImGui::NewFrame();
-    root.draw();
+
+    audioProcessor.getRootView().draw();
+
     ImGui::Render();
 
     glViewport(0, 0, getScreenBounds().getWidth(), getScreenBounds().getHeight());
-    glClearColor(root.getData().backgroundColor.x,
-                 root.getData().backgroundColor.y,
-                 root.getData().backgroundColor.z,
-                 root.getData().backgroundColor.w);
+    glClearColor(audioProcessor.getRootView().getData().getStyle().backgroundColor.x,
+                 audioProcessor.getRootView().getData().getStyle().backgroundColor.y,
+                 audioProcessor.getRootView().getData().getStyle().backgroundColor.z,
+                 audioProcessor.getRootView().getData().getStyle().backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

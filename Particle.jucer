@@ -255,12 +255,11 @@
       </GROUP>
       <GROUP id="{1F5B1442-3985-09FD-49E6-D14B0B66D9FE}" name="Particle">
         <GROUP id="{5019B814-6E56-D04F-18B1-6F6BA2ADE900}" name="Frames">
+          <GROUP id="{2DF019AB-0904-6A07-5B29-F7009E795C65}" name="Settings"/>
           <FILE id="bDEVYt" name="NodeEditor.cpp" compile="1" resource="0" file="Source/Particle/Frames/NodeEditor.cpp"/>
           <FILE id="wBaleJ" name="NodeEditor.h" compile="0" resource="0" file="Source/Particle/Frames/NodeEditor.h"/>
-          <FILE id="qNuVMZ" name="Preferences.cpp" compile="1" resource="0" file="Source/Particle/Frames/Preferences.cpp"/>
-          <FILE id="Hj21mw" name="Preferences.h" compile="0" resource="0" file="Source/Particle/Frames/Preferences.h"/>
-          <FILE id="TUX5yH" name="StatusBar.cpp" compile="1" resource="0" file="Source/Particle/Frames/StatusBar.cpp"/>
-          <FILE id="X43X0k" name="StatusBar.h" compile="0" resource="0" file="Source/Particle/Frames/StatusBar.h"/>
+          <FILE id="DaKNtJ" name="Status.cpp" compile="1" resource="0" file="Source/Particle/Frames/Status.cpp"/>
+          <FILE id="Coc4l8" name="Status.h" compile="0" resource="0" file="Source/Particle/Frames/Status.h"/>
         </GROUP>
         <GROUP id="{23F2FC7E-4719-67FD-0F34-39427197D64A}" name="Nodes">
           <GROUP id="{BEC1D8F9-3A61-24F1-3C2A-66C7B69A3EED}" name="Variables">
@@ -271,13 +270,15 @@
             <FILE id="G2ioJ5" name="BeatRate.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.h"/>
           </GROUP>
         </GROUP>
-        <FILE id="JHkJuy" name="Data.cpp" compile="1" resource="0" file="Source/Particle/Data.cpp"/>
-        <FILE id="DND2AJ" name="Data.h" compile="0" resource="0" file="Source/Particle/Data.h"/>
+        <FILE id="I25p1q" name="Data.cpp" compile="1" resource="0" file="Source/Particle/Data.cpp"/>
+        <FILE id="jTOgIM" name="Data.h" compile="0" resource="0" file="Source/Particle/Data.h"/>
         <FILE id="Tz6GqY" name="Frame.cpp" compile="1" resource="0" file="Source/Particle/Frame.cpp"/>
         <FILE id="x5Lp7u" name="Frame.h" compile="0" resource="0" file="Source/Particle/Frame.h"/>
         <FILE id="ULfcsm" name="Particle.h" compile="0" resource="0" file="Source/Particle/Particle.h"/>
-        <FILE id="CZLwGr" name="Root.cpp" compile="1" resource="0" file="Source/Particle/Root.cpp"/>
-        <FILE id="S0frtM" name="Root.h" compile="0" resource="0" file="Source/Particle/Root.h"/>
+        <FILE id="vZbLcm" name="RootView.cpp" compile="1" resource="0" file="Source/Particle/RootView.cpp"/>
+        <FILE id="mQqloZ" name="RootView.h" compile="0" resource="0" file="Source/Particle/RootView.h"/>
+        <FILE id="mAvPlB" name="Style.cpp" compile="1" resource="0" file="Source/Particle/Style.cpp"/>
+        <FILE id="eNAFbd" name="Style.h" compile="0" resource="0" file="Source/Particle/Style.h"/>
       </GROUP>
       <FILE id="vWgZYd" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>

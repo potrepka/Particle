@@ -9,13 +9,13 @@ namespace dsp {
 class BeatRate : public Producer {
 
 public:
-    BeatRate(juce::AudioPlayHead *playHead);
+    BeatRate(juce::AudioProcessor *audioProcessor);
 
 protected:
     void processNoLock() override;
 
 private:
-    juce::AudioPlayHead *playHead;
+    juce::AudioProcessor *audioProcessor;
 };
 
 } // namespace dsp

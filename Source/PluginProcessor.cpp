@@ -14,6 +14,7 @@ ParticleAudioProcessor::ParticleAudioProcessor()
 #endif
                                  )
         , nodeProcessor(2, 2, 0, 0.0)
+        , rootView(this, nullptr, &nodeProcessor)
 #endif
 {
     if (supportsDoublePrecisionProcessing()) {
@@ -24,6 +25,7 @@ ParticleAudioProcessor::ParticleAudioProcessor()
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     ImGui_ImplJUCE_Init();
+    imnodes::Initialize();
 
     // TODO: Remove MIDI status messages
 
@@ -32,7 +34,8 @@ ParticleAudioProcessor::ParticleAudioProcessor()
     std::weak_ptr<dsp::MidiInput> inputWeak(input);
     input->setProcessFunction([inputWeak]() {
         const auto input = inputWeak.lock();
-        for (const auto meta : *input->getInputMessages()) {
+        const auto messages = input->getInputMessages();
+        for (const auto meta : *messages) {
             const auto message = meta.getMessage();
             std::cout << "INPUT: " << message.getDescription() << std::endl;
         }
@@ -46,7 +49,8 @@ ParticleAudioProcessor::ParticleAudioProcessor()
     std::weak_ptr<dsp::MidiOutput> outputWeak(output);
     output->setProcessFunction([outputWeak]() {
         const auto output = outputWeak.lock();
-        for (const auto meta : *output->getOutputMessages()) {
+        const auto messages = output->getOutputMessages();
+        for (const auto meta : *messages) {
             const auto message = meta.getMessage();
             std::cout << "OUTPUT: " << message.getDescription() << std::endl;
         }
@@ -55,22 +59,18 @@ ParticleAudioProcessor::ParticleAudioProcessor()
     nodeProcessor.getNodes().push_back(output);
     nodeProcessor.unlock();
 
-//    std::shared_ptr<dsp::WhiteNoise> white = std::make_shared<dsp::WhiteNoise>();
-//    white->setNumOutputChannels(2);
-//    nodeProcessor.lock();
-//    nodeProcessor.getNodes().push_back(white);
-//    white->getOutputSignal()->connect(nodeProcessor.getAudioOutput());
-//    nodeProcessor.unlock();
+    // TODO: Remove pink noise test code
 
     std::shared_ptr<dsp::PinkNoise> pink = std::make_shared<dsp::PinkNoise>();
     pink->setNumOutputChannels(2);
     nodeProcessor.lock();
     nodeProcessor.getNodes().push_back(pink);
-    pink->getOutput()->connect(nodeProcessor.getAudioOutput());
+    pink->getOutput() >> nodeProcessor.getAudioOutput();
     nodeProcessor.unlock();
 }
 
 ParticleAudioProcessor::~ParticleAudioProcessor() {
+    imnodes::Shutdown();
     ImGui_ImplJUCE_Shutdown();
     ImGui::DestroyContext();
 }
@@ -186,6 +186,7 @@ juce::AudioProcessorEditor *ParticleAudioProcessor::createEditor() {
             w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, true);
         }
     }
+    rootView.getData().setAudioDeviceManager(getAudioDeviceManager());
     return editor;
 }
 
@@ -200,6 +201,19 @@ void ParticleAudioProcessor::setStateInformation(const void *data, int sizeInByt
     // TODO: LOAD STATE
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+juce::AudioDeviceManager* ParticleAudioProcessor::getAudioDeviceManager() {
+    juce::StandalonePluginHolder *standalone = juce::StandalonePluginHolder::getInstance();
+    return standalone != nullptr ? &standalone->deviceManager : nullptr;
+}
+
+dsp::NodeProcessor &ParticleAudioProcessor::getNodeProcessor() {
+    return nodeProcessor;
+}
+
+particle::RootView &ParticleAudioProcessor::getRootView() {
+    return rootView;
 }
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {

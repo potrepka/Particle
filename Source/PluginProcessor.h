@@ -28,6 +28,9 @@ using namespace gl;
 #include "Particle.h"
 
 #include "imgui_impl_juce.h"
+#include "imnodes.h"
+
+#include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
 
 class ParticleAudioProcessor : public juce::AudioProcessor {
 public:
@@ -63,8 +66,14 @@ public:
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
 
+    juce::AudioDeviceManager *getAudioDeviceManager();
+
+    dsp::NodeProcessor &getNodeProcessor();
+    particle::RootView &getRootView();
+
 private:
     dsp::NodeProcessor nodeProcessor;
+    particle::RootView rootView;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticleAudioProcessor)
 };
