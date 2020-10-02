@@ -41,6 +41,8 @@
                     file="Source/DSP/src/Nodes/Channel/ChannelSplitter.h"/>
               <FILE id="zccLtd" name="MidSide.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Channel/MidSide.cpp"/>
               <FILE id="XPQflQ" name="MidSide.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/MidSide.h"/>
+              <FILE id="qwt21I" name="Spread.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Channel/Spread.cpp"/>
+              <FILE id="GIfatR" name="Spread.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/Spread.h"/>
               <FILE id="kMNE76" name="StereoPanner.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Channel/StereoPanner.cpp"/>
               <FILE id="gJJ1PD" name="StereoPanner.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Channel/StereoPanner.h"/>
@@ -61,18 +63,18 @@
               <FILE id="I5zPr2" name="VariableDelay.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Delays/VariableDelay.h"/>
             </GROUP>
             <GROUP id="{E661119F-CD4F-58CF-46CC-53395D944103}" name="Dynamics">
+              <FILE id="TRDp6A" name="Clipper.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Clipper.cpp"/>
+              <FILE id="UqOGw3" name="Clipper.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Clipper.h"/>
               <FILE id="cq6VRD" name="CompressorGate.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.cpp"/>
               <FILE id="xh4OvT" name="CompressorGate.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.h"/>
-              <FILE id="k1vtxj" name="Distortion.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Distortion.cpp"/>
-              <FILE id="x20PMu" name="Distortion.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Distortion.h"/>
               <FILE id="K0F5OH" name="DryWet.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.cpp"/>
               <FILE id="p8qW5h" name="DryWet.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.h"/>
               <FILE id="tcJ9qP" name="Envelope.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.cpp"/>
               <FILE id="QuKqWu" name="Envelope.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.h"/>
-              <FILE id="q1DGRk" name="HardClip.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/HardClip.cpp"/>
-              <FILE id="EwuqGN" name="HardClip.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/HardClip.h"/>
+              <FILE id="W7NCcj" name="Shaper.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Shaper.cpp"/>
+              <FILE id="E3zN9f" name="Shaper.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Shaper.h"/>
             </GROUP>
             <GROUP id="{51AF1DF7-6246-DBF0-0552-B4C1BBE212B1}" name="External">
               <FILE id="mgMPH7" name="MidiInput.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/External/MidiInput.cpp"/>

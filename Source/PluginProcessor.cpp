@@ -130,9 +130,14 @@ const juce::String ParticleAudioProcessor::getProgramName(int index) {
 void ParticleAudioProcessor::changeProgramName(int index, const juce::String &newName) {}
 
 void ParticleAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
-    // TODO: HANDLE CHANGING NUMBER OF INPUT/OUTPUT CHANNELS MORE GRACEFULLY
-    nodeProcessor.setInputSize(getTotalNumInputChannels(), samplesPerBlock);
-    nodeProcessor.setOutputSize(getTotalNumOutputChannels(), samplesPerBlock);
+    size_t numInputChannels = getTotalNumInputChannels() > nodeProcessor.getNumInputChannels()
+                                      ? getTotalNumInputChannels()
+                                      : nodeProcessor.getNumInputChannels();
+    size_t numOutputChannels = getTotalNumOutputChannels() > nodeProcessor.getNumOutputChannels()
+                                       ? getTotalNumOutputChannels()
+                                       : nodeProcessor.getNumOutputChannels();
+    nodeProcessor.setInputSize(numInputChannels, samplesPerBlock);
+    nodeProcessor.setOutputSize(numOutputChannels, samplesPerBlock);
     nodeProcessor.setSampleRate(sampleRate);
 }
 
