@@ -5,7 +5,7 @@
               pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               cppLanguageStandard="17" pluginManufacturerCode="NATP" pluginCode="PART"
               headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/examples&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/Particle"
-              defines="DSP_USE_JUCE">
+              defines="JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1&#10;DSP_USE_JUCE">
   <MAINGROUP id="eKrb8w" name="Particle">
     <GROUP id="{54499037-BEDC-6E52-0116-A28125330971}" name="Source">
       <GROUP id="{DD21DDB7-C8F3-EED2-4E43-801094F2CCB9}" name="DSP">
@@ -282,13 +282,12 @@
         <FILE id="mAvPlB" name="Style.cpp" compile="1" resource="0" file="Source/Particle/Style.cpp"/>
         <FILE id="eNAFbd" name="Style.h" compile="0" resource="0" file="Source/Particle/Style.h"/>
       </GROUP>
-      <FILE id="vWgZYd" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="Hvkbuf" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="pVyvaq" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="vit5cU" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
+      <FILE id="Ui1iA7" name="App.cpp" compile="1" resource="0" file="Source/App.cpp"/>
+      <FILE id="GAuow4" name="App.h" compile="0" resource="0" file="Source/App.h"/>
+      <FILE id="sbIfGi" name="Editor.cpp" compile="1" resource="0" file="Source/Editor.cpp"/>
+      <FILE id="hlIE5J" name="Editor.h" compile="0" resource="0" file="Source/Editor.h"/>
+      <FILE id="ZHWFf5" name="Processor.cpp" compile="1" resource="0" file="Source/Processor.cpp"/>
+      <FILE id="olz7Tg" name="Processor.h" compile="0" resource="0" file="Source/Processor.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
