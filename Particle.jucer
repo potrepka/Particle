@@ -257,7 +257,11 @@
       </GROUP>
       <GROUP id="{1F5B1442-3985-09FD-49E6-D14B0B66D9FE}" name="Particle">
         <GROUP id="{5019B814-6E56-D04F-18B1-6F6BA2ADE900}" name="Frames">
-          <GROUP id="{2DF019AB-0904-6A07-5B29-F7009E795C65}" name="Settings"/>
+          <GROUP id="{2DF019AB-0904-6A07-5B29-F7009E795C65}" name="Settings">
+            <FILE id="uGIZaH" name="AudioSettings.cpp" compile="1" resource="0"
+                  file="Source/Particle/Frames/Settings/AudioSettings.cpp"/>
+            <FILE id="VRMKQG" name="AudioSettings.h" compile="0" resource="0" file="Source/Particle/Frames/Settings/AudioSettings.h"/>
+          </GROUP>
           <FILE id="bDEVYt" name="NodeEditor.cpp" compile="1" resource="0" file="Source/Particle/Frames/NodeEditor.cpp"/>
           <FILE id="wBaleJ" name="NodeEditor.h" compile="0" resource="0" file="Source/Particle/Frames/NodeEditor.h"/>
           <FILE id="DaKNtJ" name="Status.cpp" compile="1" resource="0" file="Source/Particle/Frames/Status.cpp"/>

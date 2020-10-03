@@ -4,6 +4,7 @@ particle::RootView::RootView(juce::AudioProcessor *audioProcessor,
                              juce::AudioDeviceManager *audioDeviceManager,
                              dsp::NodeProcessor *nodeProcessor)
         : data(audioProcessor, audioDeviceManager, nodeProcessor)
+        , audioSettings(data)
         , status(data)
         , nodeEditor(data) {}
 
@@ -40,7 +41,7 @@ void particle::RootView::draw() {
     //    }
     //    ImGui::End();
     //}
-
+    audioSettings.draw();
     status.draw();
     nodeEditor.draw();
 }

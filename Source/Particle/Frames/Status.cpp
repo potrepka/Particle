@@ -3,9 +3,7 @@
 particle::Status::Status(Data &data)
         : Frame(data, "Status")
         , cpu(0.0)
-        , fps(0.0) {
-    startTimerHz(60);
-}
+        , fps(0.0) {}
 
 void particle::Status::drawInternal() {
     getData().getNodeProcessor()->lock();
@@ -48,17 +46,12 @@ void particle::Status::drawInternal() {
     }
     getData().getNodeProcessor()->getAudioOutput()->unlock();
     getData().getNodeProcessor()->unlock();
-    ImGui::ProgressBar(cpu, ImVec2(-1, 0));
-    ImGui::Text("%.f FPS", fps);
-    ImGui::Text("Nodes: %ld/%ld", numActiveNodes, numNodes);
-    ImGui::Text("Connections: %ld/%ld", numActiveConnections, numConnections);
-
-    //ImGui::Text("DOUBLE PRECISON for audio device processing: %d", getData().getAudioProcessor()->isUsingDoublePrecision());
-}
-
-void particle::Status::timerCallback() {
     if (getData().getAudioDeviceManager() != nullptr) {
         cpu = getData().getAudioDeviceManager()->getCpuUsage();
     }
     fps = ImGui::GetIO().Framerate;
+    ImGui::ProgressBar(cpu, ImVec2(-1, 0));
+    ImGui::Text("%.f FPS", fps);
+    ImGui::Text("Nodes: %ld/%ld", numActiveNodes, numNodes);
+    ImGui::Text("Connections: %ld/%ld", numActiveConnections, numConnections);
 }

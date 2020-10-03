@@ -2,6 +2,7 @@
 
 #include "Data.h"
 
+#include "Frames/Settings/AudioSettings.h"
 #include "Frames/Status.h"
 #include "Frames/NodeEditor.h"
 
@@ -20,6 +21,7 @@ public:
 
 private:
     Data data;
+    AudioSettings audioSettings;
     Status status;
     NodeEditor nodeEditor;
 };

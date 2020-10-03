@@ -4,15 +4,12 @@
 
 namespace particle {
 
-class Status : public Frame {
+class AudioSettings : public Frame {
 
 public:
-    Status(Data &data);
+    AudioSettings(Data &data);
 
 private:
-    double cpu;
-    double fps;
-
     void drawInternal() override;
 };
 
