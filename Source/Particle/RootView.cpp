@@ -6,7 +6,11 @@ particle::RootView::RootView(juce::AudioProcessor *audioProcessor,
         : data(audioProcessor, audioDeviceManager, nodeProcessor)
         , audioSettings(data)
         , status(data)
-        , nodeEditor(data) {}
+        , nodeEditor(data) {
+    audioSettings.show();
+    status.show();
+    nodeEditor.show();
+}
 
 particle::Data &particle::RootView::getData() {
     return data;
@@ -18,29 +22,18 @@ void particle::RootView::draw() {
     //ImGui::ShowDemoWindow(&show_demo_window);
     //}
 
-    //static ImGuiID dockspaceID = 0;
+    ImGui::DockSpaceOverViewport();
 
-    //if (ImGui::Begin("Master Window" /*, nullptr, ImGuiWindowFlags_MenuBar*/)) {
-    //    ImGui::TextUnformatted("DockSpace below");
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 
-    //    // Declare Central dockspace
-    //    dockspaceID = ImGui::GetID("HUB_DockSpace");
-    //    ImGui::DockSpace(dockspaceID,
-    //                     ImVec2(0.0f, 0.0f),
-    //                     ImGuiDockNodeFlags_None |
-    //                             ImGuiDockNodeFlags_PassthruCentralNode /*|ImGuiDockNodeFlags_NoResize*/);
-    //}
-    //ImGui::End();
-
-    //static bool open = true;
-
-    //if (open) {
-    //    ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
-    //    if (ImGui::Begin("Dockable Window", &open)) {
-    //        ImGui::TextUnformatted("Test");
-    //    }
-    //    ImGui::End();
-    //}
     audioSettings.draw();
     status.draw();
     nodeEditor.draw();

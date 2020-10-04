@@ -15,14 +15,18 @@ public:
 
     Data &getData();
 
-    std::string getTitle();
+    std::string getTitle() const;
     void setTitle(std::string title);
+
+    void show();
+    void hide();
 
     void draw();
 
 private:
     Data &data;
     std::string title;
+    bool visible;
 
     virtual void drawInternal() {}
 };
