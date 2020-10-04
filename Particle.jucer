@@ -255,6 +255,16 @@
         <FILE id="Ww5piT" name="imnodes.h" compile="0" resource="0" file="Source/imnodes/imnodes.h"/>
         <FILE id="NwiklF" name="LICENSE.md" compile="0" resource="1" file="Source/imnodes/LICENSE.md"/>
       </GROUP>
+      <GROUP id="{A5B30FE7-A776-5B18-E2A2-2BC53142FE26}" name="implot">
+        <FILE id="eniQIU" name="implot.cpp" compile="1" resource="0" file="Source/implot/implot.cpp"/>
+        <FILE id="Qz40c0" name="implot.h" compile="0" resource="0" file="Source/implot/implot.h"/>
+        <FILE id="u3RB5T" name="implot_demo.cpp" compile="1" resource="0" file="Source/implot/implot_demo.cpp"/>
+        <FILE id="r5JmEO" name="implot_internal.h" compile="0" resource="0"
+              file="Source/implot/implot_internal.h"/>
+        <FILE id="NuKPri" name="implot_items.cpp" compile="1" resource="0"
+              file="Source/implot/implot_items.cpp"/>
+        <FILE id="Iezp3Q" name="LICENSE" compile="0" resource="1" file="Source/implot/LICENSE"/>
+      </GROUP>
       <GROUP id="{1F5B1442-3985-09FD-49E6-D14B0B66D9FE}" name="Particle">
         <GROUP id="{5019B814-6E56-D04F-18B1-6F6BA2ADE900}" name="Frames">
           <GROUP id="{2DF019AB-0904-6A07-5B29-F7009E795C65}" name="Settings">

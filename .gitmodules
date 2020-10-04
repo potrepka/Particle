@@ -10,3 +10,7 @@
 	path = Source/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "Source/implot"]
+	path = Source/implot
+	url = https://github.com/epezent/implot.git
+	branch = master
