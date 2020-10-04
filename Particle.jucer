@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               cppLanguageStandard="17" pluginManufacturerCode="NATP" pluginCode="PART"
-              headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/examples&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/Particle"
+              headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/examples&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/implot&#10;../../Source/Particle"
               defines="JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1&#10;DSP_USE_JUCE">
   <MAINGROUP id="eKrb8w" name="Particle">
     <GROUP id="{54499037-BEDC-6E52-0116-A28125330971}" name="Source">
