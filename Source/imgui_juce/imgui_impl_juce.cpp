@@ -80,13 +80,13 @@ static void ImGui_ImplJUCE_UpdateMouseCursorAndButtons(juce::Component *componen
     if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None) {
         if (!g_MouseCursorHidden) {
             g_MouseCursorHidden = true;
-            component->setMouseCursor(juce::MouseCursor::StandardCursorType::NoCursor);
+            component->setMouseCursor(juce::MouseCursor(juce::MouseCursor::StandardCursorType::NoCursor));
         }
     } else {
         if (g_MouseCursorHidden) {
             g_MouseCursorHidden = false;
         }
-        component->setMouseCursor(g_MouseCursors[imgui_cursor]);
+        component->setMouseCursor(juce::MouseCursor(g_MouseCursors[imgui_cursor]));
     }
 }
 
