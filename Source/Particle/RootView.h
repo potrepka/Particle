@@ -17,6 +17,7 @@ public:
     
     Data &getData();
 
+    void setup();
     void draw();
 
 private:

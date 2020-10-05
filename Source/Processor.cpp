@@ -23,9 +23,10 @@ particle::Processor::Processor()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::StyleColorsDark();
     ImGui_ImplJUCE_Init();
     imnodes::Initialize();
+    ImPlot::CreateContext();
+    rootView.setup();
 
     // TODO: Remove MIDI status messages
 
@@ -70,6 +71,7 @@ particle::Processor::Processor()
 }
 
 particle::Processor::~Processor() {
+    ImPlot::DestroyContext();
     imnodes::Shutdown();
     ImGui_ImplJUCE_Shutdown();
     ImGui::DestroyContext();

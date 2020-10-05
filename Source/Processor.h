@@ -29,6 +29,7 @@ using namespace gl;
 
 #include "imgui_impl_juce.h"
 #include "imnodes.h"
+#include "implot.h"
 
 #include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
 

@@ -8,7 +8,7 @@ namespace particle {
 class Style {
 
 public:
-    ImVec4 backgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4 backgroundColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     void apply();
     
