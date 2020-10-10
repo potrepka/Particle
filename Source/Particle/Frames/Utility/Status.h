@@ -4,12 +4,15 @@
 
 namespace particle {
 
-class NodeEditor : public Frame {
+class Status : public Frame {
 
 public:
-    NodeEditor(Data &data);
+    Status(Data &data);
 
 private:
+    double cpu;
+    double fps;
+
     void drawInternal() override;
 };
 

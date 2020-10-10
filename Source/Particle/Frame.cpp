@@ -1,20 +1,24 @@
 #include "Frame.h"
 
-particle::Frame::Frame(Data &data, std::string title)
+particle::Frame::Frame(Data &data, std::string name)
         : data(data)
-        , title(title)
+        , name(name)
         , visible(false) {}
 
 particle::Data &particle::Frame::getData() {
     return data;
 }
 
-std::string particle::Frame::getTitle() const {
-    return title;
+std::string particle::Frame::getName() const {
+    return name;
 }
 
-void particle::Frame::setTitle(std::string title) {
-    this->title = title;
+void particle::Frame::setName(std::string name) {
+    this->name = name;
+}
+
+bool &particle::Frame::isVisible() {
+    return visible;
 }
 
 void particle::Frame::show() {
@@ -25,9 +29,13 @@ void particle::Frame::hide() {
     visible = false;
 }
 
+void particle::Frame::toggle() {
+    visible = !visible;
+}
+
 void particle::Frame::draw() {
     if (visible) {
-        ImGui::Begin(title.c_str(), &visible);
+        ImGui::Begin(name.c_str(), &visible);
         drawInternal();
         ImGui::End();
     }

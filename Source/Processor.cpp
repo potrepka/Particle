@@ -25,6 +25,8 @@ particle::Processor::Processor()
     ImGui::CreateContext();
     ImGui_ImplJUCE_Init();
     imnodes::Initialize();
+    //imnodes::GetIO().emulate_three_button_mouse.enabled = true;
+    //imnodes::GetIO().emulate_three_button_mouse.modifier = &ImGui::GetIO().KeyCtrl;
     ImPlot::CreateContext();
     rootView.setup();
 

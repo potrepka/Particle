@@ -2,9 +2,9 @@
 
 #include "Data.h"
 
+#include "Frames/Nodes/NodeGraph.h"
 #include "Frames/Settings/AudioSettings.h"
-#include "Frames/Status.h"
-#include "Frames/NodeEditor.h"
+#include "Frames/Utility/Status.h"
 
 namespace particle {
 
@@ -22,9 +22,14 @@ public:
 
 private:
     Data data;
+    NodeGraph nodeGraph;
     AudioSettings audioSettings;
     Status status;
-    NodeEditor nodeEditor;
+
+    std::vector<const char *> ttf;
+    std::vector<int> ttfSize;
+    std::vector<void *> fontData;
+    std::vector<ImFont *> font;
 };
 
 } // namespace particle

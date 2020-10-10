@@ -11,21 +11,23 @@ namespace particle {
 class Frame {
 
 public:
-    Frame(Data &data, std::string title);
+    Frame(Data &data, std::string name);
 
     Data &getData();
 
-    std::string getTitle() const;
-    void setTitle(std::string title);
+    std::string getName() const;
+    void setName(std::string name);
 
+    bool &isVisible();
     void show();
     void hide();
+    void toggle();
 
     void draw();
 
 private:
     Data &data;
-    std::string title;
+    std::string name;
     bool visible;
 
     virtual void drawInternal() {}
