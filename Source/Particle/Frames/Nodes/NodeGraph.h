@@ -1,22 +1,20 @@
 #pragma once
 
-#include <string>
-
+#include "DSP.h"
 #include "Frame.h"
-#include "Node.h"
+#include "Nodes/Nodes.h"
 
 namespace particle {
 
 class NodeGraph : public Frame {
 
 public:
-
     struct Input {
         int id;
         std::string name;
         std::shared_ptr<dsp::Input> input;
 
-        Input(int id, std::string name, std::shared_ptr<dsp::Input> input);
+        Input(int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
 
         void draw();
         void drawInspector();
@@ -27,7 +25,7 @@ public:
         std::string name;
         std::shared_ptr<dsp::Output> output;
     
-        Output(int id, std::string name, std::shared_ptr<dsp::Output> output);
+        Output(int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
 
         void draw();
         void drawInspector();
@@ -72,10 +70,10 @@ public:
             LOG2,
             MODULO,
             MULTIPLY,
-            MULTIPLY_HERTZ_SECONDS,
+            MULTIPLY_FREQUENCY_TIME,
             NOTE_TO_FREQUENCY,
             NOT_GATE,
-            ONE_OVER,
+            RECIPROCAL,
             BEAT_TRIGGER,
             DIFFERENTIATOR,
             INTEGRATOR,
@@ -95,7 +93,7 @@ public:
             std::string name;
             std::vector<Type> types;
 
-            Category(std::string name, std::vector<Type> types = std::vector<Type>());
+            Category(std::string name = "", std::vector<Type> types = std::vector<Type>());
         };
 
         int id;
@@ -105,9 +103,11 @@ public:
         std::map<int, Output> outputs;
         std::string customName;
 
-        Node(int id, Type type, std::shared_ptr<dsp::Node> node);
+        Node(int id = 0, Type type = Type::CUSTOM, std::shared_ptr<dsp::Node> node = nullptr);
 
-        std::string getName() const;
+        void addInput(int id, std::string name, std::shared_ptr<dsp::Input> input);
+        void addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output);
+
         std::string getCustomName() const;
         void setCustomName(std::string customName);
 
@@ -117,6 +117,7 @@ public:
 
         static std::vector<Category> getCategories();
         static std::string getTypeName(Type type, std::string customName = "");
+        static Node generate(Data &data, int &counter, int id, Type type);
     };
     
     struct Link {
@@ -124,10 +125,12 @@ public:
         Output from;
         Input to;
 
-        Link(int id, Output from, Input to);
+        Link(int id = 0, Output from = Output(), Input to = Input());
 
         void draw();
         void drawInspector();
+
+        static Link generate(std::map<int, Node> &nodes, int id, int from, int to);
     };
 
     NodeGraph(Data &data, std::string name, std::vector<std::shared_ptr<dsp::Node>> &audioNodes);
@@ -143,9 +146,9 @@ public:
     std::vector<std::string> &getOutputNames();
 
 private:
-    int counter = 0;
-    imnodes::EditorContext *context;
     std::vector<std::shared_ptr<dsp::Node>> &audioNodes;
+    int counter;
+    imnodes::EditorContext *context;
     std::vector<dsp::Output> inputs;
     std::vector<dsp::Input> outputs;
     std::vector<std::string> inputNames;

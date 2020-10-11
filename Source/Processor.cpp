@@ -33,7 +33,7 @@ particle::Processor::Processor()
     // TODO: Remove MIDI status messages
 
     std::shared_ptr<dsp::MidiInput> input =
-            std::make_shared<dsp::MidiInput>(dsp::Type::RATIO, nodeProcessor.getInputMessages());
+            std::make_shared<dsp::MidiInput>(nodeProcessor.getInputMessages());
     std::weak_ptr<dsp::MidiInput> inputWeak(input);
     input->setProcessFunction([inputWeak]() {
         const auto input = inputWeak.lock();
@@ -48,7 +48,7 @@ particle::Processor::Processor()
     nodeProcessor.unlock();
 
     std::shared_ptr<dsp::MidiOutput> output =
-            std::make_shared<dsp::MidiOutput>(dsp::Type::RATIO, nodeProcessor.getOutputMessages());
+            std::make_shared<dsp::MidiOutput>(nodeProcessor.getOutputMessages());
     std::weak_ptr<dsp::MidiOutput> outputWeak(output);
     output->setProcessFunction([outputWeak]() {
         const auto output = outputWeak.lock();

@@ -2,5 +2,4 @@
 
 #include "RootView.h"
 
-#include "Nodes/Variables/BeatDuration.h"
-#include "Nodes/Variables/BeatRate.h"
+#include "Nodes/Nodes.h"

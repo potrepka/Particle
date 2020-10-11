@@ -174,6 +174,8 @@
                     file="Source/DSP/src/Nodes/Math/FrequencyToNote.cpp"/>
               <FILE id="crIIPI" name="FrequencyToNote.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Math/FrequencyToNote.h"/>
+              <FILE id="XwC0l7" name="Identity.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Identity.cpp"/>
+              <FILE id="dmXm6S" name="Identity.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Identity.h"/>
               <FILE id="QeqwAn" name="InverseFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.cpp"/>
               <FILE id="fvHbMQ" name="InverseFFT.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.h"/>
               <FILE id="AySFSz" name="Log2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Log2.cpp"/>
@@ -182,20 +184,18 @@
               <FILE id="cR8XeK" name="Modulo.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.h"/>
               <FILE id="t1802f" name="Multiply.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.cpp"/>
               <FILE id="xt2keG" name="Multiply.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.h"/>
-              <FILE id="TjEGPI" name="MultiplyHertzSeconds.cpp" compile="1" resource="0"
-                    file="Source/DSP/src/Nodes/Math/MultiplyHertzSeconds.cpp"/>
-              <FILE id="YOs1g4" name="MultiplyHertzSeconds.h" compile="0" resource="0"
-                    file="Source/DSP/src/Nodes/Math/MultiplyHertzSeconds.h"/>
+              <FILE id="KPxLs4" name="MultiplyFrequencyTime.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/MultiplyFrequencyTime.cpp"/>
+              <FILE id="ABwBqa" name="MultiplyFrequencyTime.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Math/MultiplyFrequencyTime.h"/>
               <FILE id="LyT62d" name="NoteToFrequency.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Math/NoteToFrequency.cpp"/>
               <FILE id="F6eZGR" name="NoteToFrequency.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Math/NoteToFrequency.h"/>
               <FILE id="QpLfO6" name="NotGate.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.cpp"/>
               <FILE id="fkNA7H" name="NotGate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.h"/>
-              <FILE id="pEVd8L" name="OneOver.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/OneOver.cpp"/>
-              <FILE id="XfSOVd" name="OneOver.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/OneOver.h"/>
-              <FILE id="hHeQ0N" name="PassThrough.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/PassThrough.cpp"/>
-              <FILE id="x6UJUP" name="PassThrough.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/PassThrough.h"/>
+              <FILE id="wRMwMZ" name="Reciprocal.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.cpp"/>
+              <FILE id="x4dwSW" name="Reciprocal.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.h"/>
             </GROUP>
             <GROUP id="{B9444817-B1D0-18D3-7B2A-7113FB81DB4C}" name="Trigger">
               <FILE id="ANha4R" name="BeatTrigger.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/BeatTrigger.cpp"/>
@@ -342,6 +342,7 @@
             <FILE id="k3VAeE" name="BeatRate.cpp" compile="1" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.cpp"/>
             <FILE id="G2ioJ5" name="BeatRate.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.h"/>
           </GROUP>
+          <FILE id="lHo7Ae" name="Nodes.h" compile="0" resource="0" file="Source/Particle/Nodes/Nodes.h"/>
         </GROUP>
         <FILE id="BQmmnI" name="Action.cpp" compile="1" resource="0" file="Source/Particle/Action.cpp"/>
         <FILE id="ZQ4QPS" name="Action.h" compile="0" resource="0" file="Source/Particle/Action.h"/>
