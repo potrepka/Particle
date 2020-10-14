@@ -54,10 +54,11 @@ public:
             BIQUAD,
             CROSSOVER,
             ONE_POLE,
+            MOORER_DSF,
             NOISE,
-            OSCILLATOR,
             PHASOR,
             SAMPLE_PLAYER,
+            TABLE_OSCILLATOR,
             ABSOLUTE_VALUE,
             BOOLEAN_MASK,
             COMPARISON,
@@ -74,7 +75,7 @@ public:
             NOTE_TO_FREQUENCY,
             NOT_GATE,
             RECIPROCAL,
-            BEAT_TRIGGER,
+            CLOCK_TRIGGER,
             DIFFERENTIATOR,
             INTEGRATOR,
             ON_OFF,
@@ -157,6 +158,8 @@ private:
     std::map<int, Link> links;
 
     void drawInternal() override;
+    void removeNodes();
+    void removeLinks();
     void drawPopup();
 };
 

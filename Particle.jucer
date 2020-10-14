@@ -142,10 +142,10 @@
                     file="Source/DSP/src/Nodes/Generators/MoorerOscillator.cpp"/>
               <FILE id="jwfBNw" name="MoorerOscillator.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Generators/MoorerOscillator.h"/>
+              <FILE id="XBnVH6" name="Noise.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/Noise.cpp"/>
+              <FILE id="K3YvpV" name="Noise.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/Noise.h"/>
               <FILE id="GWMIg1" name="Phasor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/Phasor.cpp"/>
               <FILE id="QlQDA3" name="Phasor.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/Phasor.h"/>
-              <FILE id="Qc2v0v" name="PinkNoise.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/PinkNoise.cpp"/>
-              <FILE id="Nxze6g" name="PinkNoise.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/PinkNoise.h"/>
               <FILE id="v25iij" name="SamplePlayer.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Generators/SamplePlayer.cpp"/>
               <FILE id="LweQLg" name="SamplePlayer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/SamplePlayer.h"/>
@@ -153,8 +153,6 @@
                     file="Source/DSP/src/Nodes/Generators/TableOscillator.cpp"/>
               <FILE id="xgyjhr" name="TableOscillator.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Generators/TableOscillator.h"/>
-              <FILE id="sND3WS" name="WhiteNoise.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Generators/WhiteNoise.cpp"/>
-              <FILE id="NgfKPI" name="WhiteNoise.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Generators/WhiteNoise.h"/>
             </GROUP>
             <GROUP id="{569150CB-E1AF-272A-B8B7-1C66CBF15FDD}" name="Math">
               <FILE id="zx34fF" name="AbsoluteValue.cpp" compile="1" resource="0"
@@ -198,8 +196,9 @@
               <FILE id="x4dwSW" name="Reciprocal.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.h"/>
             </GROUP>
             <GROUP id="{B9444817-B1D0-18D3-7B2A-7113FB81DB4C}" name="Trigger">
-              <FILE id="ANha4R" name="BeatTrigger.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/BeatTrigger.cpp"/>
-              <FILE id="fDWv9h" name="BeatTrigger.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/BeatTrigger.h"/>
+              <FILE id="XNvGAJ" name="ClockTrigger.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Trigger/ClockTrigger.cpp"/>
+              <FILE id="a4DYoS" name="ClockTrigger.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/ClockTrigger.h"/>
               <FILE id="eipVV9" name="Differentiator.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Trigger/Differentiator.cpp"/>
               <FILE id="HnKziN" name="Differentiator.h" compile="0" resource="0"

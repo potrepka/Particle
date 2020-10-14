@@ -64,7 +64,8 @@ particle::Processor::Processor()
 
     // TODO: Remove pink noise test code
 
-    std::shared_ptr<dsp::PinkNoise> pink = std::make_shared<dsp::PinkNoise>();
+    std::shared_ptr<dsp::Noise> pink = std::make_shared<dsp::Noise>();
+    pink->setMode(dsp::Noise::Mode::PINK);
     pink->setNumOutputChannels(2);
     nodeProcessor.lock();
     nodeProcessor.getNodes().push_back(pink);
