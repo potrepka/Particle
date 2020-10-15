@@ -332,6 +332,7 @@
             <FILE id="o0cGXu" name="Status.cpp" compile="1" resource="0" file="Source/Particle/Frames/Utility/Status.cpp"/>
             <FILE id="iEkF7y" name="Status.h" compile="0" resource="0" file="Source/Particle/Frames/Utility/Status.h"/>
           </GROUP>
+          <FILE id="x2ITEl" name="Frames.h" compile="0" resource="0" file="Source/Particle/Frames/Frames.h"/>
         </GROUP>
         <GROUP id="{23F2FC7E-4719-67FD-0F34-39427197D64A}" name="Nodes">
           <GROUP id="{BEC1D8F9-3A61-24F1-3C2A-66C7B69A3EED}" name="Variables">

@@ -5,9 +5,10 @@ dsp::BeatRate::BeatRate(juce::AudioProcessor *audioProcessor)
         , audioProcessor(audioProcessor) {}
 
 void dsp::BeatRate::processNoLock() {
-    if (audioProcessor) {
+    juce::AudioPlayHead *playHead = audioProcessor->getPlayHead();
+    if (playHead) {
         juce::AudioPlayHead::CurrentPositionInfo info;
-        audioProcessor->getPlayHead()->getCurrentPosition(info);
+        playHead->getCurrentPosition(info);
         getOutput()->getWrapper().fill(info.bpm * 0.01666666666666667);
     }
 }

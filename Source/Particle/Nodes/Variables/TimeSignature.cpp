@@ -14,9 +14,10 @@ std::shared_ptr<dsp::Output> dsp::TimeSignature::getDenominator() const {
 }
 
 void dsp::TimeSignature::processNoLock() {
-    if (audioProcessor) {
+    juce::AudioPlayHead *playHead = audioProcessor->getPlayHead();
+    if (playHead) {
         juce::AudioPlayHead::CurrentPositionInfo info;
-        audioProcessor->getPlayHead()->getCurrentPosition(info);
+        playHead->getCurrentPosition(info);
         getNumerator()->getWrapper().fill(info.timeSigNumerator);
         getDenominator()->getWrapper().fill(info.timeSigDenominator);
     }

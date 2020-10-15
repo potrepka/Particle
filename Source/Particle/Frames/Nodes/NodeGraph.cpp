@@ -54,7 +54,7 @@ void particle::NodeGraph::Node::setCustomName(std::string name) {
 void particle::NodeGraph::Node::draw() {
     imnodes::BeginNode(id);
     imnodes::BeginNodeTitleBar();
-    ImGui::Text("%s", getTypeName(type, customName).c_str());
+    ImGui::Text("%s", getTypeName(type).c_str());
     imnodes::EndNodeTitleBar();
     ImGui::BeginGroup();
     for (auto &input : inputs) {
@@ -79,7 +79,7 @@ void particle::NodeGraph::Node::drawContent() {
 
 void particle::NodeGraph::Node::drawInspector() {}
 
-std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getCategories() {
+std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getCategories(bool isPlugin) {
     std::vector<Category> categories;
     categories.push_back(Category("Analyzers", std::vector<Type>{Type::RECORDER}));
     categories.push_back(Category(
@@ -115,6 +115,13 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                           Type::NOT_GATE,
                                           Type::RECIPROCAL,
                                   }));
+    if (isPlugin) {
+        categories.push_back(Category("Plugin",
+                                      std::vector<Type>{Type::BEAT_DURATION,
+                                                        Type::BEAT_RATE,
+                                                        Type::TIME_SIGNATURE,
+                                                        Type::TRANSPORT_STATE}));
+    }
     categories.push_back(Category("Trigger",
                                   std::vector<Type>{Type::CLOCK_TRIGGER,
                                                     Type::DIFFERENTIATOR,
@@ -124,18 +131,17 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::SAMPLE_AND_HOLD,
                                                     Type::SEQUENCER}));
     categories.push_back(Category("Variables",
-                                  std::vector<Type>{Type::BEAT_DURATION,
-                                                    Type::BEAT_RATE,
-                                                    Type::BUFFER_DURATION,
+                                  std::vector<Type>{Type::BUFFER_DURATION,
                                                     Type::BUFFER_RATE,
                                                     Type::SAMPLE_DURATION,
                                                     Type::SAMPLE_RATE}));
     return categories;
+     
 }
 
-std::string particle::NodeGraph::Node::getTypeName(Type type, std::string customName) {
+std::string particle::NodeGraph::Node::getTypeName(Type type) {
     switch (type) {
-        case Type::CUSTOM: return customName;
+        case Type::CUSTOM: return "Custom";
         case Type::RECORDER: return "Recorder";
         case Type::CHANNEL_MERGER: return "Channel Merger";
         case Type::CHANNEL_SPLITTER: return "Channel Splitter";
@@ -182,12 +188,15 @@ std::string particle::NodeGraph::Node::getTypeName(Type type, std::string custom
         case Type::RESET_TRIGGER: return "Reset Trigger";
         case Type::SAMPLE_AND_HOLD: return "Sample & Hold";
         case Type::SEQUENCER: return "Sequencer";
-        case Type::BEAT_DURATION: return "Beat Duration";
-        case Type::BEAT_RATE: return "Beat Rate";
         case Type::BUFFER_DURATION: return "Buffer Duration";
         case Type::BUFFER_RATE: return "Buffer Rate";
         case Type::SAMPLE_DURATION: return "Sample Duration";
         case Type::SAMPLE_RATE: return "Sample Rate";
+        case Type::BEAT_DURATION: return "Beat Duration";
+        case Type::BEAT_RATE: return "Beat Rate";
+        case Type::TIME_SIGNATURE: return "Time Signature";
+        case Type::TRANSPORT_STATE: return "Transport State";
+        default: return "None";
     }
 }
 
@@ -577,19 +586,6 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addOutput(++counter, "Output", sequencer->getOutput());
             return node;
         }
-        case Type::BEAT_DURATION: {
-            std::shared_ptr<dsp::BeatDuration> beatDuration =
-                    std::make_shared<dsp::BeatDuration>(data.getAudioProcessor());
-            Node node(id, type, beatDuration);
-            node.addOutput(++counter, "Output", beatDuration->getOutput());
-            return node;
-        }
-        case Type::BEAT_RATE: {
-            std::shared_ptr<dsp::BeatRate> beatRate = std::make_shared<dsp::BeatRate>(data.getAudioProcessor());
-            Node node(id, type, beatRate);
-            node.addOutput(++counter, "Output", beatRate->getOutput());
-            return node;
-        }
         case Type::BUFFER_DURATION: {
             std::shared_ptr<dsp::BufferDuration> bufferDuration = std::make_shared<dsp::BufferDuration>();
             Node node(id, type, bufferDuration);
@@ -612,6 +608,36 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             std::shared_ptr<dsp::SampleRate> sampleRate = std::make_shared<dsp::SampleRate>();
             Node node(id, type, sampleRate);
             node.addOutput(++counter, "Output", sampleRate->getOutput());
+            return node;
+        }
+        case Type::BEAT_DURATION: {
+            std::shared_ptr<dsp::BeatDuration> beatDuration =
+                    std::make_shared<dsp::BeatDuration>(data.getAudioProcessor());
+            Node node(id, type, beatDuration);
+            node.addOutput(++counter, "Output", beatDuration->getOutput());
+            return node;
+        }
+        case Type::BEAT_RATE: {
+            std::shared_ptr<dsp::BeatRate> beatRate = std::make_shared<dsp::BeatRate>(data.getAudioProcessor());
+            Node node(id, type, beatRate);
+            node.addOutput(++counter, "Output", beatRate->getOutput());
+            return node;
+        }
+        case Type::TIME_SIGNATURE: {
+            std::shared_ptr<dsp::TimeSignature> timeSignature =
+                    std::make_shared<dsp::TimeSignature>(data.getAudioProcessor());
+            Node node(id, type, timeSignature);
+            node.addOutput(++counter, "Numerator", timeSignature->getNumerator());
+            node.addOutput(++counter, "Denominator", timeSignature->getDenominator());
+            return node;
+        }
+        case Type::TRANSPORT_STATE: {
+            std::shared_ptr<dsp::TransportState> transportState =
+                    std::make_shared<dsp::TransportState>(data.getAudioProcessor());
+            Node node(id, type, transportState);
+            node.addOutput(++counter, "Time Elapsed", transportState->getTimeElapsed());
+            node.addOutput(++counter, "Is Playing", transportState->isPlaying());
+            node.addOutput(++counter, "Is Recording", transportState->isRecording());
             return node;
         }
     }
@@ -719,12 +745,12 @@ void particle::NodeGraph::drawInternal() {
             links.emplace(id, Link::generate(nodes, id, from, to));
         }
     }
-    {
-        int id;
-        if (imnodes::IsLinkDestroyed(&id)) {
-            links.erase(id);
-        }
-    }
+    //{
+    //    int id;
+    //    if (imnodes::IsLinkDestroyed(&id)) {
+    //        links.erase(id);
+    //    }
+    //}
 }
 
 void particle::NodeGraph::removeNodes() {
@@ -733,6 +759,24 @@ void particle::NodeGraph::removeNodes() {
         std::vector<int> selectedNodes(numSelectedNodes);
         imnodes::GetSelectedNodes(selectedNodes.data());
         for (const auto &node : selectedNodes) {
+            std::vector<int> attachedLinks;
+            for (const auto &input : nodes[node].inputs) {
+                for (const auto &link : links) {
+                    if (input.first == link.second.to.id) {
+                        attachedLinks.push_back(link.first);
+                    }
+                }
+            }
+            for (const auto &output : nodes[node].outputs) {
+                for (const auto &link : links) {
+                    if (output.first == link.second.from.id) {
+                        attachedLinks.push_back(link.first);
+                    }
+                }
+            }
+            for (const auto& link : attachedLinks) {
+                links.erase(link);
+            }
             nodes.erase(node);
         }
     }
@@ -756,13 +800,17 @@ void particle::NodeGraph::drawPopup() {
     }
     if (ImGui::BeginPopup("Create Node")) {
         const ImVec2 mousePosition = ImGui::GetMousePosOnOpeningCurrentPopup();
-        for (const auto &category : Node::getCategories()) {
+        for (const auto &category : Node::getCategories(getData().getAudioProcessor()->getPlayHead() != nullptr)) {
             if (ImGui::BeginMenu(category.name.c_str())) {
                 for (const auto &type : category.types) {
-                    if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
-                        const int id = ++counter;
-                        imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                        nodes.emplace(id, Node::generate(getData(), counter, id, type));
+                    if (type == Node::Type::SEPARATOR) {
+                        ImGui::Separator();
+                    } else {
+                        if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
+                            const int id = ++counter;
+                            imnodes::SetNodeScreenSpacePos(id, mousePosition);
+                            nodes.emplace(id, Node::generate(getData(), counter, id, type));
+                        }
                     }
                 }
                 ImGui::EndMenu();

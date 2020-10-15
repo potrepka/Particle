@@ -1,5 +1,7 @@
 #pragma once
 
+#include "JuceHeader.h"
+
 #include "DSP.h"
 #include "Frame.h"
 #include "Nodes/Nodes.h"
@@ -35,6 +37,7 @@ public:
 
     public:
         enum class Type {
+            SEPARATOR,
             CUSTOM,
             RECORDER,       // TODO: Add more analyzers
             CHANNEL_MERGER,
@@ -82,12 +85,14 @@ public:
             RESET_TRIGGER,
             SAMPLE_AND_HOLD,
             SEQUENCER,
-            BEAT_DURATION,
-            BEAT_RATE,
             BUFFER_DURATION,
             BUFFER_RATE,
             SAMPLE_DURATION,
-            SAMPLE_RATE
+            SAMPLE_RATE,
+            BEAT_DURATION,
+            BEAT_RATE,
+            TIME_SIGNATURE,
+            TRANSPORT_STATE
         };
 
         struct Category {
@@ -116,8 +121,8 @@ public:
         void drawContent();
         void drawInspector();
 
-        static std::vector<Category> getCategories();
-        static std::string getTypeName(Type type, std::string customName = "");
+        static std::vector<Category> getCategories(bool isPlugin);
+        static std::string getTypeName(Type type);
         static Node generate(Data &data, int &counter, int id, Type type);
     };
     
