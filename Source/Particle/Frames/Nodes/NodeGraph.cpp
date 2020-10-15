@@ -196,7 +196,6 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::BEAT_RATE: return "Beat Rate";
         case Type::TIME_SIGNATURE: return "Time Signature";
         case Type::TRANSPORT_STATE: return "Transport State";
-        default: return "None";
     }
 }
 
@@ -803,14 +802,10 @@ void particle::NodeGraph::drawPopup() {
         for (const auto &category : Node::getCategories(getData().getAudioProcessor()->getPlayHead() != nullptr)) {
             if (ImGui::BeginMenu(category.name.c_str())) {
                 for (const auto &type : category.types) {
-                    if (type == Node::Type::SEPARATOR) {
-                        ImGui::Separator();
-                    } else {
-                        if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
-                            const int id = ++counter;
-                            imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                            nodes.emplace(id, Node::generate(getData(), counter, id, type));
-                        }
+                    if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
+                        const int id = ++counter;
+                        imnodes::SetNodeScreenSpacePos(id, mousePosition);
+                        nodes.emplace(id, Node::generate(getData(), counter, id, type));
                     }
                 }
                 ImGui::EndMenu();

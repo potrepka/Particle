@@ -2,9 +2,7 @@
 
 #include "Data.h"
 
-#include "Frames/Nodes/NodeGraph.h"
-#include "Frames/Settings/AudioSettings.h"
-#include "Frames/Utility/Status.h"
+#include "Frames/Frames.h"
 
 namespace particle {
 

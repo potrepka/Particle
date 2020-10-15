@@ -37,7 +37,6 @@ public:
 
     public:
         enum class Type {
-            SEPARATOR,
             CUSTOM,
             RECORDER,       // TODO: Add more analyzers
             CHANNEL_MERGER,
