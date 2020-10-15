@@ -7,7 +7,19 @@ particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp:
 
 void particle::NodeGraph::Input::draw() {
     imnodes::BeginInputAttribute(id);
-    ImGui::Text("%s", name.c_str());
+    ImGui::SetNextItemWidth(100);
+    static int x = 0;
+    static int z = 0;
+    static float y = 0;
+    switch (input->getType()) {
+        case dsp::Type::RATIO:
+        case dsp::Type::LOGARITHMIC:
+        case dsp::Type::SECONDS:
+        case dsp::Type::HERTZ: ImGui::DragFloat(name.c_str(), &y); break;
+        case dsp::Type::INTEGER: ImGui::DragInt(name.c_str(), &x); break;
+        case dsp::Type::BOOLEAN: ImGui::DragInt(name.c_str(), &z, 1.0f, 0, 1); break;
+    }
+    //ImGui::Text("%s", name.c_str());
     imnodes::EndInputAttribute();
 }
 
@@ -20,7 +32,18 @@ particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<ds
 
 void particle::NodeGraph::Output::draw() {
     imnodes::BeginOutputAttribute(id);
-    ImGui::Text("%s", name.c_str());
+    ImGui::SetNextItemWidth(100);
+    static int x = 0;
+    static int z = 0;
+    static float y = 0;
+    switch (output->getType()) {
+        case dsp::Type::RATIO:
+        case dsp::Type::LOGARITHMIC:
+        case dsp::Type::SECONDS:
+        case dsp::Type::HERTZ: ImGui::DragFloat(name.c_str(), &y); break;
+        case dsp::Type::INTEGER: ImGui::DragInt(name.c_str(), &x); break;
+        case dsp::Type::BOOLEAN: ImGui::DragInt(name.c_str(), &z, 1.0f, 0, 1); break;
+    }
     imnodes::EndOutputAttribute();
 }
 
@@ -95,7 +118,7 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
     categories.push_back(Category(
             "Generators",
             std::vector<Type>{
-                    Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::TABLE_OSCILLATOR}));
+                    Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::WAVETABLE_OSCILLATOR}));
     categories.push_back(Category("Math",
                                   std::vector<Type>{
                                           Type::ABSOLUTE_VALUE,
@@ -134,7 +157,8 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                   std::vector<Type>{Type::BUFFER_DURATION,
                                                     Type::BUFFER_RATE,
                                                     Type::SAMPLE_DURATION,
-                                                    Type::SAMPLE_RATE}));
+                                                    Type::SAMPLE_RATE,
+                                                    Type::VARIABLE}));
     return categories;
      
 }
@@ -164,7 +188,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::NOISE: return "Noise";
         case Type::PHASOR: return "Phasor";
         case Type::SAMPLE_PLAYER: return "Sample Player";
-        case Type::TABLE_OSCILLATOR: return "Table Oscillator";
+        case Type::WAVETABLE_OSCILLATOR: return "Wavetable Oscillator";
         case Type::ABSOLUTE_VALUE: return "Absolute Value";
         case Type::BOOLEAN_MASK: return "Boolean Mask";
         case Type::COMPARISON: return "Comparison";
@@ -192,6 +216,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::BUFFER_RATE: return "Buffer Rate";
         case Type::SAMPLE_DURATION: return "Sample Duration";
         case Type::SAMPLE_RATE: return "Sample Rate";
+        case Type::VARIABLE: return "Variable";
         case Type::BEAT_DURATION: return "Beat Duration";
         case Type::BEAT_RATE: return "Beat Rate";
         case Type::TIME_SIGNATURE: return "Time Signature";
@@ -398,12 +423,12 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addOutput(++counter, "Current Time", samplePlayer->getCurrentTime());
             return node;
         }
-        case Type::TABLE_OSCILLATOR: {
-            std::shared_ptr<dsp::TableOscillator> tableOscillator = std::make_shared<dsp::TableOscillator>();
-            Node node(id, type, tableOscillator);
-            node.addInput(++counter, "Phase", tableOscillator->getPhase());
-            node.addInput(++counter, "Position", tableOscillator->getPosition());
-            node.addOutput(++counter, "Output", tableOscillator->getOutput());
+        case Type::WAVETABLE_OSCILLATOR: {
+            std::shared_ptr<dsp::TableOscillator> oscillator = std::make_shared<dsp::TableOscillator>();
+            Node node(id, type, oscillator);
+            node.addInput(++counter, "Phase", oscillator->getPhase());
+            node.addInput(++counter, "Position", oscillator->getPosition());
+            node.addOutput(++counter, "Output", oscillator->getOutput());
             return node;
         }
         case Type::ABSOLUTE_VALUE: {
@@ -607,6 +632,12 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             std::shared_ptr<dsp::SampleRate> sampleRate = std::make_shared<dsp::SampleRate>();
             Node node(id, type, sampleRate);
             node.addOutput(++counter, "Output", sampleRate->getOutput());
+            return node;
+        }
+        case Type::VARIABLE: {
+            std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>();
+            Node node(id, type, variable);
+            node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::BEAT_DURATION: {

@@ -348,6 +348,8 @@
                   file="Source/Particle/Nodes/Variables/TransportState.cpp"/>
             <FILE id="LErr15" name="TransportState.h" compile="0" resource="0"
                   file="Source/Particle/Nodes/Variables/TransportState.h"/>
+            <FILE id="wcW590" name="Variable.cpp" compile="1" resource="0" file="Source/Particle/Nodes/Variables/Variable.cpp"/>
+            <FILE id="gv3yhT" name="Variable.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/Variable.h"/>
           </GROUP>
           <FILE id="lHo7Ae" name="Nodes.h" compile="0" resource="0" file="Source/Particle/Nodes/Nodes.h"/>
         </GROUP>
