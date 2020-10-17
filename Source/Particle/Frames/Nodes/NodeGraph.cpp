@@ -1,8 +1,8 @@
 #include "NodeGraph.h"
 
 particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp::Input> input)
-        : id(id)
-        , name(name)
+        : Named(name)
+        , id(id)
         , input(input) {}
 
 void particle::NodeGraph::Input::draw() {
@@ -16,7 +16,7 @@ void particle::NodeGraph::Input::draw() {
         case dsp::Type::RATIO:
         case dsp::Type::SECONDS:
         case dsp::Type::HERTZ:
-            ImGui::DragFloat(name.c_str(),
+            ImGui::DragFloat(getName().c_str(),
                              &z,
                              1.0f,
                              0.0f,
@@ -24,7 +24,7 @@ void particle::NodeGraph::Input::draw() {
                              "%.2f");
             break;
         case dsp::Type::LOGARITHMIC:
-            ImGui::DragFloat(name.c_str(),
+            ImGui::DragFloat(getName().c_str(),
                              &w,
                              1.0f,
                              0.0f,
@@ -33,21 +33,20 @@ void particle::NodeGraph::Input::draw() {
                              ImGuiSliderFlags_ClampOnInput);
             break;
         case dsp::Type::INTEGER:
-            ImGui::DragInt(name.c_str(), &x, 1.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+            ImGui::DragInt(getName().c_str(), &x, 1.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
             break;
         case dsp::Type::BOOLEAN:
-            ImGui::DragInt(name.c_str(), &y, 1.0f, 0, 1, "%d", ImGuiSliderFlags_ClampOnInput);
+            ImGui::DragInt(getName().c_str(), &y, 1.0f, 0, 1, "%d", ImGuiSliderFlags_ClampOnInput);
             break;
     }
-    //ImGui::Text("%s", name.c_str());
     imnodes::EndInputAttribute();
 }
 
 void particle::NodeGraph::Input::drawInspector() {}
 
 particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<dsp::Output> output)
-        : id(id)
-        , name(name)
+        : Named(name)
+        , id(id)
         , output(output) {}
 
 void particle::NodeGraph::Output::draw() {
@@ -60,9 +59,9 @@ void particle::NodeGraph::Output::draw() {
         case dsp::Type::RATIO:
         case dsp::Type::LOGARITHMIC:
         case dsp::Type::SECONDS:
-        case dsp::Type::HERTZ: ImGui::DragFloat(name.c_str(), &y); break;
-        case dsp::Type::INTEGER: ImGui::DragInt(name.c_str(), &x); break;
-        case dsp::Type::BOOLEAN: ImGui::DragInt(name.c_str(), &z, 1.0f, 0, 1); break;
+        case dsp::Type::HERTZ: ImGui::DragFloat(getName().c_str(), &y); break;
+        case dsp::Type::INTEGER: ImGui::DragInt(getName().c_str(), &x); break;
+        case dsp::Type::BOOLEAN: ImGui::DragInt(getName().c_str(), &z, 1.0f, 0, 1); break;
     }
     imnodes::EndOutputAttribute();
 }
@@ -70,11 +69,12 @@ void particle::NodeGraph::Output::draw() {
 void particle::NodeGraph::Output::drawInspector() {}
 
 particle::NodeGraph::Node::Category::Category(std::string name, std::vector<Type> types)
-        : name(name)
+        : Named(name)
         , types(types) {}
 
 particle::NodeGraph::Node::Node(int id, Type type, std::shared_ptr<dsp::Node> node)
-        : id(id)
+        : Named("")
+        , id(id)
         , type(type)
         , node(node) {}
 
@@ -88,14 +88,6 @@ void particle::NodeGraph::Node::addOutput(int id, std::string name, std::shared_
 
 std::string particle::NodeGraph::Node::getTypeName() const {
     return getTypeName(type);
-}
-
-std::string particle::NodeGraph::Node::getCustomName() const {
-    return customName;
-}
-
-void particle::NodeGraph::Node::setCustomName(std::string name) {
-    this->customName = customName;
 }
 
 void particle::NodeGraph::Node::draw() {
@@ -899,7 +891,7 @@ void particle::NodeGraph::createNode() {
     if (ImGui::BeginPopup("Create Node")) {
         const ImVec2 mousePosition = ImGui::GetMousePosOnOpeningCurrentPopup();
         for (const auto &category : Node::getCategories(getData().getAudioProcessor()->getPlayHead() != nullptr)) {
-            if (ImGui::BeginMenu(category.name.c_str())) {
+            if (ImGui::BeginMenu(category.getName().c_str())) {
                 for (const auto &type : category.types) {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
                         const int id = ++counter;

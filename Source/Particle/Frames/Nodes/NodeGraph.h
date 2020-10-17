@@ -12,9 +12,8 @@ namespace particle {
 class NodeGraph : public Frame, public std::enable_shared_from_this<NodeGraph> {
 
 public:
-    struct Input {
+    struct Input : public Named {
         int id;
-        std::string name;
         std::shared_ptr<dsp::Input> input;
 
         Input(int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
@@ -23,9 +22,8 @@ public:
         void drawInspector();
     };
 
-    struct Output {
+    struct Output : public Named {
         int id;
-        std::string name;
         std::shared_ptr<dsp::Output> output;
     
         Output(int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
@@ -34,7 +32,7 @@ public:
         void drawInspector();
     };
 
-    struct Node {
+    struct Node : public Named {
         enum class Type {
             CUSTOM,
             RECORDER,       // TODO: Add more analyzers
@@ -94,8 +92,7 @@ public:
             TRANSPORT_STATE
         };
 
-        struct Category {
-            std::string name;
+        struct Category : public Named {
             std::vector<Type> types;
 
             Category(std::string name = "", std::vector<Type> types = std::vector<Type>());
@@ -106,7 +103,6 @@ public:
         std::shared_ptr<dsp::Node> node;
         std::map<int, Input> inputs;
         std::map<int, Output> outputs;
-        std::string customName;
 
         Node(int id = 0, Type type = Type::CUSTOM, std::shared_ptr<dsp::Node> node = nullptr);
 
@@ -114,8 +110,6 @@ public:
         void addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output);
 
         std::string getTypeName() const;
-        std::string getCustomName() const;
-        void setCustomName(std::string customName);
 
         void draw();
         void drawContent();
