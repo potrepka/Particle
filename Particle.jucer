@@ -353,17 +353,19 @@
           </GROUP>
           <FILE id="lHo7Ae" name="Nodes.h" compile="0" resource="0" file="Source/Particle/Nodes/Nodes.h"/>
         </GROUP>
-        <FILE id="BQmmnI" name="Action.cpp" compile="1" resource="0" file="Source/Particle/Action.cpp"/>
-        <FILE id="ZQ4QPS" name="Action.h" compile="0" resource="0" file="Source/Particle/Action.h"/>
+        <FILE id="ORAcqi" name="Action.cpp" compile="1" resource="0" file="Source/Particle/Action.cpp"/>
+        <FILE id="AJNjos" name="Action.h" compile="0" resource="0" file="Source/Particle/Action.h"/>
         <FILE id="I25p1q" name="Data.cpp" compile="1" resource="0" file="Source/Particle/Data.cpp"/>
         <FILE id="jTOgIM" name="Data.h" compile="0" resource="0" file="Source/Particle/Data.h"/>
         <FILE id="Tz6GqY" name="Frame.cpp" compile="1" resource="0" file="Source/Particle/Frame.cpp"/>
         <FILE id="x5Lp7u" name="Frame.h" compile="0" resource="0" file="Source/Particle/Frame.h"/>
+        <FILE id="aoc4t3" name="Named.cpp" compile="1" resource="0" file="Source/Particle/Named.cpp"/>
+        <FILE id="Ywh2LW" name="Named.h" compile="0" resource="0" file="Source/Particle/Named.h"/>
         <FILE id="ULfcsm" name="Particle.h" compile="0" resource="0" file="Source/Particle/Particle.h"/>
-        <FILE id="vZbLcm" name="RootView.cpp" compile="1" resource="0" file="Source/Particle/RootView.cpp"/>
-        <FILE id="mQqloZ" name="RootView.h" compile="0" resource="0" file="Source/Particle/RootView.h"/>
         <FILE id="mAvPlB" name="Style.cpp" compile="1" resource="0" file="Source/Particle/Style.cpp"/>
         <FILE id="eNAFbd" name="Style.h" compile="0" resource="0" file="Source/Particle/Style.h"/>
+        <FILE id="KxGFYe" name="View.cpp" compile="1" resource="0" file="Source/Particle/View.cpp"/>
+        <FILE id="I5es1N" name="View.h" compile="0" resource="0" file="Source/Particle/View.h"/>
       </GROUP>
       <FILE id="Ui1iA7" name="App.cpp" compile="1" resource="0" file="Source/App.cpp"/>
       <FILE id="GAuow4" name="App.h" compile="0" resource="0" file="Source/App.h"/>

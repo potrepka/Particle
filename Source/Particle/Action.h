@@ -1,21 +1,16 @@
 #pragma once
 
-#include "Data.h"
+#include "Named.h"
 
 namespace particle {
 
-class Action {
+class Action : public Named {
 
 public:
-    Action(Data &data);
+    Action(std::string name);
 
-    Data &getData();
-
-    virtual void perform() = 0;
-    virtual void undo() = 0;
-
-private:
-    Data &data;
+    virtual void perform() {}
+    virtual void undo() {}
 };
 
 } // namespace particle

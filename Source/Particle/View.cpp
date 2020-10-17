@@ -1,22 +1,25 @@
-#include "RootView.h"
+#include "View.h"
 
-particle::RootView::RootView(juce::AudioProcessor *audioProcessor,
+particle::View::View(juce::AudioProcessor *audioProcessor,
                              juce::AudioDeviceManager *audioDeviceManager,
                              dsp::NodeProcessor *nodeProcessor)
         : data(audioProcessor, audioDeviceManager, nodeProcessor)
-        , nodeGraph(data, "Node Graph", nodeProcessor->getNodes())
-        , audioSettings(data)
-        , status(data) {
-    nodeGraph.show();
-    audioSettings.show();
-    status.show();
+        , nodeGraph(std::make_shared<NodeGraph>(data, "Node Graph", nodeProcessor->getNodes()))
+        , audioSettings(std::make_shared<AudioSettings>(data))
+        , status(std::make_shared<Status>(data)) {
+    frames.push_back(nodeGraph);
+    frames.push_back(audioSettings);
+    frames.push_back(status);
+    for (const auto& frame : frames) {
+        frame->show();
+    }
 }
 
-particle::Data &particle::RootView::getData() {
+particle::Data &particle::View::getData() {
     return data;
 }
 
-void particle::RootView::setup() {
+void particle::View::setup() {
     data.getStyle().apply();
 
     // TODO: Remove font chooser
@@ -45,7 +48,7 @@ void particle::RootView::setup() {
     }
 }
 
-void particle::RootView::draw() {
+void particle::View::draw() {
     // TODO: Remove demo window code
     //static bool show_demo_window = true;
     //if (show_demo_window) {
@@ -81,16 +84,16 @@ void particle::RootView::draw() {
         }
         if (ImGui::BeginMenu("View")) {
             ImGui::MenuItem("Node Tree");
-            ImGui::MenuItem("Node Graph", NULL, &nodeGraph.isVisible());
+            ImGui::MenuItem("Node Graph", NULL, &nodeGraph->isVisible());
             ImGui::MenuItem("Node Inspector");
             ImGui::Separator();
             ImGui::MenuItem("Theme Editor");
             ImGui::Separator();
-            ImGui::MenuItem("Audio Device Settings", NULL, &audioSettings.isVisible());
+            ImGui::MenuItem("Audio Settings", NULL, &audioSettings->isVisible());
             ImGui::MenuItem("MIDI Settings");
             ImGui::MenuItem("OSC Settings");
             ImGui::Separator();
-            ImGui::MenuItem("Status", NULL, &status.isVisible());
+            ImGui::MenuItem("Status", NULL, &status->isVisible());
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -119,9 +122,9 @@ void particle::RootView::draw() {
     }
     ImGui::End();
 
-    nodeGraph.draw();
-    audioSettings.draw();
-    status.draw();
+    for (const auto& frame : frames) {
+        frame->draw();
+    }
 
     ImGui::PopFont();
 }

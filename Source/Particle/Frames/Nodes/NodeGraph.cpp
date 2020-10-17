@@ -9,15 +9,35 @@ void particle::NodeGraph::Input::draw() {
     imnodes::BeginInputAttribute(id);
     ImGui::SetNextItemWidth(100);
     static int x = 0;
-    static int z = 0;
-    static float y = 0;
+    static int y = 0;
+    static float z = 0;
+    static float w = 0;
     switch (input->getType()) {
         case dsp::Type::RATIO:
-        case dsp::Type::LOGARITHMIC:
         case dsp::Type::SECONDS:
-        case dsp::Type::HERTZ: ImGui::DragFloat(name.c_str(), &y); break;
-        case dsp::Type::INTEGER: ImGui::DragInt(name.c_str(), &x); break;
-        case dsp::Type::BOOLEAN: ImGui::DragInt(name.c_str(), &z, 1.0f, 0, 1); break;
+        case dsp::Type::HERTZ:
+            ImGui::DragFloat(name.c_str(),
+                             &z,
+                             1.0f,
+                             0.0f,
+                             0.0f,
+                             "%.2f");
+            break;
+        case dsp::Type::LOGARITHMIC:
+            ImGui::DragFloat(name.c_str(),
+                             &w,
+                             1.0f,
+                             0.0f,
+                             0.0f,
+                             "%.2f",
+                             ImGuiSliderFlags_ClampOnInput);
+            break;
+        case dsp::Type::INTEGER:
+            ImGui::DragInt(name.c_str(), &x, 1.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+            break;
+        case dsp::Type::BOOLEAN:
+            ImGui::DragInt(name.c_str(), &y, 1.0f, 0, 1, "%d", ImGuiSliderFlags_ClampOnInput);
+            break;
     }
     //ImGui::Text("%s", name.c_str());
     imnodes::EndInputAttribute();
@@ -64,6 +84,10 @@ void particle::NodeGraph::Node::addInput(int id, std::string name, std::shared_p
 
 void particle::NodeGraph::Node::addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output) {
     outputs.emplace(id, Output(id, name, output));
+}
+
+std::string particle::NodeGraph::Node::getTypeName() const {
+    return getTypeName(type);
 }
 
 std::string particle::NodeGraph::Node::getCustomName() const {
@@ -366,7 +390,7 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addInput(++counter, "Frequency", biquad->getFrequency());
             node.addInput(++counter, "Resonance", biquad->getResonance());
             node.addInput(++counter, "Amplitude", biquad->getAmplitude());
-            node.addInput(++counter, "Reset", biquad->getInput());
+            node.addInput(++counter, "Reset", biquad->getReset());
             node.addOutput(++counter, "Output", biquad->getOutput());
             return node;
         }
@@ -716,10 +740,97 @@ particle::NodeGraph::Link particle::NodeGraph::Link::generate(std::map<int, Node
     return Link(id, output, input);
 }
 
+particle::NodeGraph::CreateNode::CreateNode(std::shared_ptr<NodeGraph> nodeGraph, Node node)
+        : Action("Create " + node.getTypeName())
+        , nodeGraph(nodeGraph)
+        , node(node) {}
+
+void particle::NodeGraph::CreateNode::perform() {
+    nodeGraph->getNodes().emplace(node.id, node);
+}
+
+void particle::NodeGraph::CreateNode::undo() {
+    nodeGraph->getNodes().erase(node.id);
+}
+
+particle::NodeGraph::CreateLink::CreateLink(std::shared_ptr<NodeGraph> nodeGraph, Link link)
+        : Action("Create Link")
+        , nodeGraph(nodeGraph)
+        , link(link) {}
+
+void particle::NodeGraph::CreateLink::perform() {
+    nodeGraph->getLinks().emplace(link.id, link);
+}
+
+void particle::NodeGraph::CreateLink::undo() {
+    nodeGraph->getLinks().erase(link.id);
+}
+
+particle::NodeGraph::DestroyNodes::DestroyNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids)
+        : Action(ids.size() == 1 ? "Destroy " + nodeGraph->getNodes()[ids[0]].getTypeName() : "Destroy Nodes")
+        , nodeGraph(nodeGraph)
+        , ids(ids) {}
+
+void particle::NodeGraph::DestroyNodes::perform() {
+    for (const auto &node : ids) {
+        std::vector<int> attachedLinks;
+        for (const auto &input : nodeGraph->getNodes()[node].inputs) {
+            for (const auto &link : nodeGraph->getLinks()) {
+                if (input.first == link.second.to.id) {
+                    attachedLinks.push_back(link.first);
+                }
+            }
+        }
+        for (const auto &output : nodeGraph->getNodes()[node].outputs) {
+            for (const auto &link : nodeGraph->getLinks()) {
+                if (output.first == link.second.from.id) {
+                    attachedLinks.push_back(link.first);
+                }
+            }
+        }
+        for (const auto &link : attachedLinks) {
+            links.emplace(link, nodeGraph->getLinks()[link]);
+            nodeGraph->getLinks().erase(link);
+        }
+        nodes.emplace(node, nodeGraph->getNodes()[node]);
+        nodeGraph->getNodes().erase(node);
+    }
+}
+
+void particle::NodeGraph::DestroyNodes::undo() {
+    for (const auto &node : nodes) {
+        nodeGraph->getNodes().emplace(node.first, node.second);
+    }
+    for (const auto &link : links) {
+        nodeGraph->getLinks().emplace(link.first, link.second);
+    }
+    nodes.clear();
+    links.clear();
+}
+
+particle::NodeGraph::DestroyLinks::DestroyLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids)
+        : Action("Destroy Links")
+        , nodeGraph(nodeGraph)
+        , ids(ids) {}
+
+void particle::NodeGraph::DestroyLinks::perform() {
+    for (const auto &link : ids) {
+        links.emplace(link, nodeGraph->getLinks()[link]);
+        nodeGraph->getLinks().erase(link);
+    }
+}
+
+void particle::NodeGraph::DestroyLinks::undo() {
+    for (const auto &link : links) {
+        nodeGraph->getLinks().emplace(link.first, link.second);
+    }
+    links.clear();
+}
+
 particle::NodeGraph::NodeGraph(Data &data, std::string name, std::vector<std::shared_ptr<dsp::Node>> &audioNodes)
         : Frame(data, name)
-        , audioNodes(audioNodes)
-        , counter(0) {
+        , counter(0)
+        , audioNodes(audioNodes) {
     context = imnodes::EditorContextCreate();
 }
 
@@ -727,39 +838,31 @@ particle::NodeGraph::~NodeGraph() {
     imnodes::EditorContextFree(context);
 }
 
-imnodes::EditorContext *particle::NodeGraph::getContext() const {
-    return context;
-}
-
 std::vector<std::shared_ptr<dsp::Node>> &particle::NodeGraph::getAudioNodes() {
     return audioNodes;
 }
 
-std::vector<dsp::Output> &particle::NodeGraph::getInputs() {
-    return inputs;
+std::map<int, particle::NodeGraph::Node> &particle::NodeGraph::getNodes() {
+    return nodes;
 }
 
-std::vector<dsp::Input> &particle::NodeGraph::getOutputs() {
-    return outputs;
+std::map<int, particle::NodeGraph::Link> &particle::NodeGraph::getLinks() {
+    return links;
 }
 
-std::vector<std::string> &particle::NodeGraph::getInputNames() {
-    return inputNames;
-}
-
-std::vector<std::string> &particle::NodeGraph::getOutputNames() {
-    return outputNames;
+imnodes::EditorContext *particle::NodeGraph::getContext() const {
+    return context;
 }
 
 void particle::NodeGraph::drawInternal() {
     ImGuiIO &io = ImGui::GetIO();
     imnodes::EditorContextSet(context);
-    if (ImGui::IsKeyPressed(io.KeyMap[ImGuiKey_Backspace])) {
-        removeNodes();
-        removeLinks();
+    if (!ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(io.KeyMap[ImGuiKey_Backspace])) {
+        destroyNodes();
+        destroyLinks();
     }
     imnodes::BeginNodeEditor();
-    drawPopup();
+    createNode();
     for (auto &node : nodes) {
         node.second.draw();
     }
@@ -767,63 +870,28 @@ void particle::NodeGraph::drawInternal() {
         link.second.draw();
     }
     imnodes::EndNodeEditor();
-    {
-        int from;
-        int to;
-        if (imnodes::IsLinkCreated(&from, &to)) {
-            const int id = ++counter;
-            links.emplace(id, Link::generate(nodes, id, from, to));
-        }
-    }
-    //{
-    //    int id;
-    //    if (imnodes::IsLinkDestroyed(&id)) {
-    //        links.erase(id);
-    //    }
-    //}
+    createLink();
 }
 
-void particle::NodeGraph::removeNodes() {
+void particle::NodeGraph::destroyNodes() {
     int numSelectedNodes = imnodes::NumSelectedNodes();
     if (numSelectedNodes) {
         std::vector<int> selectedNodes(numSelectedNodes);
         imnodes::GetSelectedNodes(selectedNodes.data());
-        for (const auto &node : selectedNodes) {
-            std::vector<int> attachedLinks;
-            for (const auto &input : nodes[node].inputs) {
-                for (const auto &link : links) {
-                    if (input.first == link.second.to.id) {
-                        attachedLinks.push_back(link.first);
-                    }
-                }
-            }
-            for (const auto &output : nodes[node].outputs) {
-                for (const auto &link : links) {
-                    if (output.first == link.second.from.id) {
-                        attachedLinks.push_back(link.first);
-                    }
-                }
-            }
-            for (const auto& link : attachedLinks) {
-                links.erase(link);
-            }
-            nodes.erase(node);
-        }
+        getData().pushAction(std::make_shared<DestroyNodes>(shared_from_this(), selectedNodes));
     }
 }
 
-void particle::NodeGraph::removeLinks() {
+void particle::NodeGraph::destroyLinks() {
     int numSelectedLinks = imnodes::NumSelectedLinks();
     if (numSelectedLinks) {
         std::vector<int> selectedLinks(numSelectedLinks);
         imnodes::GetSelectedLinks(selectedLinks.data());
-        for (const auto &link : selectedLinks) {
-            links.erase(link);
-        }
+        getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
     }
 }
 
-void particle::NodeGraph::drawPopup() {
+void particle::NodeGraph::createNode() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && imnodes::IsEditorHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         ImGui::OpenPopup("Create Node");
@@ -836,7 +904,8 @@ void particle::NodeGraph::drawPopup() {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
                         const int id = ++counter;
                         imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                        nodes.emplace(id, Node::generate(getData(), counter, id, type));
+                        Node node = Node::generate(getData(), counter, id, type);
+                        getData().pushAction(std::make_shared<CreateNode>(shared_from_this(), node));
                     }
                 }
                 ImGui::EndMenu();
@@ -845,4 +914,14 @@ void particle::NodeGraph::drawPopup() {
         ImGui::EndPopup();
     }
     ImGui::PopStyleVar();
+}
+
+void particle::NodeGraph::createLink() {
+    int from;
+    int to;
+    if (imnodes::IsLinkCreated(&from, &to)) {
+        const int id = ++counter;
+        Link link = Link::generate(nodes, id, from, to);
+        getData().pushAction(std::make_shared<CreateLink>(shared_from_this(), link));
+    }
 }

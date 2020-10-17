@@ -34,3 +34,23 @@ void particle::Data::setAudioDeviceManager(juce::AudioDeviceManager *audioDevice
 void particle::Data::setNodeProcessor(dsp::NodeProcessor *nodeProcessor) {
     this->nodeProcessor = nodeProcessor;
 }
+
+void particle::Data::pushAction(std::shared_ptr<Action> action) {
+    action->perform();
+    history.push_back(action);
+    forward.clear();
+}
+
+void particle::Data::undo() {
+    std::shared_ptr<Action> action = history.back();
+    action->undo();
+    forward.push_back(action);
+    history.pop_back();
+}
+
+void particle::Data::redo() {
+    std::shared_ptr<Action> action = forward.back();
+    action->perform();
+    history.push_back(action);
+    forward.pop_back();
+}

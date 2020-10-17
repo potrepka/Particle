@@ -1,14 +1,15 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <JuceHeader.h>
 
-#include "DSP.h"
 #include "Frame.h"
 #include "Nodes/Nodes.h"
 
+#include "DSP.h"
+
 namespace particle {
 
-class NodeGraph : public Frame {
+class NodeGraph : public Frame, public std::enable_shared_from_this<NodeGraph> {
 
 public:
     struct Input {
@@ -34,8 +35,6 @@ public:
     };
 
     struct Node {
-
-    public:
         enum class Type {
             CUSTOM,
             RECORDER,       // TODO: Add more analyzers
@@ -114,6 +113,7 @@ public:
         void addInput(int id, std::string name, std::shared_ptr<dsp::Input> input);
         void addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output);
 
+        std::string getTypeName() const;
         std::string getCustomName() const;
         void setCustomName(std::string customName);
 
@@ -139,33 +139,83 @@ public:
         static Link generate(std::map<int, Node> &nodes, int id, int from, int to);
     };
 
+    class CreateNode : public Action {
+
+    public:
+        CreateNode(std::shared_ptr<NodeGraph> nodeGraph, Node node);
+
+        void perform() override;
+        void undo() override;
+
+    private:
+        std::shared_ptr<NodeGraph> nodeGraph;
+        Node node;
+    };
+
+    class CreateLink : public Action {
+
+    public:
+        CreateLink(std::shared_ptr<NodeGraph> nodeGraph, Link link);
+
+        void perform() override;
+        void undo() override;
+
+    private:
+        std::shared_ptr<NodeGraph> nodeGraph;
+        Link link;
+    };
+
+    class DestroyNodes : public Action {
+
+    public:
+        DestroyNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids);
+
+        void perform() override;
+        void undo() override;
+
+    private:
+        std::shared_ptr<NodeGraph> nodeGraph;
+        std::vector<int> ids;
+        std::map<int, Node> nodes;
+        std::map<int, Link> links;
+    };
+
+    class DestroyLinks : public Action {
+
+    public:
+        DestroyLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids);
+
+        void perform() override;
+        void undo() override;
+
+    private:
+        std::shared_ptr<NodeGraph> nodeGraph;
+        std::vector<int> ids;
+        std::map<int, Link> links;
+    };
+
     NodeGraph(Data &data, std::string name, std::vector<std::shared_ptr<dsp::Node>> &audioNodes);
     ~NodeGraph();
+    
+    std::vector<std::shared_ptr<dsp::Node>> &getAudioNodes();
+    std::map<int, Node> &getNodes();
+    std::map<int, Link> &getLinks();
 
     imnodes::EditorContext *getContext() const;
 
-    std::vector<std::shared_ptr<dsp::Node>> &getAudioNodes();
-
-    std::vector<dsp::Output> &getInputs();
-    std::vector<dsp::Input> &getOutputs();
-    std::vector<std::string> &getInputNames();
-    std::vector<std::string> &getOutputNames();
-
 private:
-    std::vector<std::shared_ptr<dsp::Node>> &audioNodes;
     int counter;
-    imnodes::EditorContext *context;
-    std::vector<dsp::Output> inputs;
-    std::vector<dsp::Input> outputs;
-    std::vector<std::string> inputNames;
-    std::vector<std::string> outputNames;
+    std::vector<std::shared_ptr<dsp::Node>> &audioNodes;
     std::map<int, Node> nodes;
     std::map<int, Link> links;
 
+    imnodes::EditorContext *context;
+
     void drawInternal() override;
-    void removeNodes();
-    void removeLinks();
-    void drawPopup();
+    void destroyNodes();
+    void destroyLinks();
+    void createNode();
+    void createLink();
 };
 
 } // namespace particle

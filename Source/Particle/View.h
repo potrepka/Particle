@@ -1,17 +1,16 @@
 #pragma once
 
 #include "Data.h"
-
 #include "Frames/Frames.h"
 
 namespace particle {
 
-class RootView {
+class View {
 
 public:
-    RootView(juce::AudioProcessor *audioProcessor,
-             juce::AudioDeviceManager *audioDeviceManager,
-             dsp::NodeProcessor *nodeProcessor);
+    View(juce::AudioProcessor *audioProcessor,
+         juce::AudioDeviceManager *audioDeviceManager,
+         dsp::NodeProcessor *nodeProcessor);
     
     Data &getData();
 
@@ -20,9 +19,11 @@ public:
 
 private:
     Data data;
-    NodeGraph nodeGraph;
-    AudioSettings audioSettings;
-    Status status;
+    std::vector<std::shared_ptr<Frame>> frames;
+
+    std::shared_ptr<NodeGraph> nodeGraph;
+    std::shared_ptr<AudioSettings> audioSettings;
+    std::shared_ptr<Status> status;
 
     std::vector<const char *> ttf;
     std::vector<int> ttfSize;

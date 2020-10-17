@@ -14,7 +14,7 @@ particle::Processor::Processor()
 #endif
                                  )
         , nodeProcessor(2, 2, 0, 0.0)
-        , rootView(this, nullptr, &nodeProcessor)
+        , view(this, nullptr, &nodeProcessor)
 #endif
 {
     if (supportsDoublePrecisionProcessing()) {
@@ -28,7 +28,7 @@ particle::Processor::Processor()
     //imnodes::GetIO().emulate_three_button_mouse.enabled = true;
     //imnodes::GetIO().emulate_three_button_mouse.modifier = &ImGui::GetIO().KeyCtrl;
     ImPlot::CreateContext();
-    rootView.setup();
+    view.setup();
 
     // TODO: Remove MIDI status messages
 
@@ -196,7 +196,7 @@ juce::AudioProcessorEditor *particle::Processor::createEditor() {
             w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, true);
         }
     }
-    rootView.getData().setAudioDeviceManager(getAudioDeviceManager());
+    view.getData().setAudioDeviceManager(getAudioDeviceManager());
     return editor;
 }
 
@@ -222,8 +222,8 @@ dsp::NodeProcessor &particle::Processor::getNodeProcessor() {
     return nodeProcessor;
 }
 
-particle::RootView &particle::Processor::getRootView() {
-    return rootView;
+particle::View &particle::Processor::getView() {
+    return view;
 }
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {

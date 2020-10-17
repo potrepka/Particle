@@ -1,22 +1,18 @@
 #pragma once
 
 #include "Data.h"
-
-#include <string>
+#include "Named.h"
 
 #include "imgui.h"
 
 namespace particle {
 
-class Frame {
+class Frame : public Named {
 
 public:
     Frame(Data &data, std::string name);
 
     Data &getData();
-
-    std::string getName() const;
-    void setName(std::string name);
 
     bool &isVisible();
     void show();
@@ -27,7 +23,6 @@ public:
 
 private:
     Data &data;
-    std::string name;
     bool visible;
 
     virtual void drawInternal() {}

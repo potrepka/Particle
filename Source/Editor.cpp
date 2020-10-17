@@ -57,15 +57,15 @@ void particle::Editor::renderOpenGL() {
 
     ImGui::NewFrame();
 
-    processor.getRootView().draw();
+    processor.getView().draw();
 
     ImGui::Render();
 
     glViewport(0, 0, getScreenBounds().getWidth(), getScreenBounds().getHeight());
-    glClearColor(processor.getRootView().getData().getStyle().backgroundColor.x,
-                 processor.getRootView().getData().getStyle().backgroundColor.y,
-                 processor.getRootView().getData().getStyle().backgroundColor.z,
-                 processor.getRootView().getData().getStyle().backgroundColor.w);
+    glClearColor(processor.getView().getData().getStyle().backgroundColor.x,
+                 processor.getView().getData().getStyle().backgroundColor.y,
+                 processor.getView().getData().getStyle().backgroundColor.z,
+                 processor.getView().getData().getStyle().backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

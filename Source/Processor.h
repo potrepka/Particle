@@ -73,11 +73,11 @@ public:
     juce::AudioDeviceManager *getAudioDeviceManager();
 
     dsp::NodeProcessor &getNodeProcessor();
-    particle::RootView &getRootView();
+    particle::View &getView();
 
 private:
     dsp::NodeProcessor nodeProcessor;
-    particle::RootView rootView;
+    particle::View view;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(particle::Processor)
 };
