@@ -129,12 +129,15 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
     categories.push_back(Category(
             "Dynamics",
             std::vector<Type>{Type::CLIPPER, Type::COMPRESSOR_GATE, Type::DRY_WET, Type::ENVELOPE, Type::SHAPER}));
-    categories.push_back(Category("External", std::vector<Type>{Type::MIDI_INPUT, Type::MIDI_OUTPUT}));
+    categories.push_back(Category(
+            "External",
+            std::vector<Type>{
+                    Type::AUDIO_CLIPPING, Type::AUDIO_INPUT, Type::AUDIO_OUTPUT, Type::MIDI_INPUT, Type::MIDI_OUTPUT}));
     categories.push_back(Category("Filters", std::vector<Type>{Type::BIQUAD, Type::CROSSOVER, Type::ONE_POLE}));
     categories.push_back(Category(
             "Generators",
             std::vector<Type>{
-                    Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::WAVETABLE_OSCILLATOR}));
+                    Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::TABLE_OSCILLATOR}));
     categories.push_back(Category("Math",
                                   std::vector<Type>{
                                           Type::ABSOLUTE_VALUE,
@@ -195,6 +198,9 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::DRY_WET: return "Dry/Wet";
         case Type::ENVELOPE: return "Envelope";
         case Type::SHAPER: return "Shaper";
+        case Type::AUDIO_CLIPPING: return "Audio Clipping";
+        case Type::AUDIO_INPUT: return "Audio Input";
+        case Type::AUDIO_OUTPUT: return "Audio Output";
         case Type::MIDI_INPUT: return "MIDI Input";
         case Type::MIDI_OUTPUT: return "MIDI Output";
         case Type::BIQUAD: return "Biquad";
@@ -204,7 +210,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::NOISE: return "Noise";
         case Type::PHASOR: return "Phasor";
         case Type::SAMPLE_PLAYER: return "Sample Player";
-        case Type::WAVETABLE_OSCILLATOR: return "Wavetable Oscillator";
+        case Type::TABLE_OSCILLATOR: return "Table Oscillator";
         case Type::ABSOLUTE_VALUE: return "Absolute Value";
         case Type::BOOLEAN_MASK: return "Boolean Mask";
         case Type::COMPARISON: return "Comparison";
@@ -361,6 +367,22 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addOutput(++counter, "Output", shaper->getOutput());
             return node;
         }
+        case Type::AUDIO_CLIPPING: {
+            Node node(id, type, nullptr);
+            node.addOutput(++counter, "Audio Input Clipping", data.getNodeProcessor()->getAudioInputClipping());
+            node.addOutput(++counter, "Audio Output Clipping", data.getNodeProcessor()->getAudioOutputClipping());
+            return node;
+        }
+        case Type::AUDIO_INPUT: {
+            Node node(id, type, nullptr);
+            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioInput());
+            return node;
+        }
+        case Type::AUDIO_OUTPUT: {
+            Node node(id, type, nullptr);
+            node.addInput(++counter, "Input", data.getNodeProcessor()->getAudioOutput());
+            return node;
+        }
         case Type::MIDI_INPUT: {
             std::shared_ptr<dsp::MidiInput> midiInput =
                     std::make_shared<dsp::MidiInput>(data.getNodeProcessor()->getInputMessages());
@@ -439,7 +461,7 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addOutput(++counter, "Current Time", samplePlayer->getCurrentTime());
             return node;
         }
-        case Type::WAVETABLE_OSCILLATOR: {
+        case Type::TABLE_OSCILLATOR: {
             std::shared_ptr<dsp::TableOscillator> oscillator = std::make_shared<dsp::TableOscillator>();
             Node node(id, type, oscillator);
             node.addInput(++counter, "Phase", oscillator->getPhase());
