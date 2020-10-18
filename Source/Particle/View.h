@@ -21,6 +21,7 @@ private:
     Data data;
     std::vector<std::shared_ptr<Frame>> frames;
 
+    std::shared_ptr<dsp::Node> projectContainer;
     std::shared_ptr<NodeGraph> nodeGraph;
     std::shared_ptr<AudioSettings> audioSettings;
     std::shared_ptr<Status> status;

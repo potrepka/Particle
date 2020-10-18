@@ -841,10 +841,10 @@ void particle::NodeGraph::DestroyLinks::undo() {
     links.clear();
 }
 
-particle::NodeGraph::NodeGraph(Data &data, std::string name, std::vector<std::shared_ptr<dsp::Node>> &audioNodes)
+particle::NodeGraph::NodeGraph(Data &data, std::string name, std::shared_ptr<dsp::Node> container)
         : Frame(data, name)
         , counter(0)
-        , audioNodes(audioNodes) {
+        , container(container) {
     context = imnodes::EditorContextCreate();
 }
 
@@ -852,8 +852,8 @@ particle::NodeGraph::~NodeGraph() {
     imnodes::EditorContextFree(context);
 }
 
-std::vector<std::shared_ptr<dsp::Node>> &particle::NodeGraph::getAudioNodes() {
-    return audioNodes;
+std::shared_ptr<dsp::Node> particle::NodeGraph::getContainer() {
+    return container;
 }
 
 std::map<int, particle::NodeGraph::Node> &particle::NodeGraph::getNodes() {

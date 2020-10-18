@@ -191,10 +191,10 @@ public:
         std::map<int, Link> links;
     };
 
-    NodeGraph(Data &data, std::string name, std::vector<std::shared_ptr<dsp::Node>> &audioNodes);
+    NodeGraph(Data &data, std::string name, std::shared_ptr<dsp::Node> container);
     ~NodeGraph();
     
-    std::vector<std::shared_ptr<dsp::Node>> &getAudioNodes();
+    std::shared_ptr<dsp::Node> getContainer();
     std::map<int, Node> &getNodes();
     std::map<int, Link> &getLinks();
 
@@ -202,7 +202,7 @@ public:
 
 private:
     int counter;
-    std::vector<std::shared_ptr<dsp::Node>> &audioNodes;
+    std::shared_ptr<dsp::Node> container;
     std::map<int, Node> nodes;
     std::map<int, Link> links;
 

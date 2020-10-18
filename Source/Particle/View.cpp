@@ -4,9 +4,13 @@ particle::View::View(juce::AudioProcessor *audioProcessor,
                              juce::AudioDeviceManager *audioDeviceManager,
                              dsp::NodeProcessor *nodeProcessor)
         : data(audioProcessor, audioDeviceManager, nodeProcessor)
-        , nodeGraph(std::make_shared<NodeGraph>(data, "Node Graph", nodeProcessor->getNodes()))
+        , projectContainer(std::make_shared<dsp::Node>())
+        , nodeGraph(std::make_shared<NodeGraph>(data, "Node Graph", projectContainer))
         , audioSettings(std::make_shared<AudioSettings>(data))
         , status(std::make_shared<Status>(data)) {
+    // TODO: build a better project system, don't forget to update initializations above
+    nodeProcessor->getNodes().push_back(projectContainer);
+    
     frames.push_back(nodeGraph);
     frames.push_back(audioSettings);
     frames.push_back(status);
