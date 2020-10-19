@@ -7,7 +7,7 @@ particle::Status::Status(Data &data)
 
 void particle::Status::drawInternal() {
     getData().getNodeProcessor()->lock();
-    std::vector<std::shared_ptr<dsp::Node>> &nodes = getData().getNodeProcessor()->getNodes();
+    std::vector<std::shared_ptr<dsp::Node>> &nodes = getData().getNodeProcessor()->getNodes()[0]->getChildren();
     size_t numNodes = 0;
     size_t numActiveNodes = 0;
     size_t numConnections = 0;

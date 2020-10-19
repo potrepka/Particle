@@ -48,9 +48,10 @@ public:
             DRY_WET,
             ENVELOPE,
             SHAPER,
-            AUDIO_CLIPPING,
             AUDIO_INPUT,
+            AUDIO_INPUT_CLIPPING,
             AUDIO_OUTPUT,
+            AUDIO_OUTPUT_CLIPPING,
             MIDI_INPUT,
             MIDI_OUTPUT,
             BIQUAD,
@@ -173,8 +174,8 @@ public:
     private:
         std::shared_ptr<NodeGraph> nodeGraph;
         std::vector<int> ids;
-        std::map<int, Node> nodes;
-        std::map<int, Link> links;
+        std::deque<Node> nodes;
+        std::deque<Link> links;
     };
 
     class DestroyLinks : public Action {
@@ -188,7 +189,7 @@ public:
     private:
         std::shared_ptr<NodeGraph> nodeGraph;
         std::vector<int> ids;
-        std::map<int, Link> links;
+        std::deque<Link> links;
     };
 
     NodeGraph(Data &data, std::string name, std::shared_ptr<dsp::Node> container);

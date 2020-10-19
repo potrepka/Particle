@@ -27,6 +27,9 @@ public:
     void setAudioDeviceManager(juce::AudioDeviceManager *audioDeviceManager);
     void setNodeProcessor(dsp::NodeProcessor *nodeProcessor);
 
+    bool hasUndo() const;
+    bool hasRedo() const;
+
     void pushAction(std::shared_ptr<Action> action);
     void undo();
     void redo();

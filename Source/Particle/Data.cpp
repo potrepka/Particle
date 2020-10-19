@@ -35,6 +35,14 @@ void particle::Data::setNodeProcessor(dsp::NodeProcessor *nodeProcessor) {
     this->nodeProcessor = nodeProcessor;
 }
 
+bool particle::Data::hasUndo() const {
+    return !history.empty();
+}
+
+bool particle::Data::hasRedo() const {
+    return !forward.empty();
+}
+
 void particle::Data::pushAction(std::shared_ptr<Action> action) {
     action->perform();
     history.push_back(action);
@@ -42,15 +50,19 @@ void particle::Data::pushAction(std::shared_ptr<Action> action) {
 }
 
 void particle::Data::undo() {
-    std::shared_ptr<Action> action = history.back();
-    action->undo();
-    forward.push_back(action);
-    history.pop_back();
+    if (!history.empty()) {
+        std::shared_ptr<Action> action = history.back();
+        action->undo();
+        forward.push_back(action);
+        history.pop_back();
+    }
 }
 
 void particle::Data::redo() {
-    std::shared_ptr<Action> action = forward.back();
-    action->perform();
-    history.push_back(action);
-    forward.pop_back();
+    if (!forward.empty()) {
+        std::shared_ptr<Action> action = forward.back();
+        action->perform();
+        history.push_back(action);
+        forward.pop_back();
+    }
 }

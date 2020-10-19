@@ -82,8 +82,12 @@ void particle::View::draw() {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
-            ImGui::MenuItem("Undo");
-            ImGui::MenuItem("Redo");
+            if (ImGui::MenuItem("Undo", NULL, false, data.hasUndo())) {
+                data.undo();
+            }
+            if (ImGui::MenuItem("Redo", NULL, false, data.hasRedo())) {
+                data.redo();
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {

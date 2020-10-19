@@ -129,10 +129,13 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
     categories.push_back(Category(
             "Dynamics",
             std::vector<Type>{Type::CLIPPER, Type::COMPRESSOR_GATE, Type::DRY_WET, Type::ENVELOPE, Type::SHAPER}));
-    categories.push_back(Category(
-            "External",
-            std::vector<Type>{
-                    Type::AUDIO_CLIPPING, Type::AUDIO_INPUT, Type::AUDIO_OUTPUT, Type::MIDI_INPUT, Type::MIDI_OUTPUT}));
+    categories.push_back(Category("External",
+                                  std::vector<Type>{Type::AUDIO_INPUT,
+                                                    Type::AUDIO_INPUT_CLIPPING,
+                                                    Type::AUDIO_OUTPUT,
+                                                    Type::AUDIO_OUTPUT_CLIPPING,
+                                                    Type::MIDI_INPUT,
+                                                    Type::MIDI_OUTPUT}));
     categories.push_back(Category("Filters", std::vector<Type>{Type::BIQUAD, Type::CROSSOVER, Type::ONE_POLE}));
     categories.push_back(Category(
             "Generators",
@@ -198,9 +201,10 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::DRY_WET: return "Dry/Wet";
         case Type::ENVELOPE: return "Envelope";
         case Type::SHAPER: return "Shaper";
-        case Type::AUDIO_CLIPPING: return "Audio Clipping";
         case Type::AUDIO_INPUT: return "Audio Input";
+        case Type::AUDIO_INPUT_CLIPPING: return "Audio Input Clipping";
         case Type::AUDIO_OUTPUT: return "Audio Output";
+        case Type::AUDIO_OUTPUT_CLIPPING: return "Audio Output Clipping";
         case Type::MIDI_INPUT: return "MIDI Input";
         case Type::MIDI_OUTPUT: return "MIDI Output";
         case Type::BIQUAD: return "Biquad";
@@ -307,15 +311,14 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             return node;
         }
         case Type::VARIABLE_DELAY: {
+            // TODO: implement feedback interface
             std::shared_ptr<dsp::VariableDelay> variableDelay = std::make_shared<dsp::VariableDelay>();
             Node node(id, type, variableDelay);
             node.addInput(++counter, "Input", variableDelay->getInput());
             node.addInput(++counter, "Delay Time", variableDelay->getDelayTime());
             node.addInput(++counter, "Decay Time", variableDelay->getDecayTime());
             node.addInput(++counter, "Reset", variableDelay->getReset());
-            node.addInput(++counter, "Feedback Sample Input", variableDelay->getFeedbackSink());
             node.addOutput(++counter, "Output", variableDelay->getOutput());
-            node.addOutput(++counter, "Feedback Sample Output", variableDelay->getFeedbackSource());
             return node;
         }
         case Type::CLIPPER: {
@@ -367,20 +370,24 @@ particle::NodeGraph::Node particle::NodeGraph::Node::generate(Data &data, int &c
             node.addOutput(++counter, "Output", shaper->getOutput());
             return node;
         }
-        case Type::AUDIO_CLIPPING: {
-            Node node(id, type, nullptr);
-            node.addOutput(++counter, "Audio Input Clipping", data.getNodeProcessor()->getAudioInputClipping());
-            node.addOutput(++counter, "Audio Output Clipping", data.getNodeProcessor()->getAudioOutputClipping());
-            return node;
-        }
         case Type::AUDIO_INPUT: {
             Node node(id, type, nullptr);
             node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioInput());
             return node;
         }
+        case Type::AUDIO_INPUT_CLIPPING: {
+            Node node(id, type, nullptr);
+            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioInputClipping());
+            return node;
+        }
         case Type::AUDIO_OUTPUT: {
             Node node(id, type, nullptr);
             node.addInput(++counter, "Input", data.getNodeProcessor()->getAudioOutput());
+            return node;
+        }
+        case Type::AUDIO_OUTPUT_CLIPPING: {
+            Node node(id, type, nullptr);
+            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioOutputClipping());
             return node;
         }
         case Type::MIDI_INPUT: {
@@ -725,26 +732,26 @@ void particle::NodeGraph::Link::drawInspector() {}
 particle::NodeGraph::Link particle::NodeGraph::Link::generate(std::map<int, Node> &nodes, int id, int from, int to) {
     Input input;
     Output output;
-    for (const auto &node : nodes) {
+    for (const auto &nodePair : nodes) {
         std::map<int, Input>::const_iterator inputIterator;
-        if ((inputIterator = node.second.inputs.find(from)) != node.second.inputs.end()) {
+        if ((inputIterator = nodePair.second.inputs.find(from)) != nodePair.second.inputs.end()) {
             input = inputIterator->second;
             break;
         }
         std::map<int, Output>::const_iterator outputIterator;
-        if ((outputIterator = node.second.outputs.find(from)) != node.second.outputs.end()) {
+        if ((outputIterator = nodePair.second.outputs.find(from)) != nodePair.second.outputs.end()) {
             output = outputIterator->second;
             break;
         }
     }
-    for (const auto &node : nodes) {
+    for (const auto &nodePair : nodes) {
         std::map<int, Input>::const_iterator inputIterator;
-        if ((inputIterator = node.second.inputs.find(to)) != node.second.inputs.end()) {
+        if ((inputIterator = nodePair.second.inputs.find(to)) != nodePair.second.inputs.end()) {
             input = inputIterator->second;
             break;
         }
         std::map<int, Output>::const_iterator outputIterator;
-        if ((outputIterator = node.second.outputs.find(to)) != node.second.outputs.end()) {
+        if ((outputIterator = nodePair.second.outputs.find(to)) != nodePair.second.outputs.end()) {
             output = outputIterator->second;
             break;
         }
@@ -760,10 +767,24 @@ particle::NodeGraph::CreateNode::CreateNode(std::shared_ptr<NodeGraph> nodeGraph
         , node(node) {}
 
 void particle::NodeGraph::CreateNode::perform() {
+    // GUI
     nodeGraph->getNodes().emplace(node.id, node);
+    // DSP
+    if (node.node != nullptr) {
+
+        // TODO: TEMPORARY! REMOVE!
+        node.node->setNumChannels(2);
+
+        nodeGraph->getContainer()->addChild(node.node);
+    }
 }
 
 void particle::NodeGraph::CreateNode::undo() {
+    // DSP
+    if (node.node != nullptr) {
+        nodeGraph->getContainer()->removeChild(node.node);
+    }
+    // GUI
     nodeGraph->getNodes().erase(node.id);
 }
 
@@ -773,10 +794,17 @@ particle::NodeGraph::CreateLink::CreateLink(std::shared_ptr<NodeGraph> nodeGraph
         , link(link) {}
 
 void particle::NodeGraph::CreateLink::perform() {
+    // GUI
     nodeGraph->getLinks().emplace(link.id, link);
+    // DSP
+    link.from.output->connect(link.to.input);
+    nodeGraph->getContainer()->sortChildren();
 }
 
 void particle::NodeGraph::CreateLink::undo() {
+    // DSP
+    link.from.output->disconnect(link.to.input);
+    // GUI
     nodeGraph->getLinks().erase(link.id);
 }
 
@@ -786,38 +814,59 @@ particle::NodeGraph::DestroyNodes::DestroyNodes(std::shared_ptr<NodeGraph> nodeG
         , ids(ids) {}
 
 void particle::NodeGraph::DestroyNodes::perform() {
-    for (const auto &node : ids) {
+    for (const auto& nodeId : ids) {
+        Node& node = nodeGraph->getNodes()[nodeId];
         std::vector<int> attachedLinks;
-        for (const auto &input : nodeGraph->getNodes()[node].inputs) {
-            for (const auto &link : nodeGraph->getLinks()) {
-                if (input.first == link.second.to.id) {
-                    attachedLinks.push_back(link.first);
+        for (const auto& inputPair : node.inputs) {
+            for (const auto& linkPair : nodeGraph->getLinks()) {
+                if (inputPair.first == linkPair.second.to.id) {
+                    attachedLinks.push_back(linkPair.first);
                 }
             }
         }
-        for (const auto &output : nodeGraph->getNodes()[node].outputs) {
-            for (const auto &link : nodeGraph->getLinks()) {
-                if (output.first == link.second.from.id) {
-                    attachedLinks.push_back(link.first);
+        for (const auto& outputPair : node.outputs) {
+            for (const auto& linkPair : nodeGraph->getLinks()) {
+                if (outputPair.first == linkPair.second.from.id) {
+                    attachedLinks.push_back(linkPair.first);
                 }
             }
         }
-        for (const auto &link : attachedLinks) {
-            links.emplace(link, nodeGraph->getLinks()[link]);
-            nodeGraph->getLinks().erase(link);
+        for (const auto& linkId : attachedLinks) {
+            Link& link = nodeGraph->getLinks()[linkId];
+            // DSP
+            link.from.output->disconnect(link.to.input);
+            // LOCAL
+            links.push_front(nodeGraph->getLinks()[linkId]);
+            // GUI
+            nodeGraph->getLinks().erase(linkId);
         }
-        nodes.emplace(node, nodeGraph->getNodes()[node]);
-        nodeGraph->getNodes().erase(node);
+        // DSP
+        if (node.node != nullptr) {
+            nodeGraph->getContainer()->removeChild(node.node);
+        }
+        // LOCAL
+        nodes.push_front(node);
+        // GUI
+        nodeGraph->getNodes().erase(nodeId);
     }
 }
 
 void particle::NodeGraph::DestroyNodes::undo() {
-    for (const auto &node : nodes) {
-        nodeGraph->getNodes().emplace(node.first, node.second);
+    for (const auto& node : nodes) {
+        // GUI
+        nodeGraph->getNodes().emplace(node.id, node);
+        // DSP
+        if (node.node != nullptr) {
+            nodeGraph->getContainer()->addChild(node.node);
+        }
     }
-    for (const auto &link : links) {
-        nodeGraph->getLinks().emplace(link.first, link.second);
+    for (const auto& link : links) {
+        // GUI
+        nodeGraph->getLinks().emplace(link.id, link);
+        // DSP
+        link.from.output->connect(link.to.input);
     }
+    // LOCAL
     nodes.clear();
     links.clear();
 }
@@ -828,16 +877,25 @@ particle::NodeGraph::DestroyLinks::DestroyLinks(std::shared_ptr<NodeGraph> nodeG
         , ids(ids) {}
 
 void particle::NodeGraph::DestroyLinks::perform() {
-    for (const auto &link : ids) {
-        links.emplace(link, nodeGraph->getLinks()[link]);
-        nodeGraph->getLinks().erase(link);
+    for (const auto& linkId : ids) {
+        Link &link = nodeGraph->getLinks()[linkId];
+        // DSP
+        link.from.output->disconnect(link.to.input);
+        // LOCAL
+        links.push_front(nodeGraph->getLinks()[linkId]);
+        // GUI
+        nodeGraph->getLinks().erase(linkId);
     }
 }
 
 void particle::NodeGraph::DestroyLinks::undo() {
     for (const auto &link : links) {
-        nodeGraph->getLinks().emplace(link.first, link.second);
+        // GUI
+        nodeGraph->getLinks().emplace(link.id, link);
+        // DSP
+        link.from.output->connect(link.to.input);
     }
+    // LOCAL
     links.clear();
 }
 
@@ -901,7 +959,13 @@ void particle::NodeGraph::destroyLinks() {
     if (numSelectedLinks) {
         std::vector<int> selectedLinks(numSelectedLinks);
         imnodes::GetSelectedLinks(selectedLinks.data());
-        getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
+        selectedLinks.erase(std::remove_if(selectedLinks.begin(),
+                                           selectedLinks.end(),
+                                           [this](int linkId) { return links.find(linkId) == links.end(); }),
+                            selectedLinks.end());
+        if (!selectedLinks.empty()) {
+            getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
+        }
     }
 }
 

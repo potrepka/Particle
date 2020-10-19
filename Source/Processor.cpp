@@ -64,13 +64,13 @@ particle::Processor::Processor()
 
     // TODO: Remove pink noise test code
 
-    std::shared_ptr<dsp::Noise> pink = std::make_shared<dsp::Noise>();
-    pink->setMode(dsp::Noise::Mode::PINK);
-    pink->setNumOutputChannels(2);
-    nodeProcessor.lock();
-    nodeProcessor.getNodes().push_back(pink);
-    pink->getOutput() >> nodeProcessor.getAudioOutput();
-    nodeProcessor.unlock();
+    //std::shared_ptr<dsp::Noise> pink = std::make_shared<dsp::Noise>();
+    //pink->setMode(dsp::Noise::Mode::PINK);
+    //pink->setNumOutputChannels(2);
+    //nodeProcessor.lock();
+    //nodeProcessor.getNodes().push_back(pink);
+    //pink->getOutput() >> nodeProcessor.getAudioOutput();
+    //nodeProcessor.unlock();
 }
 
 particle::Processor::~Processor() {
