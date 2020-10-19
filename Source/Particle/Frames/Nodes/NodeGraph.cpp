@@ -869,10 +869,12 @@ void particle::NodeGraph::DestroyNodes::undo() {
     // LOCAL
     nodes.clear();
     links.clear();
+    // DSP
+    nodeGraph->getContainer()->sortChildren();
 }
 
 particle::NodeGraph::DestroyLinks::DestroyLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids)
-        : Action("Destroy Links")
+        : Action(ids.size() == 1 ? "Destroy Link" : "Destroy Links")
         , nodeGraph(nodeGraph)
         , ids(ids) {}
 
@@ -897,6 +899,8 @@ void particle::NodeGraph::DestroyLinks::undo() {
     }
     // LOCAL
     links.clear();
+    // DSP
+    nodeGraph->getContainer()->sortChildren();
 }
 
 particle::NodeGraph::NodeGraph(Data &data, std::string name, std::shared_ptr<dsp::Node> container)
@@ -935,11 +939,11 @@ void particle::NodeGraph::drawInternal() {
     }
     imnodes::BeginNodeEditor();
     createNode();
-    for (auto &node : nodes) {
-        node.second.draw();
+    for (auto &nodePair : nodes) {
+        nodePair.second.draw();
     }
-    for (auto &link : links) {
-        link.second.draw();
+    for (auto &linkPair : links) {
+        linkPair.second.draw();
     }
     imnodes::EndNodeEditor();
     createLink();
@@ -950,6 +954,7 @@ void particle::NodeGraph::destroyNodes() {
     if (numSelectedNodes) {
         std::vector<int> selectedNodes(numSelectedNodes);
         imnodes::GetSelectedNodes(selectedNodes.data());
+
         getData().pushAction(std::make_shared<DestroyNodes>(shared_from_this(), selectedNodes));
     }
 }
@@ -959,10 +964,12 @@ void particle::NodeGraph::destroyLinks() {
     if (numSelectedLinks) {
         std::vector<int> selectedLinks(numSelectedLinks);
         imnodes::GetSelectedLinks(selectedLinks.data());
+
         selectedLinks.erase(std::remove_if(selectedLinks.begin(),
                                            selectedLinks.end(),
                                            [this](int linkId) { return links.find(linkId) == links.end(); }),
                             selectedLinks.end());
+
         if (!selectedLinks.empty()) {
             getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
         }
