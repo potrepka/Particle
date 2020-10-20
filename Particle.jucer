@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               cppLanguageStandard="17" pluginManufacturerCode="NATP" pluginCode="PART"
-              headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/examples&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/implot&#10;../../Source/Particle"
+              headerPath="../../Source/DSP/src&#10;../../Source/imgui&#10;../../Source/imgui/backends&#10;../../Source/imgui_juce&#10;../../Source/imnodes/dependencies/gl3w/include&#10;../../Source/imnodes/dependencies/gl3w/src&#10;../../Source/imnodes&#10;../../Source/implot&#10;../../Source/Particle"
               defines="JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1&#10;DSP_USE_JUCE"
               bundleIdentifier="com.natpo.Particle" pluginManufacturer="Nat Po"
               aaxIdentifier="com.natpo.Particle" displaySplashScreen="1" companyName="Nat Po"
@@ -267,10 +267,10 @@
         <FILE id="hSgMsN" name="imgui.h" compile="0" resource="0" file="Source/imgui/imgui.h"/>
         <FILE id="Mr72p7" name="imgui_demo.cpp" compile="1" resource="0" file="Source/imgui/imgui_demo.cpp"/>
         <FILE id="Z92iVS" name="imgui_draw.cpp" compile="1" resource="0" file="Source/imgui/imgui_draw.cpp"/>
-        <FILE id="aeUNIE" name="imgui_impl_opengl3.cpp" compile="1" resource="0"
-              file="Source/imgui/examples/imgui_impl_opengl3.cpp"/>
-        <FILE id="KfIYhw" name="imgui_impl_opengl3.h" compile="0" resource="0"
-              file="Source/imgui/examples/imgui_impl_opengl3.h"/>
+        <FILE id="WNDyvl" name="imgui_impl_opengl3.cpp" compile="1" resource="0"
+              file="Source/imgui/backends/imgui_impl_opengl3.cpp"/>
+        <FILE id="rJ9k7q" name="imgui_impl_opengl3.h" compile="0" resource="0"
+              file="Source/imgui/backends/imgui_impl_opengl3.h"/>
         <FILE id="JjLUs6" name="imgui_internal.h" compile="0" resource="0"
               file="Source/imgui/imgui_internal.h"/>
         <FILE id="Fcfmuc" name="imgui_widgets.cpp" compile="1" resource="0"
