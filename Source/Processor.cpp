@@ -192,9 +192,10 @@ juce::AudioProcessorEditor *particle::Processor::createEditor() {
         if (juce::TopLevelWindow::getNumTopLevelWindows() == 1) {
             juce::DocumentWindow *w = dynamic_cast<juce::DocumentWindow *>(juce::TopLevelWindow::getTopLevelWindow(0));
             w->setResizable(true, false);
-            //w->setUsingNativeTitleBar(true);
-            // TODO: uncomment above and change to true below
+            // TODO: Clean up this code after you create standalone wrapper
             w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, false);
+            //w->setUsingNativeTitleBar(true);
+            //w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, true);
         }
     }
     view.getData().setAudioDeviceManager(getAudioDeviceManager());
