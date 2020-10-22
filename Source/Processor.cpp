@@ -192,8 +192,9 @@ juce::AudioProcessorEditor *particle::Processor::createEditor() {
         if (juce::TopLevelWindow::getNumTopLevelWindows() == 1) {
             juce::DocumentWindow *w = dynamic_cast<juce::DocumentWindow *>(juce::TopLevelWindow::getTopLevelWindow(0));
             w->setResizable(true, false);
-            w->setUsingNativeTitleBar(true);
-            w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, true);
+            //w->setUsingNativeTitleBar(true);
+            // TODO: uncomment above and change to true below
+            w->setTitleBarButtonsRequired(juce::DocumentWindow::allButtons, false);
         }
     }
     view.getData().setAudioDeviceManager(getAudioDeviceManager());

@@ -59,6 +59,16 @@ void particle::View::draw() {
     //ImGui::ShowDemoWindow(&show_demo_window);
     //}
 
+    ImGuiIO &io = ImGui::GetIO();
+
+    if (io.KeyCtrl) {
+        if (ImGui::IsKeyPressed('Z') && data.hasUndo()) {
+            data.undo();
+        } else if (ImGui::IsKeyPressed('Y') && data.hasRedo()) {
+            data.redo();
+        }
+    }
+
     // TODO: Remove font chooser
     static const char *current_item = NULL;
     static int current_index = 0;
@@ -82,10 +92,10 @@ void particle::View::draw() {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo", NULL, false, data.hasUndo())) {
+            if (ImGui::MenuItem("Undo", "Ctrl+Z", false, data.hasUndo())) {
                 data.undo();
             }
-            if (ImGui::MenuItem("Redo", NULL, false, data.hasRedo())) {
+            if (ImGui::MenuItem("Redo", "Ctrl+Y", false, data.hasRedo())) {
                 data.redo();
             }
             ImGui::EndMenu();

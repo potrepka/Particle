@@ -104,11 +104,15 @@ public:
 
         int id;
         Type type;
+        ImVec2 position;
         std::shared_ptr<dsp::Node> node;
         std::map<int, Input> inputs;
         std::map<int, Output> outputs;
 
-        Node(int id = 0, Type type = Type::CUSTOM, std::shared_ptr<dsp::Node> node = nullptr);
+        Node(int id = 0,
+             Type type = Type::CUSTOM,
+             ImVec2 position = ImVec2(0, 0),
+             std::shared_ptr<dsp::Node> node = nullptr);
 
         void addInput(int id, std::string name, std::shared_ptr<dsp::Input> input);
         void addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output);
@@ -121,7 +125,7 @@ public:
 
         static std::vector<Category> getCategories(bool isPlugin);
         static std::string getTypeName(Type type);
-        static Node generate(Data &data, int &counter, int id, Type type);
+        static Node generate(Data &data, int &counter, int id, Type type, ImVec2 position);
     };
     
     struct Link {
