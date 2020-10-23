@@ -757,57 +757,64 @@ particle::NodeGraph::Link particle::NodeGraph::Link::generate(std::map<int, Node
     return Link(id, output, input);
 }
 
-particle::NodeGraph::CreateNode::CreateNode(std::shared_ptr<NodeGraph> nodeGraph, Node node)
-        : Action("Create " + node.getTypeName())
+particle::NodeGraph::CreateNodes::CreateNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Node> nodes)
+        : Action(nodes.size() == 1 ? "Create Node" : "Create Nodes")
         , nodeGraph(nodeGraph)
-        , node(node) {}
+        , nodes(nodes) {}
 
-void particle::NodeGraph::CreateNode::perform() {
-    // GUI
-    nodeGraph->getNodes().emplace(node.id, node);
-    imnodes::SetNodeGridSpacePos(node.id, node.position);
-    // DSP
-    if (node.node != nullptr) {
+void particle::NodeGraph::CreateNodes::perform() {
+    for (const auto &node : nodes) {
+        // GUI
+        nodeGraph->getNodes().emplace(node.id, node);
+        imnodes::SetNodeGridSpacePos(node.id, node.position);
+        // DSP
+        if (node.node != nullptr) {
 
-        // TODO: TEMPORARY! REMOVE!
-        node.node->setNumChannels(2);
+            // TODO: TEMPORARY! REMOVE!
+            node.node->setNumChannels(2);
 
-        nodeGraph->getContainer()->addChild(node.node);
+            nodeGraph->getContainer()->addChild(node.node);
+        }
     }
 }
 
-void particle::NodeGraph::CreateNode::undo() {
-    // DSP
-    if (node.node != nullptr) {
-        nodeGraph->getContainer()->removeChild(node.node);
+void particle::NodeGraph::CreateNodes::undo() {
+    for (const auto &node : nodes) {
+        // DSP
+        if (node.node != nullptr) {
+            nodeGraph->getContainer()->removeChild(node.node);
+        }
+        // GUI
+        nodeGraph->getNodes().erase(node.id);
     }
-    // GUI
-    node.position = imnodes::GetNodeGridSpacePos(node.id);
-    nodeGraph->getNodes().erase(node.id);
 }
 
-particle::NodeGraph::CreateLink::CreateLink(std::shared_ptr<NodeGraph> nodeGraph, Link link)
-        : Action("Create Link")
+particle::NodeGraph::CreateLinks::CreateLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Link> links)
+        : Action(links.size() == 1 ? "Create Link" : "Create Links")
         , nodeGraph(nodeGraph)
-        , link(link) {}
+        , links(links) {}
 
-void particle::NodeGraph::CreateLink::perform() {
-    // GUI
-    nodeGraph->getLinks().emplace(link.id, link);
-    // DSP
-    link.from.output->connect(link.to.input);
+void particle::NodeGraph::CreateLinks::perform() {
+    for (const auto &link : links) {
+        // GUI
+        nodeGraph->getLinks().emplace(link.id, link);
+        // DSP
+        link.from.output->connect(link.to.input);
+    }
     nodeGraph->getContainer()->sortChildren();
 }
 
-void particle::NodeGraph::CreateLink::undo() {
-    // DSP
-    link.from.output->disconnect(link.to.input);
-    // GUI
-    nodeGraph->getLinks().erase(link.id);
+void particle::NodeGraph::CreateLinks::undo() {
+    for (const auto &link : links) {
+        // DSP
+        link.from.output->disconnect(link.to.input);
+        // GUI
+        nodeGraph->getLinks().erase(link.id);
+    }
 }
 
 particle::NodeGraph::DestroyNodes::DestroyNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids)
-        : Action(ids.size() == 1 ? "Destroy " + nodeGraph->getNodes()[ids[0]].getTypeName() : "Destroy Nodes")
+        : Action(ids.size() == 1 ? "Destroy Node" : "Destroy Nodes")
         , nodeGraph(nodeGraph)
         , ids(ids) {}
 
@@ -992,12 +999,13 @@ void particle::NodeGraph::createNode() {
             if (ImGui::BeginMenu(category.getName().c_str())) {
                 for (const auto &type : category.types) {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
-                        for (int i = 0; i < 1; ++i) {
+                        std::vector<Node> nodes;
+                        for (int i = 0; i < 100; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                            Node node = Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id));
-                            getData().pushAction(std::make_shared<CreateNode>(shared_from_this(), node));
+                            nodes.push_back(Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
                         }
+                        getData().pushAction(std::make_shared<CreateNodes>(shared_from_this(), nodes));
                     }
                 }
                 ImGui::EndMenu();
@@ -1014,6 +1022,6 @@ void particle::NodeGraph::createLink() {
     if (imnodes::IsLinkCreated(&from, &to)) {
         const int id = ++counter;
         Link link = Link::generate(nodes, id, from, to);
-        getData().pushAction(std::make_shared<CreateLink>(shared_from_this(), link));
+        getData().pushAction(std::make_shared<CreateLinks>(shared_from_this(), std::vector<Link>{link}));
     }
 }

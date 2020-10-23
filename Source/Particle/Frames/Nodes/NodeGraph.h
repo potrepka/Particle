@@ -141,30 +141,30 @@ public:
         static Link generate(std::map<int, Node> &nodes, int id, int from, int to);
     };
 
-    class CreateNode : public Action {
+    class CreateNodes : public Action {
 
     public:
-        CreateNode(std::shared_ptr<NodeGraph> nodeGraph, Node node);
+        CreateNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Node> nodes);
 
         void perform() override;
         void undo() override;
 
     private:
         std::shared_ptr<NodeGraph> nodeGraph;
-        Node node;
+        std::vector<Node> nodes;
     };
 
-    class CreateLink : public Action {
+    class CreateLinks : public Action {
 
     public:
-        CreateLink(std::shared_ptr<NodeGraph> nodeGraph, Link link);
+        CreateLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Link> links);
 
         void perform() override;
         void undo() override;
 
     private:
         std::shared_ptr<NodeGraph> nodeGraph;
-        Link link;
+        std::vector<Link> links;
     };
 
     class DestroyNodes : public Action {
