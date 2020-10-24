@@ -288,6 +288,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, spread);
             node.addInput(++counter, "Input", spread->getInput());
             node.addInput(++counter, "Spread", spread->getSpread());
+            node.addInput(++counter, "Mode", spread->getMode());
             node.addOutput(++counter, "Output", spread->getOutput());
             return node;
         }
@@ -322,6 +323,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Clipper> clipper = std::make_shared<dsp::Clipper>();
             Node node(id, type, position, clipper);
             node.addInput(++counter, "Input", clipper->getInput());
+            node.addInput(++counter, "Mode", clipper->getMode());
             node.addOutput(++counter, "Output", clipper->getOutput());
             return node;
         }
@@ -364,6 +366,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, shaper);
             node.addInput(++counter, "Input", shaper->getInput());
             node.addInput(++counter, "Drive", shaper->getDrive());
+            node.addInput(++counter, "Mode", shaper->getMode());
             node.addOutput(++counter, "Output", shaper->getOutput());
             return node;
         }
@@ -408,6 +411,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Frequency", biquad->getFrequency());
             node.addInput(++counter, "Resonance", biquad->getResonance());
             node.addInput(++counter, "Amplitude", biquad->getAmplitude());
+            node.addInput(++counter, "Mode", biquad->getMode());
             node.addInput(++counter, "Reset", biquad->getReset());
             node.addOutput(++counter, "Output", biquad->getOutput());
             return node;
@@ -426,6 +430,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, onePole);
             node.addInput(++counter, "Input", onePole->getInput());
             node.addInput(++counter, "Frequency", onePole->getFrequency());
+            node.addInput(++counter, "Mode", onePole->getMode());
             node.addOutput(++counter, "Output", onePole->getOutput());
             return node;
         }
@@ -436,12 +441,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Intensity", moorer->getIntensity());
             node.addInput(++counter, "Modulation Index", moorer->getModulationIndex());
             node.addInput(++counter, "Harmonics", moorer->getHarmonics());
+            node.addInput(++counter, "Mode", moorer->getMode());
             node.addOutput(++counter, "Output", moorer->getOutput());
             return node;
         }
         case Type::NOISE: {
             std::shared_ptr<dsp::Noise> noise = std::make_shared<dsp::Noise>();
             Node node(id, type, position, noise);
+            node.addInput(++counter, "Mode", noise->getMode());
             node.addOutput(++counter, "Output", noise->getOutput());
             return node;
         }
@@ -449,6 +456,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Phasor> phasor = std::make_shared<dsp::Phasor>();
             Node node(id, type, position, phasor);
             node.addInput(++counter, "Frequency", phasor->getFrequency());
+            node.addInput(++counter, "Mode", phasor->getMode());
             node.addInput(++counter, "Reset", phasor->getReset());
             node.addOutput(++counter, "Output", phasor->getOutput());
             return node;
@@ -493,6 +501,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, comparison);
             node.addInput(++counter, "Input", comparison->getInput());
             node.addInput(++counter, "Threshold", comparison->getThreshold());
+            node.addInput(++counter, "Mode", comparison->getMode());
             node.addOutput(++counter, "Output", comparison->getOutput());
             return node;
         }
@@ -1000,7 +1009,8 @@ void particle::NodeGraph::createNode() {
                 for (const auto &type : category.types) {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
                         std::vector<Node> nodes;
-                        for (int i = 0; i < 100; ++i) {
+                        // TODO: remove for loop here
+                        for (int i = 0; i < 1; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
                             nodes.push_back(Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
