@@ -138,24 +138,24 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
             std::vector<Type>{
                     Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::TABLE_OSCILLATOR}));
     categories.push_back(Category("Math",
-                                  std::vector<Type>{
-                                          Type::ABSOLUTE_VALUE,
-                                          Type::BOOLEAN_MASK,
-                                          Type::COMPARISON,
-                                          Type::EXP2,
-                                          Type::FLOOR,
-                                          Type::FORWARD_FFT,
-                                          Type::FREQUENCY_TO_NOTE,
-                                          Type::IDENTITY,
-                                          Type::INVERSE_FFT,
-                                          Type::LOG2,
-                                          Type::MODULO,
-                                          Type::MULTIPLY,
-                                          Type::MULTIPLY_FREQUENCY_TIME,
-                                          Type::NOTE_TO_FREQUENCY,
-                                          Type::NOT_GATE,
-                                          Type::RECIPROCAL,
-                                  }));
+                                  std::vector<Type>{Type::ABSOLUTE_VALUE,
+                                                    Type::BOOLEAN_MASK,
+                                                    Type::COMPARISON,
+                                                    Type::DIVIDE,
+                                                    Type::EXP2,
+                                                    Type::FLOOR,
+                                                    Type::FORWARD_FFT,
+                                                    Type::FREQUENCY_TO_NOTE,
+                                                    Type::IDENTITY,
+                                                    Type::INVERSE_FFT,
+                                                    Type::LOG2,
+                                                    Type::MODULO,
+                                                    Type::MULTIPLY,
+                                                    Type::MULTIPLY_FREQUENCY_TIME,
+                                                    Type::NOTE_TO_FREQUENCY,
+                                                    Type::NOT_GATE,
+                                                    Type::RECIPROCAL,
+                                                    Type::TRIGONOMETRIC}));
     if (isPlugin) {
         categories.push_back(Category("Plugin",
                                       std::vector<Type>{Type::BEAT_DURATION,
@@ -214,6 +214,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::ABSOLUTE_VALUE: return "Absolute Value";
         case Type::BOOLEAN_MASK: return "Boolean Mask";
         case Type::COMPARISON: return "Comparison";
+        case Type::DIVIDE: return "Divide";
         case Type::EXP2: return "Exponential";
         case Type::FLOOR: return "Floor";
         case Type::FORWARD_FFT: return "Forward FFT";
@@ -227,6 +228,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::NOTE_TO_FREQUENCY: return "Note to Frequency";
         case Type::NOT_GATE: return "Not Gate";
         case Type::RECIPROCAL: return "Reciprocal";
+        case Type::TRIGONOMETRIC: return "Trigonometric";
         case Type::CLOCK_TRIGGER: return "Clock Trigger";
         case Type::DIFFERENTIATOR: return "Differentiator";
         case Type::INTEGRATOR: return "Integrator";
@@ -501,8 +503,15 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, comparison);
             node.addInput(++counter, "Input", comparison->getInput());
             node.addInput(++counter, "Threshold", comparison->getThreshold());
-            node.addInput(++counter, "Mode", comparison->getMode());
             node.addOutput(++counter, "Output", comparison->getOutput());
+            return node;
+        }
+        case Type::DIVIDE: {
+            std::shared_ptr<dsp::Divide> divide = std::make_shared<dsp::Divide>();
+            Node node(id, type, position, divide);
+            node.addInput(++counter, "Input", divide->getInput());
+            node.addInput(++counter, "Divisor", divide->getDivisor());
+            node.addOutput(++counter, "Output", divide->getOutput());
             return node;
         }
         case Type::EXP2: {
@@ -569,6 +578,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Multiply> multiply = std::make_shared<dsp::Multiply>();
             Node node(id, type, position, multiply);
             node.addInput(++counter, "Input", multiply->getInput());
+            node.addInput(++counter, "Factor", multiply->getFactor());
             node.addOutput(++counter, "Output", multiply->getOutput());
             return node;
         }
@@ -599,6 +609,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, reciprocal);
             node.addInput(++counter, "Input", reciprocal->getInput());
             node.addOutput(++counter, "Output", reciprocal->getOutput());
+            return node;
+        }
+        case Type::TRIGONOMETRIC: {
+            std::shared_ptr<dsp::Trigonometric> trigonometric = std::make_shared<dsp::Trigonometric>();
+            Node node(id, type, position, trigonometric);
+            node.addInput(++counter, "Input", trigonometric->getInput());
+            node.addInput(++counter, "Mode", trigonometric->getMode());
+            node.addOutput(++counter, "Output", trigonometric->getOutput());
             return node;
         }
         case Type::CLOCK_TRIGGER: {
@@ -1010,7 +1028,7 @@ void particle::NodeGraph::createNode() {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
                         std::vector<Node> nodes;
                         // TODO: remove for loop here
-                        for (int i = 0; i < 1; ++i) {
+                        for (int i = 0; i < 100; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
                             nodes.push_back(Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));

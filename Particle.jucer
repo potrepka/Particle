@@ -170,6 +170,8 @@
               <FILE id="T23D4o" name="BooleanMask.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/BooleanMask.h"/>
               <FILE id="wkGayR" name="Comparison.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.cpp"/>
               <FILE id="hUlzke" name="Comparison.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.h"/>
+              <FILE id="pCKusO" name="Divide.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Divide.cpp"/>
+              <FILE id="ClG5Yr" name="Divide.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Divide.h"/>
               <FILE id="wVo1jn" name="Exp2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.cpp"/>
               <FILE id="XlE6fb" name="Exp2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.h"/>
               <FILE id="VQUmEM" name="Floor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Floor.cpp"/>
@@ -202,6 +204,9 @@
               <FILE id="fkNA7H" name="NotGate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.h"/>
               <FILE id="wRMwMZ" name="Reciprocal.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.cpp"/>
               <FILE id="x4dwSW" name="Reciprocal.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.h"/>
+              <FILE id="eKKGWT" name="Trigonometric.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/Trigonometric.cpp"/>
+              <FILE id="mxnp9C" name="Trigonometric.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Trigonometric.h"/>
             </GROUP>
             <GROUP id="{B9444817-B1D0-18D3-7B2A-7113FB81DB4C}" name="Trigger">
               <FILE id="XNvGAJ" name="ClockTrigger.cpp" compile="1" resource="0"
