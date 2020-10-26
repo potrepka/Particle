@@ -141,7 +141,7 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                   std::vector<Type>{Type::ABSOLUTE_VALUE,
                                                     Type::BOOLEAN_MASK,
                                                     Type::COMPARISON,
-                                                    Type::DIVIDE,
+                                                    Type::DIVISION,
                                                     Type::EXP2,
                                                     Type::FLOOR,
                                                     Type::FORWARD_FFT,
@@ -150,10 +150,10 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::INVERSE_FFT,
                                                     Type::LOG2,
                                                     Type::MODULO,
-                                                    Type::MULTIPLY,
-                                                    Type::MULTIPLY_FREQUENCY_TIME,
+                                                    Type::MULTIPLICATION,
                                                     Type::NOTE_TO_FREQUENCY,
                                                     Type::NOT_GATE,
+                                                    Type::POWER,
                                                     Type::RECIPROCAL,
                                                     Type::TRIGONOMETRIC}));
     if (isPlugin) {
@@ -214,19 +214,19 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::ABSOLUTE_VALUE: return "Absolute Value";
         case Type::BOOLEAN_MASK: return "Boolean Mask";
         case Type::COMPARISON: return "Comparison";
-        case Type::DIVIDE: return "Divide";
+        case Type::DIVISION: return "Division";
         case Type::EXP2: return "Exponential";
         case Type::FLOOR: return "Floor";
         case Type::FORWARD_FFT: return "Forward FFT";
         case Type::FREQUENCY_TO_NOTE: return "Frequency to Note";
         case Type::IDENTITY: return "Identity";
         case Type::INVERSE_FFT: return "Inverse FFT";
-        case Type::LOG2: return "Logarithm";
+        case Type::LOG2: return "Logarithmic";
         case Type::MODULO: return "Modulo";
-        case Type::MULTIPLY: return "Multiply";
-        case Type::MULTIPLY_FREQUENCY_TIME: return "Multiply Frequency/Time";
+        case Type::MULTIPLICATION: return "Multiplication";
         case Type::NOTE_TO_FREQUENCY: return "Note to Frequency";
         case Type::NOT_GATE: return "Not Gate";
+        case Type::POWER: return "Power";
         case Type::RECIPROCAL: return "Reciprocal";
         case Type::TRIGONOMETRIC: return "Trigonometric";
         case Type::CLOCK_TRIGGER: return "Clock Trigger";
@@ -506,12 +506,12 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addOutput(++counter, "Output", comparison->getOutput());
             return node;
         }
-        case Type::DIVIDE: {
-            std::shared_ptr<dsp::Divide> divide = std::make_shared<dsp::Divide>();
-            Node node(id, type, position, divide);
-            node.addInput(++counter, "Input", divide->getInput());
-            node.addInput(++counter, "Divisor", divide->getDivisor());
-            node.addOutput(++counter, "Output", divide->getOutput());
+        case Type::DIVISION: {
+            std::shared_ptr<dsp::Division> division = std::make_shared<dsp::Division>();
+            Node node(id, type, position, division);
+            node.addInput(++counter, "Input", division->getInput());
+            node.addInput(++counter, "Divisor", division->getDivisor());
+            node.addOutput(++counter, "Output", division->getOutput());
             return node;
         }
         case Type::EXP2: {
@@ -540,8 +540,8 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         case Type::FREQUENCY_TO_NOTE: {
             std::shared_ptr<dsp::FrequencyToNote> toNote = std::make_shared<dsp::FrequencyToNote>();
             Node node(id, type, position, toNote);
-            node.addInput(++counter, "Input", toNote->getInput());
-            node.addOutput(++counter, "Output", toNote->getOutput());
+            node.addInput(++counter, "Frequency", toNote->getInput());
+            node.addOutput(++counter, "Note", toNote->getOutput());
             return node;
         }
         case Type::IDENTITY: {
@@ -574,27 +574,19 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addOutput(++counter, "Output", modulo->getOutput());
             return node;
         }
-        case Type::MULTIPLY: {
-            std::shared_ptr<dsp::Multiply> multiply = std::make_shared<dsp::Multiply>();
-            Node node(id, type, position, multiply);
-            node.addInput(++counter, "Input", multiply->getInput());
-            node.addInput(++counter, "Factor", multiply->getFactor());
-            node.addOutput(++counter, "Output", multiply->getOutput());
-            return node;
-        }
-        case Type::MULTIPLY_FREQUENCY_TIME: {
-            std::shared_ptr<dsp::MultiplyFrequencyTime> multiplyFT = std::make_shared<dsp::MultiplyFrequencyTime>();
-            Node node(id, type, position, multiplyFT);
-            node.addInput(++counter, "Frequency", multiplyFT->getFrequency());
-            node.addInput(++counter, "Time", multiplyFT->getTime());
-            node.addOutput(++counter, "Output", multiplyFT->getOutput());
+        case Type::MULTIPLICATION: {
+            std::shared_ptr<dsp::Multiplication> multiplication = std::make_shared<dsp::Multiplication>();
+            Node node(id, type, position, multiplication);
+            node.addInput(++counter, "Input", multiplication->getInput());
+            node.addInput(++counter, "Factor", multiplication->getFactor());
+            node.addOutput(++counter, "Output", multiplication->getOutput());
             return node;
         }
         case Type::NOTE_TO_FREQUENCY: {
             std::shared_ptr<dsp::NoteToFrequency> toFrequency = std::make_shared<dsp::NoteToFrequency>();
             Node node(id, type, position, toFrequency);
-            node.addInput(++counter, "Input", toFrequency->getInput());
-            node.addOutput(++counter, "Output", toFrequency->getOutput());
+            node.addInput(++counter, "Note", toFrequency->getInput());
+            node.addOutput(++counter, "Frequency", toFrequency->getOutput());
             return node;
         }
         case Type::NOT_GATE: {
@@ -602,6 +594,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, notGate);
             node.addInput(++counter, "Input", notGate->getInput());
             node.addOutput(++counter, "Output", notGate->getOutput());
+            return node;
+        }
+        case Type::POWER: {
+            std::shared_ptr<dsp::Power> power = std::make_shared<dsp::Power>();
+            Node node(id, type, position, power);
+            node.addInput(++counter, "Base", power->getInput());
+            node.addInput(++counter, "Exponent", power->getInput());
+            node.addOutput(++counter, "Output", power->getOutput());
             return node;
         }
         case Type::RECIPROCAL: {

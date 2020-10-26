@@ -170,8 +170,8 @@
               <FILE id="T23D4o" name="BooleanMask.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/BooleanMask.h"/>
               <FILE id="wkGayR" name="Comparison.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.cpp"/>
               <FILE id="hUlzke" name="Comparison.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.h"/>
-              <FILE id="pCKusO" name="Divide.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Divide.cpp"/>
-              <FILE id="ClG5Yr" name="Divide.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Divide.h"/>
+              <FILE id="pCKusO" name="Division.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Division.cpp"/>
+              <FILE id="ClG5Yr" name="Division.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Division.h"/>
               <FILE id="wVo1jn" name="Exp2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.cpp"/>
               <FILE id="XlE6fb" name="Exp2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.h"/>
               <FILE id="VQUmEM" name="Floor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Floor.cpp"/>
@@ -190,18 +190,18 @@
               <FILE id="zqtYYh" name="Log2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Log2.h"/>
               <FILE id="VpAU6B" name="Modulo.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.cpp"/>
               <FILE id="cR8XeK" name="Modulo.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.h"/>
-              <FILE id="t1802f" name="Multiply.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.cpp"/>
-              <FILE id="xt2keG" name="Multiply.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Multiply.h"/>
-              <FILE id="KPxLs4" name="MultiplyFrequencyTime.cpp" compile="1" resource="0"
-                    file="Source/DSP/src/Nodes/Math/MultiplyFrequencyTime.cpp"/>
-              <FILE id="ABwBqa" name="MultiplyFrequencyTime.h" compile="0" resource="0"
-                    file="Source/DSP/src/Nodes/Math/MultiplyFrequencyTime.h"/>
+              <FILE id="t1802f" name="Multiplication.cpp" compile="1" resource="0"
+                    file="Source/DSP/src/Nodes/Math/Multiplication.cpp"/>
+              <FILE id="xt2keG" name="Multiplication.h" compile="0" resource="0"
+                    file="Source/DSP/src/Nodes/Math/Multiplication.h"/>
               <FILE id="LyT62d" name="NoteToFrequency.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Math/NoteToFrequency.cpp"/>
               <FILE id="F6eZGR" name="NoteToFrequency.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Math/NoteToFrequency.h"/>
               <FILE id="QpLfO6" name="NotGate.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.cpp"/>
               <FILE id="fkNA7H" name="NotGate.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/NotGate.h"/>
+              <FILE id="PmqqEw" name="Power.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Power.cpp"/>
+              <FILE id="KXHXuy" name="Power.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Power.h"/>
               <FILE id="wRMwMZ" name="Reciprocal.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.cpp"/>
               <FILE id="x4dwSW" name="Reciprocal.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Reciprocal.h"/>
               <FILE id="eKKGWT" name="Trigonometric.cpp" compile="1" resource="0"
