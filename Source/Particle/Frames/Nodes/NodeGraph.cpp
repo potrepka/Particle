@@ -1028,7 +1028,7 @@ void particle::NodeGraph::createNode() {
                     if (ImGui::MenuItem(Node::getTypeName(type).c_str())) {
                         std::vector<Node> nodes;
                         // TODO: remove for loop here
-                        for (int i = 0; i < 100; ++i) {
+                        for (int i = 0; i < 1; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
                             nodes.push_back(Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));

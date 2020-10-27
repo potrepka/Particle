@@ -54,4 +54,11 @@ void particle::Status::drawInternal() {
     ImGui::Text("%.f FPS", fps);
     ImGui::Text("Nodes: %ld/%ld", numActiveNodes, numNodes);
     ImGui::Text("Connections: %ld/%ld", numActiveConnections, numConnections);
+
+    static float x = 0.0f;
+    ImGui::SliderFloat("Example Slider", &x, 0.0f, 1.0f);
+    ImGui::Button("Example Button");
+    std::vector<float> y {1.0f, 3.0f, 2.0f, 4.0f};
+    ImGui::PlotHistogram("Histogram", y.data(), 4);
+    ImGui::PlotLines("Lines", y.data(), 4);
 }

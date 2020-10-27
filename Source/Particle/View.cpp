@@ -24,7 +24,8 @@ particle::Data &particle::View::getData() {
 }
 
 void particle::View::setup() {
-    data.getStyle().apply();
+    // TODO: persist theme between runs
+    data.getStyle().light();
 
     // TODO: Remove font chooser
     ImGuiIO &io = ImGui::GetIO();
@@ -112,6 +113,16 @@ void particle::View::draw() {
             ImGui::MenuItem("OSC Settings");
             ImGui::Separator();
             ImGui::MenuItem("Status", NULL, &status->isVisible());
+            ImGui::EndMenu();
+        }
+        // TODO: Remove this menu and replace with theme editor
+        if (ImGui::BeginMenu("Theme")) {
+            if (ImGui::MenuItem("Light", NULL, false, true)) {
+                data.getStyle().light(1.0f);
+            }
+            if (ImGui::MenuItem("Dark", NULL, false, true)) {
+                data.getStyle().dark(1.0f);
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
