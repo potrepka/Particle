@@ -7,6 +7,8 @@
 
 #include "DSP.h"
 
+#include <set>
+
 namespace particle {
 
 class NodeGraph : public Frame, public std::enable_shared_from_this<NodeGraph> {
@@ -121,7 +123,7 @@ public:
 
         std::string getTypeName() const;
 
-        void draw();
+        void draw(bool selected = false);
         void drawContent();
         void drawInspector();
 
@@ -220,6 +222,9 @@ private:
     void destroyLinks();
     void createNode();
     void createLink();
+
+    std::vector<int> getSelectedNodes();
+    std::vector<int> getSelectedLinks();
 };
 
 } // namespace particle

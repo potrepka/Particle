@@ -24,25 +24,27 @@ particle::Data &particle::View::getData() {
 }
 
 void particle::View::setup() {
-    // TODO: persist theme between runs
-    data.getStyle().light();
+    data.getStyle().setup();
 
     // TODO: Remove font chooser
     ImGuiIO &io = ImGui::GetIO();
 
-    int numFonts = 3;
+    int numFonts = 4;
 
     ttf.resize(numFonts);
     ttfSize.resize(numFonts);
 
-    ttf[0] = BinaryData::OxygenMonoRegular_ttf;
-    ttfSize[0] = BinaryData::OxygenMonoRegular_ttfSize;
+    ttf[0] = BinaryData::OverpassMonoRegular_ttf;
+    ttfSize[0] = BinaryData::OverpassMonoRegular_ttfSize;
 
-    ttf[1] = BinaryData::FiraCodeRegular_ttf;
-    ttfSize[1] = BinaryData::FiraCodeRegular_ttfSize;
+    ttf[1] = BinaryData::OverpassMonoBold_ttf;
+    ttfSize[1] = BinaryData::OverpassMonoBold_ttfSize;
 
-    ttf[2] = BinaryData::DMMonoRegular_ttf;
-    ttfSize[2] = BinaryData::DMMonoRegular_ttfSize;
+    ttf[2] = BinaryData::OverpassRegular_ttf;
+    ttfSize[2] = BinaryData::OverpassRegular_ttfSize;
+
+    ttf[3] = BinaryData::OverpassBold_ttf;
+    ttfSize[3] = BinaryData::OverpassBold_ttfSize;
 
     fontData.resize(numFonts);
     font.resize(numFonts);
@@ -135,7 +137,7 @@ void particle::View::draw() {
 
     // TODO: Remove font chooser
     ImGui::Begin("Font");
-    const char *items[] = {"Oxygen Mono", "Fira Code", "DM Mono"};
+    const char *items[] = {"Overpass Mono Regular", "Overpass Mono Bold", "Overpass Regular", "Overpass Bold"};
     if (ImGui::BeginCombo("##combo", current_item)) {
         for (int i = 0; i < IM_ARRAYSIZE(items); ++i) {
             bool is_selected = (current_item == items[i]);

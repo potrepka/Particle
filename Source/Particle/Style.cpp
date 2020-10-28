@@ -23,6 +23,13 @@ particle::Style::Style()
         : theme(Theme::CUSTOM)
         , transparency(1.0f) {}
 
+void particle::Style::setup() {
+    // TODO: persist theme between runs
+    light();
+
+    setSizes();
+}
+
 particle::Style::Theme particle::Style::getTheme() const {
     return theme;
 }
@@ -239,6 +246,22 @@ void particle::Style::setColors(const ImColor &background,
         style.colors[imnodes::ColorStyle_BoxSelector] = TRANSPARENT;
         style.colors[imnodes::ColorStyle_BoxSelectorOutline] = item_active;
         style.colors[imnodes::ColorStyle_GridBackground] = TRANSPARENT;
-        style.colors[imnodes::ColorStyle_GridLine] = TRANSPARENT;
+        style.colors[imnodes::ColorStyle_GridLine] = frame;
+    }
+}
+
+void particle::Style::setSizes() {
+    {
+        ImGuiStyle &style = ImGui::GetStyle();
+        // TODO: You can remove this whole block, or add more
+        style.TabRounding = 4.0f;
+    }
+    {
+        imnodes::Style &style = imnodes::GetStyle();
+        style.grid_spacing = 20.0f;
+        style.node_corner_rounding = 7.0f;
+        style.link_thickness = 2.5f;
+        style.pin_quad_side_length = 7.5f;
+        style.pin_offset = 0.0f;
     }
 }

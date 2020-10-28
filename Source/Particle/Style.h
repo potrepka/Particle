@@ -33,6 +33,8 @@ public:
 
     Style();
 
+    void setup();
+
     Theme getTheme() const;
     float getTransparency() const;
 
@@ -70,6 +72,7 @@ private:
                    const ImColor &accent_active,
                    const ImColor &text,
                    const ImColor &text_disabled);
+    void setSizes();
 };
 
 } // namespace particle

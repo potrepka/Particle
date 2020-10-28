@@ -6,7 +6,7 @@ particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp:
         , input(input) {}
 
 void particle::NodeGraph::Input::draw() {
-    imnodes::BeginInputAttribute(id);
+    imnodes::BeginInputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
     ImGui::SetNextItemWidth(100);
     static int x = 0;
     static int y = 0;
@@ -38,7 +38,7 @@ particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<ds
         , output(output) {}
 
 void particle::NodeGraph::Output::draw() {
-    imnodes::BeginOutputAttribute(id);
+    imnodes::BeginOutputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
     ImGui::SetNextItemWidth(100);
     static int x = 0;
     static int y = 0;
@@ -86,7 +86,13 @@ std::string particle::NodeGraph::Node::getTypeName() const {
     return getTypeName(type);
 }
 
-void particle::NodeGraph::Node::draw() {
+void particle::NodeGraph::Node::draw(bool selected) {
+    if (selected) {
+        // TODO: uncomment
+        //imnodes::PushStyleVar(imnodes::StyleVar_NodeBorderThickness, 2.5f);
+        imnodes::PushColorStyle(imnodes::ColorStyle_NodeOutline,
+                                imnodes::GetStyle().colors[imnodes::ColorStyle_LinkSelected]);
+    }
     imnodes::BeginNode(id);
     imnodes::BeginNodeTitleBar();
     ImGui::Text("%s", getTypeName(type).c_str());
@@ -105,6 +111,11 @@ void particle::NodeGraph::Node::draw() {
     }
     ImGui::EndGroup();
     imnodes::EndNode();
+    if (selected) {
+        // TODO: uncomment
+        imnodes::PopColorStyle();
+        //imnodes::PopStyleVar();
+    }
 }
 
 void particle::NodeGraph::Node::drawContent() {
@@ -971,10 +982,14 @@ void particle::NodeGraph::drawInternal() {
         destroyNodes();
         destroyLinks();
     }
+    std::set<int> selectedNodeSet;
+    for (const int node_id : getSelectedNodes()) {
+        selectedNodeSet.insert(node_id);
+    }
     imnodes::BeginNodeEditor();
     createNode();
     for (auto &nodePair : nodes) {
-        nodePair.second.draw();
+        nodePair.second.draw(selectedNodeSet.find(nodePair.first) != selectedNodeSet.end());
     }
     for (auto &linkPair : links) {
         linkPair.second.draw();
@@ -984,34 +999,16 @@ void particle::NodeGraph::drawInternal() {
 }
 
 void particle::NodeGraph::destroyNodes() {
-    int numSelectedNodes = imnodes::NumSelectedNodes();
-    if (numSelectedNodes) {
-        std::vector<int> selectedNodes(numSelectedNodes);
-        imnodes::GetSelectedNodes(selectedNodes.data());
-
-        selectedNodes.erase(std::remove_if(selectedNodes.begin(),
-                                           selectedNodes.end(),
-                                           [this](int nodeId) { return nodes.find(nodeId) == nodes.end(); }),
-                            selectedNodes.end());
-
+    std::vector<int> selectedNodes = getSelectedNodes();
+    if (!selectedNodes.empty()) {
         getData().pushAction(std::make_shared<DestroyNodes>(shared_from_this(), selectedNodes));
     }
 }
 
 void particle::NodeGraph::destroyLinks() {
-    int numSelectedLinks = imnodes::NumSelectedLinks();
-    if (numSelectedLinks) {
-        std::vector<int> selectedLinks(numSelectedLinks);
-        imnodes::GetSelectedLinks(selectedLinks.data());
-
-        selectedLinks.erase(std::remove_if(selectedLinks.begin(),
-                                           selectedLinks.end(),
-                                           [this](int linkId) { return links.find(linkId) == links.end(); }),
-                            selectedLinks.end());
-
-        if (!selectedLinks.empty()) {
-            getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
-        }
+    std::vector<int> selectedLinks = getSelectedLinks();
+    if (!selectedLinks.empty()) {
+        getData().pushAction(std::make_shared<DestroyLinks>(shared_from_this(), selectedLinks));
     }
 }
 
@@ -1052,4 +1049,32 @@ void particle::NodeGraph::createLink() {
         Link link = Link::generate(nodes, id, from, to);
         getData().pushAction(std::make_shared<CreateLinks>(shared_from_this(), std::vector<Link>{link}));
     }
+}
+
+std::vector<int> particle::NodeGraph::getSelectedNodes() {
+    std::vector<int> selectedNodes;
+    int numSelectedNodes = imnodes::NumSelectedNodes();
+    if (numSelectedNodes) {
+        selectedNodes.resize(numSelectedNodes);
+        imnodes::GetSelectedNodes(selectedNodes.data());
+        selectedNodes.erase(std::remove_if(selectedNodes.begin(),
+                                           selectedNodes.end(),
+                                           [this](int nodeId) { return nodes.find(nodeId) == nodes.end(); }),
+                            selectedNodes.end());
+    }
+    return selectedNodes;
+}
+
+std::vector<int> particle::NodeGraph::getSelectedLinks() {
+    std::vector<int> selectedLinks;
+    int numSelectedLinks = imnodes::NumSelectedLinks();
+    if (numSelectedLinks) {
+        selectedLinks.resize(numSelectedLinks);
+        imnodes::GetSelectedLinks(selectedLinks.data());
+        selectedLinks.erase(std::remove_if(selectedLinks.begin(),
+                                           selectedLinks.end(),
+                                           [this](int linkId) { return links.find(linkId) == links.end(); }),
+                            selectedLinks.end());
+    }
+    return selectedLinks;
 }
