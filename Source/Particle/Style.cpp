@@ -24,9 +24,9 @@ particle::Style::Style()
         , transparency(1.0f) {}
 
 void particle::Style::setup() {
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    time_t hour = std::chrono::system_clock::to_time_t(now) % 3600;
-    if (hour >= 6 && hour < 18) {
+    std::time_t t = std::time(0);
+    std::tm *now = std::localtime(&t);
+    if (now->tm_hour >= 6 && now->tm_hour < 18) {
         light();
     } else {
         dark();
