@@ -1,8 +1,8 @@
 #include "Variable.h"
 
-dsp::Variable::Variable(Type type)
+dsp::Variable::Variable(Sample value, Type type)
         : Producer(type)
-        , value(0.0) {}
+        , value(value) {}
 
 dsp::Sample dsp::Variable::get() const {
     return value;
@@ -11,12 +11,6 @@ dsp::Sample dsp::Variable::get() const {
 void dsp::Variable::set(Sample value) {
     lock();
     this->value = value;
-    unlock();
-}
-
-void dsp::Variable::apply(std::function<Sample(Sample)> f) {
-    lock();
-    value = f(value);
     unlock();
 }
 

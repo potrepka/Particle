@@ -132,6 +132,8 @@
               <FILE id="p8qW5h" name="DryWet.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.h"/>
               <FILE id="tcJ9qP" name="Envelope.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.cpp"/>
               <FILE id="QuKqWu" name="Envelope.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.h"/>
+              <FILE id="dGobot" name="Lag.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Lag.cpp"/>
+              <FILE id="NKdMSf" name="Lag.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Lag.h"/>
               <FILE id="W7NCcj" name="Shaper.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Shaper.cpp"/>
               <FILE id="E3zN9f" name="Shaper.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Shaper.h"/>
             </GROUP>
@@ -180,8 +182,6 @@
               <FILE id="hUlzke" name="Comparison.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Comparison.h"/>
               <FILE id="pCKusO" name="Division.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Division.cpp"/>
               <FILE id="ClG5Yr" name="Division.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Division.h"/>
-              <FILE id="wVo1jn" name="Exp2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.cpp"/>
-              <FILE id="XlE6fb" name="Exp2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Exp2.h"/>
               <FILE id="VQUmEM" name="Floor.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Floor.cpp"/>
               <FILE id="Yx6ylU" name="Floor.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Floor.h"/>
               <FILE id="uPZgkm" name="ForwardFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/ForwardFFT.cpp"/>
@@ -194,8 +194,8 @@
               <FILE id="dmXm6S" name="Identity.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Identity.h"/>
               <FILE id="QeqwAn" name="InverseFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.cpp"/>
               <FILE id="fvHbMQ" name="InverseFFT.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.h"/>
-              <FILE id="AySFSz" name="Log2.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Log2.cpp"/>
-              <FILE id="zqtYYh" name="Log2.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Log2.h"/>
+              <FILE id="f1D7YF" name="Logarithm.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Logarithm.cpp"/>
+              <FILE id="LrIC8k" name="Logarithm.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Logarithm.h"/>
               <FILE id="VpAU6B" name="Modulo.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.cpp"/>
               <FILE id="cR8XeK" name="Modulo.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Modulo.h"/>
               <FILE id="t1802f" name="Multiplication.cpp" compile="1" resource="0"

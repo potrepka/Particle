@@ -14,9 +14,16 @@ namespace particle {
 class NodeGraph : public Frame, public std::enable_shared_from_this<NodeGraph> {
 
 public:
+    union FloatInt {
+        FloatInt(dsp::Type type, dsp::Sample value);
+        float valueFloat;
+        int valueInt;
+    };
+
     struct Input : public Named {
         int id;
         std::shared_ptr<dsp::Input> input;
+        FloatInt value;
 
         Input(int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
 
@@ -27,6 +34,7 @@ public:
     struct Output : public Named {
         int id;
         std::shared_ptr<dsp::Output> output;
+        FloatInt value;
     
         Output(int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
 
@@ -49,6 +57,7 @@ public:
             COMPRESSOR_GATE,
             DRY_WET,
             ENVELOPE,
+            LAG,
             SHAPER,
             AUDIO_INPUT,
             AUDIO_INPUT_CLIPPING,
@@ -68,13 +77,11 @@ public:
             BOOLEAN_MASK,
             COMPARISON,
             DIVISION,
-            EXP2,
             FLOOR,
             FORWARD_FFT,
             FREQUENCY_TO_NOTE,
-            IDENTITY,
             INVERSE_FFT,
-            LOG2,
+            LOGARITHM,
             MODULO,
             MULTIPLICATION,
             NOTE_TO_FREQUENCY,
@@ -82,6 +89,10 @@ public:
             POWER,
             RECIPROCAL,
             TRIGONOMETRIC,
+            BEAT_DURATION,
+            BEAT_RATE,
+            TIME_SIGNATURE,
+            TRANSPORT_STATE,
             CLOCK_TRIGGER,
             DIFFERENTIATOR,
             INTEGRATOR,
@@ -91,13 +102,12 @@ public:
             SEQUENCER,
             BUFFER_DURATION,
             BUFFER_RATE,
+            EULER,
+            PHI,
+            PI,
             SAMPLE_DURATION,
             SAMPLE_RATE,
-            VARIABLE,
-            BEAT_DURATION,
-            BEAT_RATE,
-            TIME_SIGNATURE,
-            TRANSPORT_STATE
+            VARIABLE
         };
 
         struct Category : public Named {
@@ -134,10 +144,16 @@ public:
     
     struct Link {
         int id;
-        Output from;
-        Input to;
+        int from;
+        int to;
+        std::shared_ptr<dsp::Output> output;
+        std::shared_ptr<dsp::Input> input;
 
-        Link(int id = 0, Output from = Output(), Input to = Input());
+        Link(int id = 0,
+             int from = 0,
+             int to = 0,
+             std::shared_ptr<dsp::Output> output = nullptr,
+             std::shared_ptr<dsp::Input> input = nullptr);
 
         void draw();
         void drawInspector();

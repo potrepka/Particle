@@ -136,22 +136,22 @@ void particle::View::draw() {
     //ImGui::End();
 
     // TODO: Remove font chooser
-    ImGui::Begin("Font");
-    const char *items[] = {"Overpass Mono Regular", "Overpass Mono Bold", "Overpass Regular", "Overpass Bold"};
-    if (ImGui::BeginCombo("##combo", current_item)) {
-        for (int i = 0; i < IM_ARRAYSIZE(items); ++i) {
-            bool is_selected = (current_item == items[i]);
-            if (ImGui::Selectable(items[i], is_selected)) {
-                current_item = items[i];
-                current_index = i;
-            }
-            if (is_selected) {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-        ImGui::EndCombo();
-    }
-    ImGui::End();
+    //ImGui::Begin("Font");
+    //const char *items[] = {"Overpass Mono Regular", "Overpass Mono Bold", "Overpass Regular", "Overpass Bold"};
+    //if (ImGui::BeginCombo("##combo", current_item)) {
+    //    for (int i = 0; i < IM_ARRAYSIZE(items); ++i) {
+    //        bool is_selected = (current_item == items[i]);
+    //        if (ImGui::Selectable(items[i], is_selected)) {
+    //            current_item = items[i];
+    //            current_index = i;
+    //        }
+    //        if (is_selected) {
+    //            ImGui::SetItemDefaultFocus();
+    //        }
+    //    }
+    //    ImGui::EndCombo();
+    //}
+    //ImGui::End();
 
     for (const auto& frame : frames) {
         frame->draw();
