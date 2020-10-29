@@ -3,6 +3,8 @@
 #include "imgui.h"
 #include "imnodes.h"
 
+#include <chrono>
+
 namespace particle {
 
 class Style {

@@ -24,9 +24,13 @@ particle::Style::Style()
         , transparency(1.0f) {}
 
 void particle::Style::setup() {
-    // TODO: persist theme between runs
-    light();
-
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    time_t hour = std::chrono::system_clock::to_time_t(now) % 3600;
+    if (hour >= 6 && hour < 18) {
+        light();
+    } else {
+        dark();
+    }
     setSizes();
 }
 
