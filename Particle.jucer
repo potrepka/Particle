@@ -128,8 +128,8 @@
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.cpp"/>
               <FILE id="xh4OvT" name="CompressorGate.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.h"/>
-              <FILE id="K0F5OH" name="DryWet.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.cpp"/>
-              <FILE id="p8qW5h" name="DryWet.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.h"/>
+              <FILE id="Qq2QIb" name="Crossfader.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Crossfader.cpp"/>
+              <FILE id="wBtdtE" name="Crossfader.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Crossfader.h"/>
               <FILE id="tcJ9qP" name="Envelope.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.cpp"/>
               <FILE id="QuKqWu" name="Envelope.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.h"/>
               <FILE id="dGobot" name="Lag.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Lag.cpp"/>
@@ -236,6 +236,8 @@
               <FILE id="RL03NA" name="SampleAndHold.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/SampleAndHold.h"/>
               <FILE id="kus6lM" name="Sequencer.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/Sequencer.cpp"/>
               <FILE id="ENGPbp" name="Sequencer.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/Sequencer.h"/>
+              <FILE id="FyGYrc" name="TriggerHold.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Trigger/TriggerHold.cpp"/>
+              <FILE id="RHqB1n" name="TriggerHold.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Trigger/TriggerHold.h"/>
             </GROUP>
             <GROUP id="{EE46FB73-4603-43AF-00B8-7885FB36A254}" name="Variables">
               <FILE id="NEjJuX" name="BufferDuration.cpp" compile="1" resource="0"

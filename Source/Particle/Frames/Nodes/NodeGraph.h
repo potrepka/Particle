@@ -55,7 +55,7 @@ public:
             VARIABLE_DELAY,
             CLIPPER,
             COMPRESSOR_GATE,
-            DRY_WET,
+            CROSSFADER,
             ENVELOPE,
             LAG,
             SHAPER,
@@ -100,6 +100,7 @@ public:
             RESET_TRIGGER,
             SAMPLE_AND_HOLD,
             SEQUENCER,
+            TRIGGER_HOLD,
             BUFFER_DURATION,
             BUFFER_RATE,
             EULER,
@@ -107,6 +108,7 @@ public:
             PI,
             SAMPLE_DURATION,
             SAMPLE_RATE,
+            TAU,
             VARIABLE
         };
 

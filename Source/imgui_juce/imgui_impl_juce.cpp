@@ -17,34 +17,31 @@ void ImGui_ImplJUCE_Init() {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-    const int offset_for_function_keys = 256 - 0xF700;
-    io.KeyMap[ImGuiKey_Tab] = juce::KeyPress::tabKey;
-    io.KeyMap[ImGuiKey_LeftArrow] = juce::KeyPress::leftKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_RightArrow] = juce::KeyPress::rightKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_UpArrow] = juce::KeyPress::upKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_DownArrow] = juce::KeyPress::downKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_PageUp] = juce::KeyPress::pageUpKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_PageDown] = juce::KeyPress::pageDownKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_Home] = juce::KeyPress::homeKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_End] = juce::KeyPress::endKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_Insert] = juce::KeyPress::insertKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_Delete] = juce::KeyPress::deleteKey + offset_for_function_keys;
-    io.KeyMap[ImGuiKey_Backspace] = juce::KeyPress::backspaceKey;
-    io.KeyMap[ImGuiKey_Space] = juce::KeyPress::spaceKey;
-    io.KeyMap[ImGuiKey_Enter] = 13;
-    io.KeyMap[ImGuiKey_Escape] = juce::KeyPress::escapeKey;
-    io.KeyMap[ImGuiKey_KeyPadEnter] = 13;
-    io.KeyMap[ImGuiKey_A] = 'A';
-    io.KeyMap[ImGuiKey_C] = 'C';
-    io.KeyMap[ImGuiKey_V] = 'V';
-    io.KeyMap[ImGuiKey_X] = 'X';
-    io.KeyMap[ImGuiKey_Y] = 'Y';
-    io.KeyMap[ImGuiKey_Z] = 'Z';
+    //io.KeyMap[ImGuiKey_Tab] = juce::KeyPress::tabKey;
+    //io.KeyMap[ImGuiKey_LeftArrow] = juce::KeyPress::leftKey;
+    //io.KeyMap[ImGuiKey_RightArrow] = juce::KeyPress::rightKey;
+    //io.KeyMap[ImGuiKey_UpArrow] = juce::KeyPress::upKey;
+    //io.KeyMap[ImGuiKey_DownArrow] = juce::KeyPress::downKey;
+    //io.KeyMap[ImGuiKey_PageUp] = juce::KeyPress::pageUpKey;
+    //io.KeyMap[ImGuiKey_PageDown] = juce::KeyPress::pageDownKey;
+    //io.KeyMap[ImGuiKey_Home] = juce::KeyPress::homeKey;
+    //io.KeyMap[ImGuiKey_End] = juce::KeyPress::endKey;
+    //io.KeyMap[ImGuiKey_Insert] = juce::KeyPress::insertKey;
+    //io.KeyMap[ImGuiKey_Delete] = juce::KeyPress::deleteKey;
+    //io.KeyMap[ImGuiKey_Backspace] = juce::KeyPress::backspaceKey;
+    //io.KeyMap[ImGuiKey_Space] = juce::KeyPress::spaceKey;
+    //io.KeyMap[ImGuiKey_Enter] = 13;
+    //io.KeyMap[ImGuiKey_Escape] = juce::KeyPress::escapeKey;
+    //io.KeyMap[ImGuiKey_KeyPadEnter] = 13;
+    //io.KeyMap[ImGuiKey_A] = 'A';
+    //io.KeyMap[ImGuiKey_C] = 'C';
+    //io.KeyMap[ImGuiKey_V] = 'V';
+    //io.KeyMap[ImGuiKey_X] = 'X';
+    //io.KeyMap[ImGuiKey_Y] = 'Y';
+    //io.KeyMap[ImGuiKey_Z] = 'Z';
 
-    for (int n = 0; n < ImGuiKey_COUNT; ++n) {
-        if (io.KeyMap[n] < -1 || io.KeyMap[n] >= IM_ARRAYSIZE(io.KeysDown)) {
-            io.KeyMap[n] = -1;
-        }
+    for (int i = 0; i < IM_ARRAYSIZE(io.KeyMap); ++i) {
+        io.KeyMap[i] = i + 256;
     }
 
     g_MouseCursorHidden = false;
@@ -136,8 +133,36 @@ bool ImGui_ImplJUCE_HandleKeyStateChanged(const bool isKeyDown, juce::Component 
     if (io.KeySuper) {
         io.KeyMods |= ImGuiKeyModFlags_Super;
     }
-    for (int i = 8; i < IM_ARRAYSIZE(io.KeysDown); ++i) {
+    for (int i = 8; i < 256; ++i) {
         io.KeysDown[i] = juce::KeyPress::isKeyCurrentlyDown(i);
+    }
+    for (int i = 0; i < IM_ARRAYSIZE(io.KeyMap); ++i) {
+        int key;
+        switch (i) {
+            case ImGuiKey_Tab: key = juce::KeyPress::tabKey; break;
+            case ImGuiKey_LeftArrow: key = juce::KeyPress::leftKey; break;
+            case ImGuiKey_RightArrow: key = juce::KeyPress::rightKey; break;
+            case ImGuiKey_UpArrow: key = juce::KeyPress::upKey; break;
+            case ImGuiKey_DownArrow: key = juce::KeyPress::downKey; break;
+            case ImGuiKey_PageUp: key = juce::KeyPress::pageUpKey; break;
+            case ImGuiKey_PageDown: key = juce::KeyPress::pageDownKey; break;
+            case ImGuiKey_Home: key = juce::KeyPress::homeKey; break;
+            case ImGuiKey_End: key = juce::KeyPress::endKey; break;
+            case ImGuiKey_Insert: key = juce::KeyPress::insertKey; break;
+            case ImGuiKey_Delete: key = juce::KeyPress::deleteKey; break;
+            case ImGuiKey_Backspace: key = juce::KeyPress::backspaceKey; break;
+            case ImGuiKey_Space: key = juce::KeyPress::spaceKey; break;
+            case ImGuiKey_Enter: key = 13; break;
+            case ImGuiKey_Escape: key = juce::KeyPress::escapeKey; break;
+            case ImGuiKey_KeyPadEnter: key = 13; break;
+            case ImGuiKey_A: key = 'A'; break;
+            case ImGuiKey_C: key = 'C'; break;
+            case ImGuiKey_V: key = 'V'; break;
+            case ImGuiKey_X: key = 'X'; break;
+            case ImGuiKey_Y: key = 'Y'; break;
+            case ImGuiKey_Z: key = 'Z'; break;
+        }
+        io.KeysDown[io.KeyMap[i]] = juce::KeyPress::isKeyCurrentlyDown(key);
     }
     return io.WantCaptureKeyboard;
 }

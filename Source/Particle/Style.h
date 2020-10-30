@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "imnodes.h"
+#include "implot.h"
 
 #include <ctime>
 

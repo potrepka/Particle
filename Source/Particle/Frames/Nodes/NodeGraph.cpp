@@ -49,28 +49,50 @@ void particle::NodeGraph::Input::draw() {
         }
     } else {
         input->lock();
-        switch (input->getType()) {
-            case dsp::Type::RATIO:
-            case dsp::Type::SECONDS:
-            case dsp::Type::HERTZ:
-            case dsp::Type::LOGARITHMIC: {
-                float firstSample = input->getWrapper().getSample(0, 0);
-                ImGui::DragFloat(getName().c_str(),
-                                 &firstSample,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f,
-                                 ("%." + std::to_string(precision) + "f").c_str(),
-                                 ImGuiSliderFlags_ClampOnInput);
-                break;
-            }
-            case dsp::Type::INTEGER:
-            case dsp::Type::BOOLEAN: {
-                int firstSample = input->getWrapper().getSample(0, 0);
-                ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
-                break;
-            }
+        std::vector<dsp::Sample> x(input->getNumSamples());
+        std::iota(x.begin(), x.end(), 0);
+        // TODO: remove commented code
+
+        //switch (input->getType()) {
+        //    case dsp::Type::RATIO:
+        //    case dsp::Type::SECONDS:
+        //    case dsp::Type::HERTZ:
+        //    case dsp::Type::LOGARITHMIC: {
+        //        float firstSample = input->getWrapper().getSample(0, 0);
+        //        ImGui::DragFloat(getName().c_str(),
+        //                         &firstSample,
+        //                         0.0f,
+        //                         0.0f,
+        //                         0.0f,
+        //                         ("%." + std::to_string(precision) + "f").c_str(),
+        //                         ImGuiSliderFlags_ClampOnInput);
+        //        break;
+        //    }
+        //    case dsp::Type::INTEGER:
+        //    case dsp::Type::BOOLEAN: {
+        //        int firstSample = input->getWrapper().getSample(0, 0);
+        //        ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+        //        break;
+        //    }
+        //}
+        ImPlot::SetNextPlotLimits(0, input->getNumSamples(), -1, 1);
+        if (ImPlot::BeginPlot(("##" + getName()).c_str(),
+                              NULL,
+                              NULL,
+                              ImVec2(100, ImGui::GetFrameHeight()),
+                              ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
+                              ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
+                              ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
+            ImPlot::PlotLine("Channel 0",
+                             x.data(),
+                             input->getWrapper().getChannelPointer(0),
+                             input->getNumSamples(),
+                             0,
+                             sizeof(dsp::Sample));
+            ImPlot::EndPlot();
         }
+        ImGui::SameLine();
+        ImGui::Text("%s", getName().c_str());
         input->unlock();
     }
     imnodes::EndInputAttribute();
@@ -90,28 +112,52 @@ void particle::NodeGraph::Output::draw() {
     ImGui::SetNextItemWidth(100);
     int precision = 2;
     output->lock();
-    switch (output->getType()) {
-        case dsp::Type::RATIO:
-        case dsp::Type::SECONDS:
-        case dsp::Type::HERTZ:
-        case dsp::Type::LOGARITHMIC: {
-            float firstSample = output->getWrapper().getSample(0, 0);
-            ImGui::DragFloat(getName().c_str(),
-                             &firstSample,
-                             0.0f,
-                             0.0f,
-                             0.0f,
-                             ("%." + std::to_string(precision) + "f").c_str(),
-                             ImGuiSliderFlags_ClampOnInput);
-            break;
-        }
-        case dsp::Type::INTEGER:
-        case dsp::Type::BOOLEAN: {
-            int firstSample = output->getWrapper().getSample(0, 0);
-            ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
-            break;
-        }
+    std::vector<dsp::Sample> x(output->getNumSamples());
+    std::iota(x.begin(), x.end(), 0);
+    // TODO: remove commented code
+
+    //switch (output->getType()) {
+    //    case dsp::Type::RATIO:
+    //    case dsp::Type::SECONDS:
+    //    case dsp::Type::HERTZ:
+    //    case dsp::Type::LOGARITHMIC: {
+
+    //        float firstSample = output->getWrapper().getSample(0, 0);
+    //        ImGui::DragFloat(getName().c_str(),
+    //                         &firstSample,
+    //                         0.0f,
+    //                         0.0f,
+    //                         0.0f,
+    //                         ("%." + std::to_string(precision) + "f").c_str(),
+    //                         ImGuiSliderFlags_ClampOnInput);
+    //        break;
+    //    }
+    //    case dsp::Type::INTEGER:
+    //    case dsp::Type::BOOLEAN: {
+    //        int firstSample = output->getWrapper().getSample(0, 0);
+    //        ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+    //        break;
+    //    }
+    //}
+
+    ImPlot::SetNextPlotLimits(0, output->getNumSamples(), -1, 1);
+    if (ImPlot::BeginPlot(("##" + getName()).c_str(),
+                          NULL,
+                          NULL,
+                          ImVec2(100, ImGui::GetFrameHeight()),
+                          ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
+                          ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
+                          ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
+        ImPlot::PlotLine("Channel 0",
+                         x.data(),
+                         output->getWrapper().getChannelPointer(0),
+                         output->getNumSamples(),
+                         0,
+                         sizeof(dsp::Sample));
+        ImPlot::EndPlot();
     }
+    ImGui::SameLine();
+    ImGui::Text("%s", getName().c_str());
     output->unlock();
     imnodes::EndOutputAttribute();
 }
@@ -177,6 +223,15 @@ void particle::NodeGraph::Node::drawContent() {
     // TODO: remove this comment
     // ImGui::BeginChild("Child", ImVec2(200, 200));
     // ImGui::EndChild();
+
+    switch (type) {
+        case Type::RESET_TRIGGER: {
+            std::shared_ptr<dsp::ResetTrigger> resetTrigger = std::dynamic_pointer_cast<dsp::ResetTrigger>(node);
+            if (ImGui::Button("Reset")) {
+                resetTrigger.reset();
+            }
+        } break;
+    }
 }
 
 void particle::NodeGraph::Node::drawInspector() {}
@@ -191,7 +246,8 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
     categories.push_back(Category("Delays", std::vector<Type>{Type::CONVOLVER, Type::VARIABLE_DELAY}));
     categories.push_back(Category(
             "Dynamics",
-            std::vector<Type>{Type::CLIPPER, Type::COMPRESSOR_GATE, Type::DRY_WET, Type::ENVELOPE, Type::LAG, Type::SHAPER}));
+            std::vector<Type>{
+                    Type::CLIPPER, Type::COMPRESSOR_GATE, Type::CROSSFADER, Type::ENVELOPE, Type::LAG, Type::SHAPER}));
     categories.push_back(Category("External",
                                   std::vector<Type>{Type::AUDIO_INPUT,
                                                     Type::AUDIO_INPUT_CLIPPING,
@@ -235,7 +291,8 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::ON_OFF,
                                                     Type::RESET_TRIGGER,
                                                     Type::SAMPLE_AND_HOLD,
-                                                    Type::SEQUENCER}));
+                                                    Type::SEQUENCER,
+                                                    Type::TRIGGER_HOLD}));
     categories.push_back(Category("Variables",
                                   std::vector<Type>{Type::BUFFER_DURATION,
                                                     Type::BUFFER_RATE,
@@ -244,6 +301,7 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::PI,
                                                     Type::SAMPLE_DURATION,
                                                     Type::SAMPLE_RATE,
+                                                    Type::TAU,
                                                     Type::VARIABLE}));
     return categories;
      
@@ -262,7 +320,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::VARIABLE_DELAY: return "Variable Delay";
         case Type::CLIPPER: return "Clipper";
         case Type::COMPRESSOR_GATE: return "Compressor/Gate";
-        case Type::DRY_WET: return "Dry/Wet";
+        case Type::CROSSFADER: return "Crossfader";
         case Type::ENVELOPE: return "Envelope";
         case Type::LAG: return "Lag";
         case Type::SHAPER: return "Shaper";
@@ -307,6 +365,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::RESET_TRIGGER: return "Reset Trigger";
         case Type::SAMPLE_AND_HOLD: return "Sample & Hold";
         case Type::SEQUENCER: return "Sequencer";
+        case Type::TRIGGER_HOLD: return "Trigger Hold";
         case Type::BUFFER_DURATION: return "Buffer Duration";
         case Type::BUFFER_RATE: return "Buffer Rate";
         case Type::EULER: return "Euler";
@@ -314,6 +373,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::PI: return "Pi";
         case Type::SAMPLE_DURATION: return "Sample Duration";
         case Type::SAMPLE_RATE: return "Sample Rate";
+        case Type::TAU: return "Tau";
         case Type::VARIABLE: return "Variable";
 
     }
@@ -415,13 +475,13 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addOutput(++counter, "Gain Response", compressorGate->getGainResponse());
             return node;
         }
-        case Type::DRY_WET: {
-            std::shared_ptr<dsp::DryWet> dryWet = std::make_shared<dsp::DryWet>();
-            Node node(id, type, position, dryWet);
-            node.addInput(++counter, "Dry", dryWet->getDry());
-            node.addInput(++counter, "Wet", dryWet->getWet());
-            node.addInput(++counter, "Mix Amount", dryWet->getMixAmount());
-            node.addOutput(++counter, "Output", dryWet->getOutput());
+        case Type::CROSSFADER: {
+            std::shared_ptr<dsp::Crossfader> crossfader = std::make_shared<dsp::Crossfader>();
+            Node node(id, type, position, crossfader);
+            node.addInput(++counter, "Input", crossfader->getInput());
+            node.addInput(++counter, "Position", crossfader->getPosition());
+            node.addOutput(++counter, "A", crossfader->getA());
+            node.addOutput(++counter, "B", crossfader->getB());
             return node;
         }
         case Type::ENVELOPE: {
@@ -513,6 +573,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", onePole->getInput());
             node.addInput(++counter, "Frequency", onePole->getFrequency());
             node.addInput(++counter, "Mode", onePole->getMode());
+            node.addInput(++counter, "Reset", onePole->getReset());
             node.addOutput(++counter, "Output", onePole->getOutput());
             return node;
         }
@@ -614,6 +675,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::FrequencyToNote> toNote = std::make_shared<dsp::FrequencyToNote>();
             Node node(id, type, position, toNote);
             node.addInput(++counter, "Frequency", toNote->getInput());
+            node.addInput(++counter, "Tuning Frequency", toNote->getTuningFrequency());
             node.addOutput(++counter, "Note", toNote->getOutput());
             return node;
         }
@@ -653,6 +715,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::NoteToFrequency> toFrequency = std::make_shared<dsp::NoteToFrequency>();
             Node node(id, type, position, toFrequency);
             node.addInput(++counter, "Note", toFrequency->getInput());
+            node.addInput(++counter, "Tuning Frequency", toFrequency->getTuningFrequency());
             node.addOutput(++counter, "Frequency", toFrequency->getOutput());
             return node;
         }
@@ -775,6 +838,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addOutput(++counter, "Output", sequencer->getOutput());
             return node;
         }
+        case Type::TRIGGER_HOLD: {
+            std::shared_ptr<dsp::TriggerHold> triggerHold = std::make_shared<dsp::TriggerHold>();
+            Node node(id, type, position, triggerHold);
+            node.addInput(++counter, "Input", triggerHold->getInput());
+            node.addInput(++counter, "Hold Time", triggerHold->getHoldTime());
+            node.addOutput(++counter, "Output", triggerHold->getOutput());
+            return node;
+        }
         case Type::BUFFER_DURATION: {
             std::shared_ptr<dsp::BufferDuration> bufferDuration = std::make_shared<dsp::BufferDuration>();
             Node node(id, type, position, bufferDuration);
@@ -815,6 +886,12 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::SampleRate> sampleRate = std::make_shared<dsp::SampleRate>();
             Node node(id, type, position, sampleRate);
             node.addOutput(++counter, "Output", sampleRate->getOutput());
+            return node;
+        }
+        case Type::TAU: {
+            std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::TAU);
+            Node node(id, type, position, variable);
+            node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::VARIABLE: {
@@ -1054,6 +1131,16 @@ imnodes::EditorContext *particle::NodeGraph::getContext() const {
 void particle::NodeGraph::drawInternal() {
     ImGuiIO &io = ImGui::GetIO();
     imnodes::EditorContextSet(context);
+    ImVec2 panning = imnodes::EditorContextGetPanning();
+    {
+        
+        float speed = io.KeyAlt ? 1.0f : io.KeyShift ? 100.0f : 10.0f;
+        int x = ImGui::IsKeyDown(io.KeyMap[ImGuiKey_LeftArrow]) - ImGui::IsKeyDown(io.KeyMap[ImGuiKey_RightArrow]);
+        int y = ImGui::IsKeyDown(io.KeyMap[ImGuiKey_UpArrow]) - ImGui::IsKeyDown(io.KeyMap[ImGuiKey_DownArrow]);
+        panning.x += speed * x;
+        panning.y += speed * y;
+        imnodes::EditorContextResetPanning(panning);
+    }
     if (!ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(io.KeyMap[ImGuiKey_Backspace])) {
         destroyNodes();
         destroyLinks();
@@ -1063,6 +1150,7 @@ void particle::NodeGraph::drawInternal() {
         selectedNodeSet.insert(node_id);
     }
     imnodes::BeginNodeEditor();
+    ImGui::Text("(%.0f, %.0f)", panning.x, panning.y);
     createNode();
     for (auto &nodePair : nodes) {
         nodePair.second.draw(selectedNodeSet.find(nodePair.first) != selectedNodeSet.end());

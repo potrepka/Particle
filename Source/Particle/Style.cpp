@@ -250,22 +250,39 @@ void particle::Style::setColors(const ImColor &background,
         style.colors[imnodes::ColorStyle_BoxSelector] = TRANSPARENT;
         style.colors[imnodes::ColorStyle_BoxSelectorOutline] = item_active;
         style.colors[imnodes::ColorStyle_GridBackground] = TRANSPARENT;
-        style.colors[imnodes::ColorStyle_GridLine] = frame;
+        style.colors[imnodes::ColorStyle_GridLine] = TRANSPARENT;
     }
+    {
+        ImPlotStyle &style = ImPlot::GetStyle();
+        style.Colors[ImPlotCol_Line] = item;
+        style.Colors[ImPlotCol_Fill] = item;
+        style.Colors[ImPlotCol_FrameBg] = frame;
+        style.Colors[ImPlotCol_PlotBg] = frame;
+        style.Colors[ImPlotCol_Selection] = accent_active;
+        style.Colors[ImPlotCol_Query] = ImColor(1.0f, 0.0f, 1.0f, 1.0f);  
+    }
+    
 }
 
 void particle::Style::setSizes() {
     {
         ImGuiStyle &style = ImGui::GetStyle();
         // TODO: You can remove this whole block, or add more
+        // TODO: You can also remove the line below, as 4.0f is the default
         style.TabRounding = 4.0f;
     }
     {
         imnodes::Style &style = imnodes::GetStyle();
-        style.grid_spacing = 20.0f;
+        style.grid_spacing = 300.0f;
         style.node_corner_rounding = 7.0f;
         style.link_thickness = 2.5f;
         style.pin_quad_side_length = 7.5f;
         style.pin_offset = 0.0f;
+    }
+    {
+        ImPlotStyle &style = ImPlot::GetStyle();
+        style.PlotBorderSize = 0.0f;
+        style.PlotPadding = ImGui::GetStyle().FramePadding;
+        style.AntiAliasedLines = true;
     }
 }
