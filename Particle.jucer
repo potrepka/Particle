@@ -361,6 +361,8 @@
             <FILE id="VMl7mw" name="BeatDuration.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatDuration.h"/>
             <FILE id="k3VAeE" name="BeatRate.cpp" compile="1" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.cpp"/>
             <FILE id="G2ioJ5" name="BeatRate.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/BeatRate.h"/>
+            <FILE id="gI5oLK" name="Infinity.cpp" compile="1" resource="0" file="Source/Particle/Nodes/Variables/Infinity.cpp"/>
+            <FILE id="Cvp9LW" name="Infinity.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/Infinity.h"/>
             <FILE id="CI6R9a" name="TimeSignature.cpp" compile="1" resource="0"
                   file="Source/Particle/Nodes/Variables/TimeSignature.cpp"/>
             <FILE id="yhC7rm" name="TimeSignature.h" compile="0" resource="0" file="Source/Particle/Nodes/Variables/TimeSignature.h"/>

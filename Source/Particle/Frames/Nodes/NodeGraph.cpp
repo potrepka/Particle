@@ -323,6 +323,7 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                   std::vector<Type>{Type::BUFFER_DURATION,
                                                     Type::BUFFER_RATE,
                                                     Type::EULER,
+                                                    Type::INF,
                                                     Type::PHI,
                                                     Type::PI,
                                                     Type::SAMPLE_DURATION,
@@ -395,6 +396,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::BUFFER_DURATION: return "Buffer Duration";
         case Type::BUFFER_RATE: return "Buffer Rate";
         case Type::EULER: return "Euler";
+        case Type::INF: return "Infinity";
         case Type::PHI: return "Phi";
         case Type::PI: return "Pi";
         case Type::SAMPLE_DURATION: return "Sample Duration";
@@ -892,6 +894,13 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::E);
             Node node(id, type, position, variable);
             node.addOutput(++counter, "Output", variable->getOutput());
+            return node;
+        }
+        case Type::INF: {
+            std::shared_ptr<dsp::Infinity> infinity = std::make_shared<dsp::Infinity>();
+            Node node(id, type, position, infinity);
+            node.addInput(++counter, "Mode", infinity->getMode());
+            node.addOutput(++counter, "Output", infinity->getOutput());
             return node;
         }
         case Type::PHI: {

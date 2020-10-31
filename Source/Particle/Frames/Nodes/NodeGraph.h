@@ -104,6 +104,7 @@ public:
             BUFFER_DURATION,
             BUFFER_RATE,
             EULER,
+            INF,
             PHI,
             PI,
             SAMPLE_DURATION,
