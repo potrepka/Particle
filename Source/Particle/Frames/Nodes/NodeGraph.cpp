@@ -169,7 +169,7 @@ void particle::NodeGraph::Output::draw() {
     //                     sizeof(dsp::Sample));
     //    ImPlot::EndPlot();
     //}
-    //ImGui::SameLine();
+    //ImGui::SameLine();cd 
     //ImGui::Text("%s", getName().c_str());
 
     output->unlock();
@@ -505,6 +505,8 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, envelope);
             node.addInput(++counter, "Attack", envelope->getAttack());
             node.addInput(++counter, "Release", envelope->getRelease());
+            node.addInput(++counter, "Attack Shape", envelope->getAttackShape());
+            node.addInput(++counter, "Release Shape", envelope->getReleaseShape());
             node.addInput(++counter, "Gate", envelope->getGate());
             node.addInput(++counter, "Reset", envelope->getReset());
             node.addOutput(++counter, "Output", envelope->getOutput());
@@ -620,9 +622,10 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         case Type::SAMPLE_PLAYER: {
             std::shared_ptr<dsp::SamplePlayer> samplePlayer = std::make_shared<dsp::SamplePlayer>();
             Node node(id, type, position, samplePlayer);
-            node.addInput(++counter, "Sample Index", samplePlayer->getSampleIndex());
-            node.addInput(++counter, "Start Time", samplePlayer->getStartTime());
             node.addInput(++counter, "Speed", samplePlayer->getSpeed());
+            node.addInput(++counter, "Start Time", samplePlayer->getStartTime());
+            node.addInput(++counter, "Sample Index", samplePlayer->getSampleIndex());
+            node.addInput(++counter, "Interpolation", samplePlayer->getInterpolation());
             node.addInput(++counter, "Gate", samplePlayer->getGate());
             node.addInput(++counter, "Reset", samplePlayer->getReset());
             node.addOutput(++counter, "Output", samplePlayer->getOutput());
@@ -634,6 +637,8 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, oscillator);
             node.addInput(++counter, "Phase", oscillator->getPhase());
             node.addInput(++counter, "Position", oscillator->getPosition());
+            node.addInput(++counter, "Phase Interpolation", oscillator->getPhaseInterpolation());
+            node.addInput(++counter, "Position Interpolation", oscillator->getPositionInterpolation());
             node.addOutput(++counter, "Output", oscillator->getOutput());
             return node;
         }
