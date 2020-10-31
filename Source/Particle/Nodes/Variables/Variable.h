@@ -7,7 +7,7 @@ namespace dsp {
 class Variable : public Producer {
 
 public:
-    Variable(Sample value = 0.0, Type type = Type::RATIO);
+    Variable(Sample value = 0.0, Type type = Type::RATIO, Space space = Space::TIME);
 
     Sample get() const;
     void set(Sample value);
