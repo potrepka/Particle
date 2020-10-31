@@ -61,14 +61,6 @@
     <GROUP id="{54499037-BEDC-6E52-0116-A28125330971}" name="Source">
       <GROUP id="{DD21DDB7-C8F3-EED2-4E43-801094F2CCB9}" name="DSP">
         <GROUP id="{BB87CC22-11CD-1444-83D5-AB618C7636D0}" name="lib">
-          <GROUP id="{C3CD0221-4A8A-6817-45EE-4021A4A2652B}" name="fastapprox">
-            <FILE id="XscYM7" name="cast.h" compile="0" resource="0" file="Source/DSP/lib/fastapprox/cast.h"/>
-            <FILE id="zy1w4S" name="fastexp.h" compile="0" resource="0" file="Source/DSP/lib/fastapprox/fastexp.h"/>
-            <FILE id="iZvW19" name="fastlog.h" compile="0" resource="0" file="Source/DSP/lib/fastapprox/fastlog.h"/>
-            <FILE id="MWZZAa" name="fasttrig.h" compile="0" resource="0" file="Source/DSP/lib/fastapprox/fasttrig.h"/>
-            <FILE id="eSsJgH" name="LICENSE" compile="0" resource="0" file="Source/DSP/lib/fastapprox/LICENSE"/>
-            <FILE id="BrC1JL" name="sse.h" compile="0" resource="0" file="Source/DSP/lib/fastapprox/sse.h"/>
-          </GROUP>
           <GROUP id="{2FB36E37-A9F9-C23D-0EE1-50C3E7439D60}" name="FFTConvolver">
             <FILE id="FWwCqo" name="AudioFFT.cpp" compile="1" resource="0" file="Source/DSP/lib/FFTConvolver/AudioFFT.cpp"/>
             <FILE id="jSQQy1" name="AudioFFT.h" compile="0" resource="0" file="Source/DSP/lib/FFTConvolver/AudioFFT.h"/>
@@ -82,6 +74,11 @@
                   file="Source/DSP/lib/FFTConvolver/TwoStageFFTConvolver.h"/>
             <FILE id="KpD3IX" name="Utilities.cpp" compile="1" resource="0" file="Source/DSP/lib/FFTConvolver/Utilities.cpp"/>
             <FILE id="m7m7YG" name="Utilities.h" compile="0" resource="0" file="Source/DSP/lib/FFTConvolver/Utilities.h"/>
+          </GROUP>
+          <GROUP id="{35292E75-CFF0-8C20-9320-3ABACF4081A2}" name="simd_math_prims">
+            <FILE id="tsHbl8" name="LICENSE" compile="0" resource="1" file="Source/DSP/lib/simd_math_prims/LICENSE"/>
+            <FILE id="n3JJ51" name="simd_math_prims.h" compile="0" resource="0"
+                  file="Source/DSP/lib/simd_math_prims/simd_math_prims.h"/>
           </GROUP>
         </GROUP>
         <GROUP id="{6233DD64-F0E8-3FC8-5DF8-995E39ABA828}" name="src">
