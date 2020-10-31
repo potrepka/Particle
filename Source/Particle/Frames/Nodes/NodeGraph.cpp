@@ -3,9 +3,8 @@
 particle::NodeGraph::FloatInt::FloatInt(dsp::Type type, dsp::Sample value) {
     switch (type) {
         case dsp::Type::RATIO:
-        case dsp::Type::SECONDS:
         case dsp::Type::HERTZ:
-        case dsp::Type::LOGARITHMIC: valueFloat = value; break;
+        case dsp::Type::SECONDS: valueFloat = value; break;
         case dsp::Type::INTEGER:
         case dsp::Type::BOOLEAN: valueInt = value; break;
     }
@@ -18,81 +17,96 @@ particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp:
         , value(input->getType(), input->getDefaultValue()) {}
 
 void particle::NodeGraph::Input::draw() {
+    ImGuiIO &io = ImGui::GetIO();
     imnodes::BeginInputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(100);
-    int precision = 2;
+    ImGui::SetNextItemWidth(90);
     if (input->getConnections().size() == 0) {
         switch (input->getType()) {
             case dsp::Type::RATIO:
-            case dsp::Type::SECONDS:
             case dsp::Type::HERTZ:
-            case dsp::Type::LOGARITHMIC:
+            case dsp::Type::SECONDS: {
+                int precision = 3;
+                float speed = io.KeyAlt ? 0.1f : io.KeyShift ? 100.0f : 1.0f;
                 if (ImGui::DragFloat(getName().c_str(),
                                      &value.valueFloat,
-                                     1.0f,
+                                     speed,
                                      0.0f,
-                                     0.0f,
+                                     static_cast<float>(input->getRange()),
                                      ("%." + std::to_string(precision) + "f").c_str(),
                                      ImGuiSliderFlags_ClampOnInput)) {
                     input->setAllChannelValues(value.valueFloat);
                     input->setDefaultValue(value.valueFloat);
                 }
-                break;
-            case dsp::Type::INTEGER:
-            case dsp::Type::BOOLEAN:
-                if (ImGui::DragInt(
-                            getName().c_str(), &value.valueInt, 1.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput)) {
+            } break;
+            case dsp::Type::INTEGER: {
+                float speed = io.KeyAlt ? 1.0f : 0.1f;
+                if (ImGui::DragInt(getName().c_str(),
+                                   &value.valueInt,
+                                   speed,
+                                   0,
+                                   static_cast<int>(input->getRange()),
+                                   "%d",
+                                   ImGuiSliderFlags_ClampOnInput)) {
                     input->setAllChannelValues(value.valueInt);
                     input->setDefaultValue(value.valueInt);
                 }
-                break;
+            } break;
+            case dsp::Type::BOOLEAN: {
+                float speed = io.KeyAlt ? 100.0f : io.KeyShift ? 0.1f : 1.0f;
+                if (ImGui::DragInt(
+                            getName().c_str(), &value.valueInt, speed, 0, 1, "%d", ImGuiSliderFlags_ClampOnInput)) {
+                    input->setAllChannelValues(value.valueInt);
+                    input->setDefaultValue(value.valueInt);
+                }
+            } break;
         }
     } else {
         input->lock();
         std::vector<dsp::Sample> x(input->getNumSamples());
         std::iota(x.begin(), x.end(), 0);
-        // TODO: remove commented code
-
-        //switch (input->getType()) {
-        //    case dsp::Type::RATIO:
-        //    case dsp::Type::SECONDS:
-        //    case dsp::Type::HERTZ:
-        //    case dsp::Type::LOGARITHMIC: {
-        //        float firstSample = input->getWrapper().getSample(0, 0);
-        //        ImGui::DragFloat(getName().c_str(),
-        //                         &firstSample,
-        //                         0.0f,
-        //                         0.0f,
-        //                         0.0f,
-        //                         ("%." + std::to_string(precision) + "f").c_str(),
-        //                         ImGuiSliderFlags_ClampOnInput);
-        //        break;
-        //    }
-        //    case dsp::Type::INTEGER:
-        //    case dsp::Type::BOOLEAN: {
-        //        int firstSample = input->getWrapper().getSample(0, 0);
-        //        ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
-        //        break;
-        //    }
-        //}
-        ImPlot::SetNextPlotLimits(0, input->getNumSamples(), -1, 1);
-        if (ImPlot::BeginPlot(("##" + getName()).c_str(),
-                              NULL,
-                              NULL,
-                              ImVec2(100, ImGui::GetFrameHeight()),
-                              ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
-                              ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
-                              ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
-            ImPlot::PlotLine("Channel 0",
-                             x.data(),
-                             input->getWrapper().getChannelPointer(0),
-                             input->getNumSamples(),
-                             0,
-                             sizeof(dsp::Sample));
-            ImPlot::EndPlot();
+        switch (input->getType()) {
+            case dsp::Type::RATIO:
+            case dsp::Type::HERTZ:
+            case dsp::Type::SECONDS: {
+                int precision = 3;
+                float firstSample = input->getWrapper().getSample(0, 0);
+                firstSample = firstSample == 0.0 ? 0.0 : firstSample;
+                ImGui::DragFloat(getName().c_str(),
+                                 &firstSample,
+                                 0.0f,
+                                 0.0f,
+                                 0.0f,
+                                 ("%." + std::to_string(precision) + "f").c_str(),
+                                 ImGuiSliderFlags_ClampOnInput);
+            } break;
+            case dsp::Type::INTEGER:
+            case dsp::Type::BOOLEAN: {
+                int firstSample = input->getWrapper().getSample(0, 0);
+                ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+            } break;
         }
-        ImGui::SameLine();
-        ImGui::Text("%s", getName().c_str());
+
+        // TODO: remove commented code, put plots elsewhere
+
+        //ImPlot::SetNextPlotLimits(0, input->getNumSamples(), -1, 1);
+        //if (ImPlot::BeginPlot(("##" + getName()).c_str(),
+        //                      NULL,
+        //                      NULL,
+        //                      ImVec2(100, ImGui::GetFrameHeight()),
+        //                      ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
+        //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
+        //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
+        //    ImPlot::PlotLine("Channel 0",
+        //                     x.data(),
+        //                     input->getWrapper().getChannelPointer(0),
+        //                     input->getNumSamples(),
+        //                     0,
+        //                     sizeof(dsp::Sample));
+        //    ImPlot::EndPlot();
+        //}
+        //ImGui::SameLine();
+        //ImGui::Text("%s", getName().c_str());
+
         input->unlock();
     }
     imnodes::EndInputAttribute();
@@ -109,55 +123,55 @@ particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<ds
 
 void particle::NodeGraph::Output::draw() {
     imnodes::BeginOutputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(100);
-    int precision = 2;
+    ImGui::SetNextItemWidth(90);
     output->lock();
     std::vector<dsp::Sample> x(output->getNumSamples());
     std::iota(x.begin(), x.end(), 0);
-    // TODO: remove commented code
-
-    //switch (output->getType()) {
-    //    case dsp::Type::RATIO:
-    //    case dsp::Type::SECONDS:
-    //    case dsp::Type::HERTZ:
-    //    case dsp::Type::LOGARITHMIC: {
-
-    //        float firstSample = output->getWrapper().getSample(0, 0);
-    //        ImGui::DragFloat(getName().c_str(),
-    //                         &firstSample,
-    //                         0.0f,
-    //                         0.0f,
-    //                         0.0f,
-    //                         ("%." + std::to_string(precision) + "f").c_str(),
-    //                         ImGuiSliderFlags_ClampOnInput);
-    //        break;
-    //    }
-    //    case dsp::Type::INTEGER:
-    //    case dsp::Type::BOOLEAN: {
-    //        int firstSample = output->getWrapper().getSample(0, 0);
-    //        ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
-    //        break;
-    //    }
-    //}
-
-    ImPlot::SetNextPlotLimits(0, output->getNumSamples(), -1, 1);
-    if (ImPlot::BeginPlot(("##" + getName()).c_str(),
-                          NULL,
-                          NULL,
-                          ImVec2(100, ImGui::GetFrameHeight()),
-                          ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
-                          ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
-                          ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
-        ImPlot::PlotLine("Channel 0",
-                         x.data(),
-                         output->getWrapper().getChannelPointer(0),
-                         output->getNumSamples(),
-                         0,
-                         sizeof(dsp::Sample));
-        ImPlot::EndPlot();
+    switch (output->getType()) {
+        case dsp::Type::RATIO:
+        case dsp::Type::HERTZ:
+        case dsp::Type::SECONDS: {
+            int precision = 3;
+            float firstSample = output->getWrapper().getSample(0, 0);
+            firstSample = firstSample == 0.0 ? 0.0 : firstSample;
+            ImGui::DragFloat(getName().c_str(),
+                             &firstSample,
+                             0.0f,
+                             0.0f,
+                             0.0f,
+                             ("%." + std::to_string(precision) + "f").c_str(),
+                             ImGuiSliderFlags_ClampOnInput);
+            break;
+        }
+        case dsp::Type::INTEGER:
+        case dsp::Type::BOOLEAN: {
+            int firstSample = output->getWrapper().getSample(0, 0);
+            ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+            break;
+        }
     }
-    ImGui::SameLine();
-    ImGui::Text("%s", getName().c_str());
+
+    // TODO: remove commented code, put plots elsewhere
+
+    //ImPlot::SetNextPlotLimits(0, output->getNumSamples(), -1, 1);
+    //if (ImPlot::BeginPlot(("##" + getName()).c_str(),
+    //                      NULL,
+    //                      NULL,
+    //                      ImVec2(100, ImGui::GetFrameHeight()),
+    //                      ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
+    //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
+    //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
+    //    ImPlot::PlotLine("Channel 0",
+    //                     x.data(),
+    //                     output->getWrapper().getChannelPointer(0),
+    //                     output->getNumSamples(),
+    //                     0,
+    //                     sizeof(dsp::Sample));
+    //    ImPlot::EndPlot();
+    //}
+    //ImGui::SameLine();
+    //ImGui::Text("%s", getName().c_str());
+
     output->unlock();
     imnodes::EndOutputAttribute();
 }
@@ -456,6 +470,8 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Clipper> clipper = std::make_shared<dsp::Clipper>();
             Node node(id, type, position, clipper);
             node.addInput(++counter, "Input", clipper->getInput());
+            node.addInput(++counter, "Minimum", clipper->getMinimum());
+            node.addInput(++counter, "Maximum", clipper->getMaximum());
             node.addInput(++counter, "Mode", clipper->getMode());
             node.addOutput(++counter, "Output", clipper->getOutput());
             return node;
@@ -466,13 +482,13 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", compressorGate->getInput());
             node.addInput(++counter, "Control", compressorGate->getControl());
             node.addInput(++counter, "Threshold", compressorGate->getThreshold());
-            node.addInput(++counter, "Half Knee", compressorGate->getHalfKnee());
+            node.addInput(++counter, "Hardness", compressorGate->getHardness());
             node.addInput(++counter, "Compression Ratio", compressorGate->getCompressionRatio());
             node.addInput(++counter, "Gate Ratio", compressorGate->getGateRatio());
             node.addInput(++counter, "Attack", compressorGate->getAttack());
             node.addInput(++counter, "Release", compressorGate->getRelease());
             node.addOutput(++counter, "Output", compressorGate->getOutput());
-            node.addOutput(++counter, "Gain Response", compressorGate->getGainResponse());
+            node.addOutput(++counter, "Gain", compressorGate->getGain());
             return node;
         }
         case Type::CROSSFADER: {
@@ -499,7 +515,6 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             Node node(id, type, position, lag);
             node.addInput(++counter, "Input", lag->getInput());
             node.addInput(++counter, "Lag Time", lag->getLagTime());
-            node.addInput(++counter, "Reset", lag->getReset());
             node.addOutput(++counter, "Output", lag->getOutput());
             return node;
         }
@@ -554,7 +569,6 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Resonance", biquad->getResonance());
             node.addInput(++counter, "Amplitude", biquad->getAmplitude());
             node.addInput(++counter, "Mode", biquad->getMode());
-            node.addInput(++counter, "Reset", biquad->getReset());
             node.addOutput(++counter, "Output", biquad->getOutput());
             return node;
         }
@@ -573,7 +587,6 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", onePole->getInput());
             node.addInput(++counter, "Frequency", onePole->getFrequency());
             node.addInput(++counter, "Mode", onePole->getMode());
-            node.addInput(++counter, "Reset", onePole->getReset());
             node.addOutput(++counter, "Output", onePole->getOutput());
             return node;
         }

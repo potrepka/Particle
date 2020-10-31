@@ -14,9 +14,8 @@ particle::View::View(juce::AudioProcessor *audioProcessor,
     frames.push_back(nodeGraph);
     frames.push_back(audioSettings);
     frames.push_back(status);
-    for (const auto& frame : frames) {
-        frame->show();
-    }
+    
+    nodeGraph->show();
 }
 
 particle::Data &particle::View::getData() {
