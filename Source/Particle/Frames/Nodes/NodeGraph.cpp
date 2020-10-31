@@ -19,13 +19,13 @@ particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp:
 void particle::NodeGraph::Input::draw() {
     ImGuiIO &io = ImGui::GetIO();
     imnodes::BeginInputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(90);
+    ImGui::SetNextItemWidth(190);
     if (input->getConnections().size() == 0) {
         switch (input->getType()) {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
-                int precision = 3;
+                int precision = 16;
                 float speed = io.KeyAlt ? 0.1f : io.KeyShift ? 100.0f : 1.0f;
                 if (ImGui::DragFloat(getName().c_str(),
                                      &value.valueFloat,
@@ -33,7 +33,7 @@ void particle::NodeGraph::Input::draw() {
                                      0.0f,
                                      static_cast<float>(input->getRange()),
                                      ("%." + std::to_string(precision) + "f").c_str(),
-                                     ImGuiSliderFlags_ClampOnInput)) {
+                                     ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueFloat);
                     input->setDefaultValue(value.valueFloat);
                 }
@@ -46,7 +46,7 @@ void particle::NodeGraph::Input::draw() {
                                    0,
                                    static_cast<int>(input->getRange()),
                                    "%d",
-                                   ImGuiSliderFlags_ClampOnInput)) {
+                                   ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueInt);
                     input->setDefaultValue(value.valueInt);
                 }
@@ -54,7 +54,7 @@ void particle::NodeGraph::Input::draw() {
             case dsp::Type::BOOLEAN: {
                 float speed = io.KeyAlt ? 100.0f : io.KeyShift ? 0.1f : 1.0f;
                 if (ImGui::DragInt(
-                            getName().c_str(), &value.valueInt, speed, 0, 1, "%d", ImGuiSliderFlags_ClampOnInput)) {
+                            getName().c_str(), &value.valueInt, speed, 0, 1, "%d", ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueInt);
                     input->setDefaultValue(value.valueInt);
                 }
@@ -68,7 +68,7 @@ void particle::NodeGraph::Input::draw() {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
-                int precision = 3;
+                int precision = 16;
                 float firstSample = input->getWrapper().getSample(0, 0);
                 firstSample = firstSample == 0.0 ? 0.0 : firstSample;
                 ImGui::DragFloat(getName().c_str(),
@@ -77,12 +77,18 @@ void particle::NodeGraph::Input::draw() {
                                  0.0f,
                                  0.0f,
                                  ("%." + std::to_string(precision) + "f").c_str(),
-                                 ImGuiSliderFlags_ClampOnInput);
+                                 ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             } break;
             case dsp::Type::INTEGER:
             case dsp::Type::BOOLEAN: {
                 int firstSample = input->getWrapper().getSample(0, 0);
-                ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+                ImGui::DragInt(getName().c_str(),
+                               &firstSample,
+                               0.0f,
+                               0,
+                               0,
+                               "%d",
+                               ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             } break;
         }
 
@@ -123,7 +129,7 @@ particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<ds
 
 void particle::NodeGraph::Output::draw() {
     imnodes::BeginOutputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(90);
+    ImGui::SetNextItemWidth(190);
     output->lock();
     std::vector<dsp::Sample> x(output->getNumSamples());
     std::iota(x.begin(), x.end(), 0);
@@ -131,7 +137,7 @@ void particle::NodeGraph::Output::draw() {
         case dsp::Type::RATIO:
         case dsp::Type::HERTZ:
         case dsp::Type::SECONDS: {
-            int precision = 3;
+            int precision = 16;
             float firstSample = output->getWrapper().getSample(0, 0);
             firstSample = firstSample == 0.0 ? 0.0 : firstSample;
             ImGui::DragFloat(getName().c_str(),
@@ -140,13 +146,19 @@ void particle::NodeGraph::Output::draw() {
                              0.0f,
                              0.0f,
                              ("%." + std::to_string(precision) + "f").c_str(),
-                             ImGuiSliderFlags_ClampOnInput);
+                             ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             break;
         }
         case dsp::Type::INTEGER:
         case dsp::Type::BOOLEAN: {
             int firstSample = output->getWrapper().getSample(0, 0);
-            ImGui::DragInt(getName().c_str(), &firstSample, 0.0f, 0, 0, "%d", ImGuiSliderFlags_ClampOnInput);
+            ImGui::DragInt(getName().c_str(),
+                           &firstSample,
+                           0.0f,
+                           0,
+                           0,
+                           "%d",
+                           ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             break;
         }
     }
