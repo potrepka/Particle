@@ -71,10 +71,10 @@ void particle::NodeGraph::Input::draw() {
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
                 int precision = 16;
-                float firstSample = input->getWrapper().getSample(0, 0);
-                firstSample = firstSample == 0.0 ? 0.0 : firstSample;
+                float lastSample = input->getWrapper().getSample(0, input->getNumSamples() - 1);
+                lastSample = lastSample == 0.0 ? 0.0 : lastSample;
                 ImGui::DragFloat(getName().c_str(),
-                                 &firstSample,
+                                 &lastSample,
                                  0.0f,
                                  0.0f,
                                  0.0f,
@@ -83,9 +83,9 @@ void particle::NodeGraph::Input::draw() {
             } break;
             case dsp::Type::INTEGER:
             case dsp::Type::BOOLEAN: {
-                int firstSample = input->getWrapper().getSample(0, 0);
+                int lastSample = input->getWrapper().getSample(0, input->getNumSamples() - 1);
                 ImGui::DragInt(getName().c_str(),
-                               &firstSample,
+                               &lastSample,
                                0.0f,
                                0,
                                0,
@@ -143,10 +143,10 @@ void particle::NodeGraph::Output::draw() {
         case dsp::Type::HERTZ:
         case dsp::Type::SECONDS: {
             int precision = 16;
-            float firstSample = output->getWrapper().getSample(0, 0);
-            firstSample = firstSample == 0.0 ? 0.0 : firstSample;
+            float lastSample = output->getWrapper().getSample(0, output->getNumSamples() - 1);
+            lastSample = lastSample == 0.0 ? 0.0 : lastSample;
             ImGui::DragFloat(getName().c_str(),
-                             &firstSample,
+                             &lastSample,
                              0.0f,
                              0.0f,
                              0.0f,
@@ -156,9 +156,9 @@ void particle::NodeGraph::Output::draw() {
         }
         case dsp::Type::INTEGER:
         case dsp::Type::BOOLEAN: {
-            int firstSample = output->getWrapper().getSample(0, 0);
+            int lastSample = output->getWrapper().getSample(0, output->getNumSamples() - 1);
             ImGui::DragInt(getName().c_str(),
-                           &firstSample,
+                           &lastSample,
                            0.0f,
                            0,
                            0,
