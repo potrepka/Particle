@@ -21,22 +21,24 @@ public:
     };
 
     struct Input : public Named {
+        Data *data;
         int id;
         std::shared_ptr<dsp::Input> input;
         FloatInt value;
 
-        Input(int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
+        Input(Data *data = nullptr, int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
 
         void draw();
         void drawInspector();
     };
 
     struct Output : public Named {
+        Data *data;
         int id;
         std::shared_ptr<dsp::Output> output;
         FloatInt value;
     
-        Output(int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
+        Output(Data *data = nullptr, int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
 
         void draw();
         void drawInspector();
@@ -119,6 +121,7 @@ public:
             Category(std::string name = "", std::vector<Type> types = std::vector<Type>());
         };
 
+        Data *data;
         int id;
         Type type;
         ImVec2 position;
@@ -126,7 +129,8 @@ public:
         std::map<int, Input> inputs;
         std::map<int, Output> outputs;
 
-        Node(int id = 0,
+        Node(Data *data = nullptr,
+             int id = 0,
              Type type = Type::CUSTOM,
              ImVec2 position = ImVec2(0, 0),
              std::shared_ptr<dsp::Node> node = nullptr);
@@ -142,17 +146,19 @@ public:
 
         static std::vector<Category> getCategories(bool isPlugin);
         static std::string getTypeName(Type type);
-        static Node generate(Data &data, int &counter, int id, Type type, ImVec2 position);
+        static Node generate(Data *data, int &counter, int id, Type type, ImVec2 position);
     };
     
     struct Link {
+        Data *data;
         int id;
         int from;
         int to;
         std::shared_ptr<dsp::Output> output;
         std::shared_ptr<dsp::Input> input;
 
-        Link(int id = 0,
+        Link(Data *data = nullptr,
+             int id = 0,
              int from = 0,
              int to = 0,
              std::shared_ptr<dsp::Output> output = nullptr,
@@ -161,7 +167,7 @@ public:
         void draw();
         void drawInspector();
 
-        static Link generate(std::map<int, Node> &nodes, int id, int from, int to);
+        static Link generate(Data *data, std::map<int, Node> &nodes, int id, int from, int to);
     };
 
     class CreateNodes : public Action {

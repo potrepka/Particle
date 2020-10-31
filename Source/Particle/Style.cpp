@@ -261,28 +261,32 @@ void particle::Style::setColors(const ImColor &background,
         style.Colors[ImPlotCol_Selection] = accent_active;
         style.Colors[ImPlotCol_Query] = ImColor(1.0f, 0.0f, 1.0f, 1.0f);  
     }
-    
 }
 
 void particle::Style::setSizes() {
     {
         ImGuiStyle &style = ImGui::GetStyle();
-        // TODO: You can remove this whole block, or add more
-        // TODO: You can also remove the line below, as 4.0f is the default
-        style.TabRounding = 4.0f;
+        style.WindowPadding = windowPadding;
+        style.WindowRounding = windowRounding;
+        style.FramePadding = framePadding;
+        style.FrameRounding = frameRounding;
+        style.TabRounding = tabRounding;
     }
     {
         imnodes::Style &style = imnodes::GetStyle();
         style.grid_spacing = 300.0f;
-        style.node_corner_rounding = 7.0f;
+        style.node_corner_rounding = 6.0f;
+        // TODO: uncomment below
+        // style.node_border_thickness = 1.25f;
         style.link_thickness = 2.5f;
+        style.link_line_segments_per_length = 0.5f;
         style.pin_quad_side_length = 7.5f;
         style.pin_offset = 0.0f;
     }
     {
         ImPlotStyle &style = ImPlot::GetStyle();
         style.PlotBorderSize = 0.0f;
-        style.PlotPadding = ImGui::GetStyle().FramePadding;
+        style.PlotPadding = framePadding;
         style.AntiAliasedLines = true;
     }
 }

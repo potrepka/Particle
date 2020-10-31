@@ -10,17 +10,19 @@ particle::NodeGraph::FloatInt::FloatInt(dsp::Type type, dsp::Sample value) {
     }
 }
 
-particle::NodeGraph::Input::Input(int id, std::string name, std::shared_ptr<dsp::Input> input)
+particle::NodeGraph::Input::Input(Data *data, int id, std::string name, std::shared_ptr<dsp::Input> input)
         : Named(name)
+        , data(data)
         , id(id)
         , input(input)
         , value(input->getType(), input->getDefaultValue()) {}
 
 void particle::NodeGraph::Input::draw() {
-    ImGuiIO &io = ImGui::GetIO();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
     imnodes::BeginInputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
     ImGui::SetNextItemWidth(190);
     if (input->getConnections().size() == 0) {
+        ImGuiIO &io = ImGui::GetIO();
         switch (input->getType()) {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
@@ -116,18 +118,21 @@ void particle::NodeGraph::Input::draw() {
         input->unlock();
     }
     imnodes::EndInputAttribute();
+    ImGui::PopStyleVar();
 }
 
 void particle::NodeGraph::Input::drawInspector() {}
 
 // TODO: Set can edit
-particle::NodeGraph::Output::Output(int id, std::string name, std::shared_ptr<dsp::Output> output)
+particle::NodeGraph::Output::Output(Data *data, int id, std::string name, std::shared_ptr<dsp::Output> output)
         : Named(name)
+        , data(data)
         , id(id)
         , output(output)
         , value(output->getType(), output->getDefaultValue()) {}
 
 void particle::NodeGraph::Output::draw() {
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
     imnodes::BeginOutputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
     ImGui::SetNextItemWidth(190);
     output->lock();
@@ -186,6 +191,7 @@ void particle::NodeGraph::Output::draw() {
 
     output->unlock();
     imnodes::EndOutputAttribute();
+    ImGui::PopStyleVar();
 }
 
 void particle::NodeGraph::Output::drawInspector() {}
@@ -194,19 +200,20 @@ particle::NodeGraph::Node::Category::Category(std::string name, std::vector<Type
         : Named(name)
         , types(types) {}
 
-particle::NodeGraph::Node::Node(int id, Type type, ImVec2 position, std::shared_ptr<dsp::Node> node)
+particle::NodeGraph::Node::Node(Data *data, int id, Type type, ImVec2 position, std::shared_ptr<dsp::Node> node)
         : Named("")
+        , data(data)
         , id(id)
         , type(type)
         , position(position)
         , node(node) {}
 
 void particle::NodeGraph::Node::addInput(int id, std::string name, std::shared_ptr<dsp::Input> input) {
-    inputs.emplace(id, Input(id, name, input));
+    inputs.emplace(id, Input(data, id, name, input));
 }
 
 void particle::NodeGraph::Node::addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output) {
-    outputs.emplace(id, Output(id, name, output));
+    outputs.emplace(id, Output(data, id, name, output));
 }
 
 std::string particle::NodeGraph::Node::getTypeName() const {
@@ -246,6 +253,8 @@ void particle::NodeGraph::Node::draw(bool selected) {
 }
 
 void particle::NodeGraph::Node::drawContent() {
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
+
     // TODO: remove this comment
     // ImGui::BeginChild("Child", ImVec2(200, 200));
     // ImGui::EndChild();
@@ -254,10 +263,11 @@ void particle::NodeGraph::Node::drawContent() {
         case Type::RESET_TRIGGER: {
             std::shared_ptr<dsp::ResetTrigger> resetTrigger = std::dynamic_pointer_cast<dsp::ResetTrigger>(node);
             if (ImGui::Button("Reset")) {
-                resetTrigger.reset();
+                resetTrigger->reset();
             }
         } break;
     }
+    ImGui::PopStyleVar();
 }
 
 void particle::NodeGraph::Node::drawInspector() {}
@@ -408,16 +418,16 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
 }
 
 particle::NodeGraph::Node
-particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type, ImVec2 position) {
+particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type, ImVec2 position) {
     switch (type) {
         case Type::CUSTOM: {
             std::shared_ptr<dsp::Node> custom = std::make_shared<dsp::Node>();
-            Node node(id, type, position, custom);
+            Node node(data, id, type, position, custom);
             return node;
         }
         case Type::RECORDER: {
             std::shared_ptr<dsp::Recorder> recorder = std::make_shared<dsp::Recorder>();
-            Node node(id, type, position, recorder);
+            Node node(data, id, type, position, recorder);
             node.addInput(++counter, "Input", recorder->getInput());
             node.addInput(++counter, "Gate", recorder->getGate());
             node.addInput(++counter, "Reset", recorder->getReset());
@@ -425,19 +435,19 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CHANNEL_MERGER: {
             std::shared_ptr<dsp::ChannelMerger> merger = std::make_shared<dsp::ChannelMerger>();
-            Node node(id, type, position, merger);
+            Node node(data, id, type, position, merger);
             node.addOutput(++counter, "Output", merger->getOutput());
             return node;
         }
         case Type::CHANNEL_SPLITTER: {
             std::shared_ptr<dsp::ChannelSplitter> splitter = std::make_shared<dsp::ChannelSplitter>();
-            Node node(id, type, position, splitter);
+            Node node(data, id, type, position, splitter);
             node.addInput(++counter, "Input", splitter->getInput());
             return node;
         }
         case Type::MID_SIDE: {
             std::shared_ptr<dsp::MidSide> midSide = std::make_shared<dsp::MidSide>();
-            Node node(id, type, position, midSide);
+            Node node(data, id, type, position, midSide);
             node.addInput(++counter, "Input", midSide->getInput());
             node.addInput(++counter, "Mix Amount", midSide->getMixAmount());
             node.addOutput(++counter, "Mid", midSide->getMid());
@@ -446,7 +456,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::SPREAD: {
             std::shared_ptr<dsp::Spread> spread = std::make_shared<dsp::Spread>();
-            Node node(id, type, position, spread);
+            Node node(data, id, type, position, spread);
             node.addInput(++counter, "Input", spread->getInput());
             node.addInput(++counter, "Spread", spread->getSpread());
             node.addInput(++counter, "Mode", spread->getMode());
@@ -455,7 +465,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::STEREO_PANNER: {
             std::shared_ptr<dsp::StereoPanner> stereoPanner = std::make_shared<dsp::StereoPanner>();
-            Node node(id, type, position, stereoPanner);
+            Node node(data, id, type, position, stereoPanner);
             node.addInput(++counter, "Input", stereoPanner->getInput());
             node.addInput(++counter, "Direction", stereoPanner->getDirection());
             node.addOutput(++counter, "Left", stereoPanner->getLeft());
@@ -464,7 +474,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CONVOLVER: {
             std::shared_ptr<dsp::Convolver> convolver = std::make_shared<dsp::Convolver>();
-            Node node(id, type, position, convolver);
+            Node node(data, id, type, position, convolver);
             node.addInput(++counter, "Input", convolver->getInput());
             node.addOutput(++counter, "Output", convolver->getOutput());
             return node;
@@ -472,7 +482,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         case Type::VARIABLE_DELAY: {
             // TODO: implement feedback interface
             std::shared_ptr<dsp::VariableDelay> variableDelay = std::make_shared<dsp::VariableDelay>();
-            Node node(id, type, position, variableDelay);
+            Node node(data, id, type, position, variableDelay);
             node.addInput(++counter, "Input", variableDelay->getInput());
             node.addInput(++counter, "Delay Time", variableDelay->getDelayTime());
             node.addInput(++counter, "Decay Time", variableDelay->getDecayTime());
@@ -482,7 +492,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CLIPPER: {
             std::shared_ptr<dsp::Clipper> clipper = std::make_shared<dsp::Clipper>();
-            Node node(id, type, position, clipper);
+            Node node(data, id, type, position, clipper);
             node.addInput(++counter, "Input", clipper->getInput());
             node.addInput(++counter, "Minimum", clipper->getMinimum());
             node.addInput(++counter, "Maximum", clipper->getMaximum());
@@ -492,7 +502,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::COMPRESSOR_GATE: {
             std::shared_ptr<dsp::CompressorGate> compressorGate = std::make_shared<dsp::CompressorGate>();
-            Node node(id, type, position, compressorGate);
+            Node node(data, id, type, position, compressorGate);
             node.addInput(++counter, "Input", compressorGate->getInput());
             node.addInput(++counter, "Control", compressorGate->getControl());
             node.addInput(++counter, "Threshold", compressorGate->getThreshold());
@@ -507,7 +517,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CROSSFADER: {
             std::shared_ptr<dsp::Crossfader> crossfader = std::make_shared<dsp::Crossfader>();
-            Node node(id, type, position, crossfader);
+            Node node(data, id, type, position, crossfader);
             node.addInput(++counter, "Input", crossfader->getInput());
             node.addInput(++counter, "Position", crossfader->getPosition());
             node.addOutput(++counter, "A", crossfader->getA());
@@ -516,7 +526,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::ENVELOPE: {
             std::shared_ptr<dsp::Envelope> envelope = std::make_shared<dsp::Envelope>();
-            Node node(id, type, position, envelope);
+            Node node(data, id, type, position, envelope);
             node.addInput(++counter, "Attack", envelope->getAttack());
             node.addInput(++counter, "Release", envelope->getRelease());
             node.addInput(++counter, "Attack Shape", envelope->getAttackShape());
@@ -528,7 +538,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::LAG: {
             std::shared_ptr<dsp::Lag> lag = std::make_shared<dsp::Lag>();
-            Node node(id, type, position, lag);
+            Node node(data, id, type, position, lag);
             node.addInput(++counter, "Input", lag->getInput());
             node.addInput(++counter, "Lag Time", lag->getLagTime());
             node.addOutput(++counter, "Output", lag->getOutput());
@@ -536,7 +546,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::SHAPER: {
             std::shared_ptr<dsp::Shaper> shaper = std::make_shared<dsp::Shaper>();
-            Node node(id, type, position, shaper);
+            Node node(data, id, type, position, shaper);
             node.addInput(++counter, "Input", shaper->getInput());
             node.addInput(++counter, "Drive", shaper->getDrive());
             node.addInput(++counter, "Mode", shaper->getMode());
@@ -544,42 +554,42 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
             return node;
         }
         case Type::AUDIO_INPUT: {
-            Node node(id, type, position, nullptr);
-            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioInput());
+            Node node(data, id, type, position, nullptr);
+            node.addOutput(++counter, "Output", data->getNodeProcessor()->getAudioInput());
             return node;
         }
         case Type::AUDIO_INPUT_CLIPPING: {
-            Node node(id, type, position, nullptr);
-            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioInputClipping());
+            Node node(data, id, type, position, nullptr);
+            node.addOutput(++counter, "Output", data->getNodeProcessor()->getAudioInputClipping());
             return node;
         }
         case Type::AUDIO_OUTPUT: {
-            Node node(id, type, position, nullptr);
-            node.addInput(++counter, "Input", data.getNodeProcessor()->getAudioOutput());
+            Node node(data, id, type, position, nullptr);
+            node.addInput(++counter, "Input", data->getNodeProcessor()->getAudioOutput());
             return node;
         }
         case Type::AUDIO_OUTPUT_CLIPPING: {
-            Node node(id, type, position, nullptr);
-            node.addOutput(++counter, "Output", data.getNodeProcessor()->getAudioOutputClipping());
+            Node node(data, id, type, position, nullptr);
+            node.addOutput(++counter, "Output", data->getNodeProcessor()->getAudioOutputClipping());
             return node;
         }
         case Type::MIDI_INPUT: {
             std::shared_ptr<dsp::MidiInput> midiInput =
-                    std::make_shared<dsp::MidiInput>(data.getNodeProcessor()->getInputMessages());
-            Node node(id, type, position, midiInput);
+                    std::make_shared<dsp::MidiInput>(data->getNodeProcessor()->getInputMessages());
+            Node node(data, id, type, position, midiInput);
             node.addOutput(++counter, "Output", midiInput->getOutput());
             return node;
         }
         case Type::MIDI_OUTPUT: {
             std::shared_ptr<dsp::MidiOutput> midiOutput =
-                    std::make_shared<dsp::MidiOutput>(data.getNodeProcessor()->getOutputMessages());
-            Node node(id, type, position, midiOutput);
+                    std::make_shared<dsp::MidiOutput>(data->getNodeProcessor()->getOutputMessages());
+            Node node(data, id, type, position, midiOutput);
             node.addInput(++counter, "Input", midiOutput->getInput());
             return node;
         }
         case Type::BIQUAD: {
             std::shared_ptr<dsp::Biquad> biquad = std::make_shared<dsp::Biquad>();
-            Node node(id, type, position, biquad);
+            Node node(data, id, type, position, biquad);
             node.addInput(++counter, "Input", biquad->getInput());
             node.addInput(++counter, "Frequency", biquad->getFrequency());
             node.addInput(++counter, "Resonance", biquad->getResonance());
@@ -590,7 +600,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CROSSOVER: {
             std::shared_ptr<dsp::Crossover> crossover = std::make_shared<dsp::Crossover>();
-            Node node(id, type, position, crossover);
+            Node node(data, id, type, position, crossover);
             node.addInput(++counter, "Input", crossover->getInput());
             node.addInput(++counter, "Frequency", crossover->getFrequency());
             node.addOutput(++counter, "Low", crossover->getLow());
@@ -599,7 +609,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::ONE_POLE: {
             std::shared_ptr<dsp::OnePole> onePole = std::make_shared<dsp::OnePole>();
-            Node node(id, type, position, onePole);
+            Node node(data, id, type, position, onePole);
             node.addInput(++counter, "Input", onePole->getInput());
             node.addInput(++counter, "Frequency", onePole->getFrequency());
             node.addInput(++counter, "Mode", onePole->getMode());
@@ -608,7 +618,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::MOORER_DSF: {
             std::shared_ptr<dsp::MoorerOscillator> moorer = std::make_shared<dsp::MoorerOscillator>();
-            Node node(id, type, position, moorer);
+            Node node(data, id, type, position, moorer);
             node.addInput(++counter, "Phase", moorer->getPhase());
             node.addInput(++counter, "Intensity", moorer->getIntensity());
             node.addInput(++counter, "Modulation Index", moorer->getModulationIndex());
@@ -619,14 +629,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::NOISE: {
             std::shared_ptr<dsp::Noise> noise = std::make_shared<dsp::Noise>();
-            Node node(id, type, position, noise);
+            Node node(data, id, type, position, noise);
             node.addInput(++counter, "Mode", noise->getMode());
             node.addOutput(++counter, "Output", noise->getOutput());
             return node;
         }
         case Type::PHASOR: {
             std::shared_ptr<dsp::Phasor> phasor = std::make_shared<dsp::Phasor>();
-            Node node(id, type, position, phasor);
+            Node node(data, id, type, position, phasor);
             node.addInput(++counter, "Frequency", phasor->getFrequency());
             node.addInput(++counter, "Mode", phasor->getMode());
             node.addInput(++counter, "Reset", phasor->getReset());
@@ -635,7 +645,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::SAMPLE_PLAYER: {
             std::shared_ptr<dsp::SamplePlayer> samplePlayer = std::make_shared<dsp::SamplePlayer>();
-            Node node(id, type, position, samplePlayer);
+            Node node(data, id, type, position, samplePlayer);
             node.addInput(++counter, "Speed", samplePlayer->getSpeed());
             node.addInput(++counter, "Start Time", samplePlayer->getStartTime());
             node.addInput(++counter, "Sample Index", samplePlayer->getSampleIndex());
@@ -648,7 +658,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::TABLE_OSCILLATOR: {
             std::shared_ptr<dsp::TableOscillator> oscillator = std::make_shared<dsp::TableOscillator>();
-            Node node(id, type, position, oscillator);
+            Node node(data, id, type, position, oscillator);
             node.addInput(++counter, "Phase", oscillator->getPhase());
             node.addInput(++counter, "Position", oscillator->getPosition());
             node.addInput(++counter, "Phase Interpolation", oscillator->getPhaseInterpolation());
@@ -658,14 +668,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::ABSOLUTE_VALUE: {
             std::shared_ptr<dsp::AbsoluteValue> absoluteValue = std::make_shared<dsp::AbsoluteValue>();
-            Node node(id, type, position, absoluteValue);
+            Node node(data, id, type, position, absoluteValue);
             node.addInput(++counter, "Input", absoluteValue->getInput());
             node.addOutput(++counter, "Output", absoluteValue->getOutput());
             return node;
         }
         case Type::BOOLEAN_MASK: {
             std::shared_ptr<dsp::BooleanMask> booleanMask = std::make_shared<dsp::BooleanMask>();
-            Node node(id, type, position, booleanMask);
+            Node node(data, id, type, position, booleanMask);
             node.addInput(++counter, "Input", booleanMask->getInput());
             node.addInput(++counter, "Mask", booleanMask->getMask());
             node.addOutput(++counter, "Output", booleanMask->getOutput());
@@ -673,7 +683,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::COMPARISON: {
             std::shared_ptr<dsp::Comparison> comparison = std::make_shared<dsp::Comparison>();
-            Node node(id, type, position, comparison);
+            Node node(data, id, type, position, comparison);
             node.addInput(++counter, "Input", comparison->getInput());
             node.addInput(++counter, "Threshold", comparison->getThreshold());
             node.addOutput(++counter, "Output", comparison->getOutput());
@@ -681,7 +691,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::DIVISION: {
             std::shared_ptr<dsp::Division> division = std::make_shared<dsp::Division>();
-            Node node(id, type, position, division);
+            Node node(data, id, type, position, division);
             node.addInput(++counter, "Input", division->getInput());
             node.addInput(++counter, "Divisor", division->getDivisor());
             node.addOutput(++counter, "Output", division->getOutput());
@@ -689,7 +699,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::FLOOR: {
             std::shared_ptr<dsp::Floor> floor = std::make_shared<dsp::Floor>();
-            Node node(id, type, position, floor);
+            Node node(data, id, type, position, floor);
             node.addInput(++counter, "Input", floor->getInput());
             node.addInput(++counter, "Divisor", floor->getDivisor());
             node.addOutput(++counter, "Output", floor->getOutput());
@@ -697,7 +707,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::FORWARD_FFT: {
             std::shared_ptr<dsp::ForwardFFT> forwardFFT = std::make_shared<dsp::ForwardFFT>();
-            Node node(id, type, position, forwardFFT);
+            Node node(data, id, type, position, forwardFFT);
             node.addInput(++counter, "Input", forwardFFT->getInput());
             node.addOutput(++counter, "Magnitude", forwardFFT->getMagnitude());
             node.addOutput(++counter, "Phase", forwardFFT->getPhase());
@@ -705,7 +715,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::FREQUENCY_TO_NOTE: {
             std::shared_ptr<dsp::FrequencyToNote> toNote = std::make_shared<dsp::FrequencyToNote>();
-            Node node(id, type, position, toNote);
+            Node node(data, id, type, position, toNote);
             node.addInput(++counter, "Frequency", toNote->getInput());
             node.addInput(++counter, "Tuning Frequency", toNote->getTuningFrequency());
             node.addOutput(++counter, "Note", toNote->getOutput());
@@ -713,7 +723,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::INVERSE_FFT: {
             std::shared_ptr<dsp::InverseFFT> inverseFFT = std::make_shared<dsp::InverseFFT>();
-            Node node(id, type, position, inverseFFT);
+            Node node(data, id, type, position, inverseFFT);
             node.addInput(++counter, "Magnitude", inverseFFT->getMagnitude());
             node.addInput(++counter, "Phase", inverseFFT->getPhase());
             node.addOutput(++counter, "Output", inverseFFT->getOutput());
@@ -721,7 +731,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::LOGARITHM: {
             std::shared_ptr<dsp::Logarithm> logarithm = std::make_shared<dsp::Logarithm>();
-            Node node(id, type, position, logarithm);
+            Node node(data, id, type, position, logarithm);
             node.addInput(++counter, "Input", logarithm->getInput());
             node.addInput(++counter, "Base", logarithm->getBase());
             node.addOutput(++counter, "Exponent", logarithm->getOutput());
@@ -729,7 +739,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::MODULO: {
             std::shared_ptr<dsp::Modulo> modulo = std::make_shared<dsp::Modulo>();
-            Node node(id, type, position, modulo);
+            Node node(data, id, type, position, modulo);
             node.addInput(++counter, "Input", modulo->getInput());
             node.addInput(++counter, "Divisor", modulo->getDivisor());
             node.addOutput(++counter, "Output", modulo->getOutput());
@@ -737,7 +747,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::MULTIPLICATION: {
             std::shared_ptr<dsp::Multiplication> multiplication = std::make_shared<dsp::Multiplication>();
-            Node node(id, type, position, multiplication);
+            Node node(data, id, type, position, multiplication);
             node.addInput(++counter, "Input", multiplication->getInput());
             node.addInput(++counter, "Factor", multiplication->getFactor());
             node.addOutput(++counter, "Output", multiplication->getOutput());
@@ -745,7 +755,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::NOTE_TO_FREQUENCY: {
             std::shared_ptr<dsp::NoteToFrequency> toFrequency = std::make_shared<dsp::NoteToFrequency>();
-            Node node(id, type, position, toFrequency);
+            Node node(data, id, type, position, toFrequency);
             node.addInput(++counter, "Note", toFrequency->getInput());
             node.addInput(++counter, "Tuning Frequency", toFrequency->getTuningFrequency());
             node.addOutput(++counter, "Frequency", toFrequency->getOutput());
@@ -753,14 +763,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::NOT_GATE: {
             std::shared_ptr<dsp::NotGate> notGate = std::make_shared<dsp::NotGate>();
-            Node node(id, type, position, notGate);
+            Node node(data, id, type, position, notGate);
             node.addInput(++counter, "Input", notGate->getInput());
             node.addOutput(++counter, "Output", notGate->getOutput());
             return node;
         }
         case Type::POWER: {
             std::shared_ptr<dsp::Power> power = std::make_shared<dsp::Power>();
-            Node node(id, type, position, power);
+            Node node(data, id, type, position, power);
             node.addInput(++counter, "Base", power->getInput());
             node.addInput(++counter, "Exponent", power->getExponent());
             node.addOutput(++counter, "Output", power->getOutput());
@@ -768,14 +778,14 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::RECIPROCAL: {
             std::shared_ptr<dsp::Reciprocal> reciprocal = std::make_shared<dsp::Reciprocal>();
-            Node node(id, type, position, reciprocal);
+            Node node(data, id, type, position, reciprocal);
             node.addInput(++counter, "Input", reciprocal->getInput());
             node.addOutput(++counter, "Output", reciprocal->getOutput());
             return node;
         }
         case Type::TRIGONOMETRIC: {
             std::shared_ptr<dsp::Trigonometric> trigonometric = std::make_shared<dsp::Trigonometric>();
-            Node node(id, type, position, trigonometric);
+            Node node(data, id, type, position, trigonometric);
             node.addInput(++counter, "Input", trigonometric->getInput());
             node.addInput(++counter, "Mode", trigonometric->getMode());
             node.addOutput(++counter, "Output", trigonometric->getOutput());
@@ -783,29 +793,29 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::BEAT_DURATION: {
             std::shared_ptr<dsp::BeatDuration> beatDuration =
-                    std::make_shared<dsp::BeatDuration>(data.getAudioProcessor());
-            Node node(id, type, position, beatDuration);
+                    std::make_shared<dsp::BeatDuration>(data->getAudioProcessor());
+            Node node(data, id, type, position, beatDuration);
             node.addOutput(++counter, "Output", beatDuration->getOutput());
             return node;
         }
         case Type::BEAT_RATE: {
-            std::shared_ptr<dsp::BeatRate> beatRate = std::make_shared<dsp::BeatRate>(data.getAudioProcessor());
-            Node node(id, type, position, beatRate);
+            std::shared_ptr<dsp::BeatRate> beatRate = std::make_shared<dsp::BeatRate>(data->getAudioProcessor());
+            Node node(data, id, type, position, beatRate);
             node.addOutput(++counter, "Output", beatRate->getOutput());
             return node;
         }
         case Type::TIME_SIGNATURE: {
             std::shared_ptr<dsp::TimeSignature> timeSignature =
-                    std::make_shared<dsp::TimeSignature>(data.getAudioProcessor());
-            Node node(id, type, position, timeSignature);
+                    std::make_shared<dsp::TimeSignature>(data->getAudioProcessor());
+            Node node(data, id, type, position, timeSignature);
             node.addOutput(++counter, "Numerator", timeSignature->getNumerator());
             node.addOutput(++counter, "Denominator", timeSignature->getDenominator());
             return node;
         }
         case Type::TRANSPORT_STATE: {
             std::shared_ptr<dsp::TransportState> transportState =
-                    std::make_shared<dsp::TransportState>(data.getAudioProcessor());
-            Node node(id, type, position, transportState);
+                    std::make_shared<dsp::TransportState>(data->getAudioProcessor());
+            Node node(data, id, type, position, transportState);
             node.addOutput(++counter, "Time Elapsed", transportState->getTimeElapsed());
             node.addOutput(++counter, "Is Playing", transportState->isPlaying());
             node.addOutput(++counter, "Is Recording", transportState->isRecording());
@@ -813,7 +823,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::CLOCK_TRIGGER: {
             std::shared_ptr<dsp::ClockTrigger> clockTrigger = std::make_shared<dsp::ClockTrigger>();
-            Node node(id, type, position, clockTrigger);
+            Node node(data, id, type, position, clockTrigger);
             node.addInput(++counter, "Interval", clockTrigger->getInterval());
             node.addInput(++counter, "Delay Time", clockTrigger->getDelayTime());
             node.addInput(++counter, "Reset", clockTrigger->getReset());
@@ -823,7 +833,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::DIFFERENTIATOR: {
             std::shared_ptr<dsp::Differentiator> differentiator = std::make_shared<dsp::Differentiator>();
-            Node node(id, type, position, differentiator);
+            Node node(data, id, type, position, differentiator);
             node.addInput(++counter, "Input", differentiator->getInput());
             node.addInput(++counter, "Gate", differentiator->getGate());
             node.addInput(++counter, "Reset", differentiator->getReset());
@@ -832,7 +842,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::INTEGRATOR: {
             std::shared_ptr<dsp::Integrator> integrator = std::make_shared<dsp::Integrator>();
-            Node node(id, type, position, integrator);
+            Node node(data, id, type, position, integrator);
             node.addInput(++counter, "Input", integrator->getInput());
             node.addInput(++counter, "Gate", integrator->getGate());
             node.addInput(++counter, "Reset", integrator->getReset());
@@ -841,7 +851,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::ON_OFF: {
             std::shared_ptr<dsp::OnOff> onOff = std::make_shared<dsp::OnOff>();
-            Node node(id, type, position, onOff);
+            Node node(data, id, type, position, onOff);
             node.addInput(++counter, "On", onOff->getOnTrigger());
             node.addInput(++counter, "Off", onOff->getOffTrigger());
             node.addOutput(++counter, "Output", onOff->getOutput());
@@ -849,13 +859,13 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::RESET_TRIGGER: {
             std::shared_ptr<dsp::ResetTrigger> resetTrigger = std::make_shared<dsp::ResetTrigger>();
-            Node node(id, type, position, resetTrigger);
+            Node node(data, id, type, position, resetTrigger);
             node.addOutput(++counter, "Output", resetTrigger->getOutput());
             return node;
         }
         case Type::SAMPLE_AND_HOLD: {
             std::shared_ptr<dsp::SampleAndHold> sampleAndHold = std::make_shared<dsp::SampleAndHold>();
-            Node node(id, type, position, sampleAndHold);
+            Node node(data, id, type, position, sampleAndHold);
             node.addInput(++counter, "Input", sampleAndHold->getInput());
             node.addInput(++counter, "Gate", sampleAndHold->getGate());
             node.addInput(++counter, "Reset", sampleAndHold->getReset());
@@ -864,7 +874,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::SEQUENCER: {
             std::shared_ptr<dsp::Sequencer> sequencer = std::make_shared<dsp::Sequencer>();
-            Node node(id, type, position, sequencer);
+            Node node(data, id, type, position, sequencer);
             node.addInput(++counter, "Sequence Index", sequencer->getSequenceIndex());
             node.addInput(++counter, "Position Index", sequencer->getPositionIndex());
             node.addOutput(++counter, "Output", sequencer->getOutput());
@@ -872,7 +882,7 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::TRIGGER_HOLD: {
             std::shared_ptr<dsp::TriggerHold> triggerHold = std::make_shared<dsp::TriggerHold>();
-            Node node(id, type, position, triggerHold);
+            Node node(data, id, type, position, triggerHold);
             node.addInput(++counter, "Input", triggerHold->getInput());
             node.addInput(++counter, "Hold Time", triggerHold->getHoldTime());
             node.addOutput(++counter, "Output", triggerHold->getOutput());
@@ -880,62 +890,62 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
         }
         case Type::BUFFER_DURATION: {
             std::shared_ptr<dsp::BufferDuration> bufferDuration = std::make_shared<dsp::BufferDuration>();
-            Node node(id, type, position, bufferDuration);
+            Node node(data, id, type, position, bufferDuration);
             node.addOutput(++counter, "Output", bufferDuration->getOutput());
             return node;
         }
         case Type::BUFFER_RATE: {
             std::shared_ptr<dsp::BufferRate> bufferRate = std::make_shared<dsp::BufferRate>();
-            Node node(id, type, position, bufferRate);
+            Node node(data, id, type, position, bufferRate);
             node.addOutput(++counter, "Output", bufferRate->getOutput());
             return node;
         }
         case Type::EULER: {
             std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::E);
-            Node node(id, type, position, variable);
+            Node node(data, id, type, position, variable);
             node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::INF: {
             std::shared_ptr<dsp::Infinity> infinity = std::make_shared<dsp::Infinity>();
-            Node node(id, type, position, infinity);
+            Node node(data, id, type, position, infinity);
             node.addInput(++counter, "Mode", infinity->getMode());
             node.addOutput(++counter, "Output", infinity->getOutput());
             return node;
         }
         case Type::PHI: {
             std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::PHI);
-            Node node(id, type, position, variable);
+            Node node(data, id, type, position, variable);
             node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::PI: {
             std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::PI);
-            Node node(id, type, position, variable);
+            Node node(data, id, type, position, variable);
             node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::SAMPLE_DURATION: {
             std::shared_ptr<dsp::SampleDuration> sampleDuration = std::make_shared<dsp::SampleDuration>();
-            Node node(id, type, position, sampleDuration);
+            Node node(data, id, type, position, sampleDuration);
             node.addOutput(++counter, "Output", sampleDuration->getOutput());
             return node;
         }
         case Type::SAMPLE_RATE: {
             std::shared_ptr<dsp::SampleRate> sampleRate = std::make_shared<dsp::SampleRate>();
-            Node node(id, type, position, sampleRate);
+            Node node(data, id, type, position, sampleRate);
             node.addOutput(++counter, "Output", sampleRate->getOutput());
             return node;
         }
         case Type::TAU: {
             std::shared_ptr<dsp::Variable> variable = std::make_shared<dsp::Variable>(dsp::TAU);
-            Node node(id, type, position, variable);
+            Node node(data, id, type, position, variable);
             node.addOutput(++counter, "Output", variable->getOutput());
             return node;
         }
         case Type::VARIABLE: {
             std::shared_ptr<dsp::Identity> identity = std::make_shared<dsp::Identity>();
-            Node node(id, type, position, identity);
+            Node node(data, id, type, position, identity);
             node.addInput(++counter, "Input", identity->getInput());
             node.addOutput(++counter, "Output", identity->getOutput());
             return node;
@@ -944,8 +954,9 @@ particle::NodeGraph::Node::generate(Data &data, int &counter, int id, Type type,
 }
 
 particle::NodeGraph::Link::Link(
-        int id, int from, int to, std::shared_ptr<dsp::Output> output, std::shared_ptr<dsp::Input> input)
-        : id(id)
+        Data *data, int id, int from, int to, std::shared_ptr<dsp::Output> output, std::shared_ptr<dsp::Input> input)
+        : data(data)
+        , id(id)
         , from(from)
         , to(to)
         , output(output)
@@ -957,7 +968,8 @@ void particle::NodeGraph::Link::draw() {
 
 void particle::NodeGraph::Link::drawInspector() {}
 
-particle::NodeGraph::Link particle::NodeGraph::Link::generate(std::map<int, Node> &nodes, int id, int from, int to) {
+particle::NodeGraph::Link
+particle::NodeGraph::Link::generate(Data *data, std::map<int, Node> &nodes, int id, int from, int to) {
     std::shared_ptr<dsp::Output> output;
     std::shared_ptr<dsp::Input> input;
     for (const auto &nodePair : nodes) {
@@ -984,7 +996,7 @@ particle::NodeGraph::Link particle::NodeGraph::Link::generate(std::map<int, Node
             break;
         }
     }
-    return Link(id, from, to, output, input);
+    return Link(data, id, from, to, output, input);
 }
 
 particle::NodeGraph::CreateNodes::CreateNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Node> nodes)
@@ -1172,7 +1184,6 @@ void particle::NodeGraph::drawInternal() {
     imnodes::EditorContextSet(context);
     ImVec2 panning = imnodes::EditorContextGetPanning();
     {
-        
         float speed = io.KeyAlt ? 1.0f : io.KeyShift ? 100.0f : 10.0f;
         int x = ImGui::IsKeyDown(io.KeyMap[ImGuiKey_LeftArrow]) - ImGui::IsKeyDown(io.KeyMap[ImGuiKey_RightArrow]);
         int y = ImGui::IsKeyDown(io.KeyMap[ImGuiKey_UpArrow]) - ImGui::IsKeyDown(io.KeyMap[ImGuiKey_DownArrow]);
@@ -1216,7 +1227,7 @@ void particle::NodeGraph::destroyLinks() {
 }
 
 void particle::NodeGraph::createNode() {
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, getData().getStyle().windowPadding);
     if (!ImGui::IsAnyItemHovered() && imnodes::IsEditorHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         ImGui::OpenPopup("Create Node");
     }
@@ -1231,7 +1242,7 @@ void particle::NodeGraph::createNode() {
                         for (int i = 0; i < 1; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                            nodes.push_back(Node::generate(getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
+                            nodes.push_back(Node::generate(&getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
                         }
                         getData().pushAction(std::make_shared<CreateNodes>(shared_from_this(), nodes));
                     }
@@ -1249,7 +1260,7 @@ void particle::NodeGraph::createLink() {
     int to;
     if (imnodes::IsLinkCreated(&from, &to)) {
         const int id = ++counter;
-        Link link = Link::generate(nodes, id, from, to);
+        Link link = Link::generate(&getData(), nodes, id, from, to);
         getData().pushAction(std::make_shared<CreateLinks>(shared_from_this(), std::vector<Link>{link}));
     }
 }

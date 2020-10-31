@@ -34,6 +34,13 @@ public:
 
     ImVec4 backgroundColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+    const ImVec2 windowPadding = ImVec2(8.0f, 8.0f);
+    const ImVec2 framePadding = ImVec2(4.0f, 4.0f);
+
+    const float windowRounding = 0.0f;
+    const float frameRounding = 0.0f;
+    const float tabRounding = 0.0f;
+
     Style();
 
     void setup();
