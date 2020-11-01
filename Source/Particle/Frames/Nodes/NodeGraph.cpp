@@ -304,10 +304,12 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::FLOOR,
                                                     Type::FORWARD_FFT,
                                                     Type::FREQUENCY_TO_NOTE,
+                                                    Type::HYPERBOLIC,
                                                     Type::INVERSE_FFT,
                                                     Type::LOGARITHM,
                                                     Type::MODULO,
                                                     Type::MULTIPLICATION,
+                                                    Type::NEGATIVE,
                                                     Type::NOTE_TO_FREQUENCY,
                                                     Type::NOT_GATE,
                                                     Type::POWER,
@@ -382,10 +384,12 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::FLOOR: return "Floor";
         case Type::FORWARD_FFT: return "Forward FFT";
         case Type::FREQUENCY_TO_NOTE: return "Frequency to Note";
+        case Type::HYPERBOLIC: return "Hyperbolic";
         case Type::INVERSE_FFT: return "Inverse FFT";
         case Type::LOGARITHM: return "Logarithm";
         case Type::MODULO: return "Modulo";
         case Type::MULTIPLICATION: return "Multiplication";
+        case Type::NEGATIVE: return "Negative";
         case Type::NOTE_TO_FREQUENCY: return "Note to Frequency";
         case Type::NOT_GATE: return "Not Gate";
         case Type::POWER: return "Power";
@@ -721,6 +725,14 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addOutput(++counter, "Note", toNote->getOutput());
             return node;
         }
+        case Type::HYPERBOLIC: {
+            std::shared_ptr<dsp::Hyperbolic> hyperbolic = std::make_shared<dsp::Hyperbolic>();
+            Node node(data, id, type, position, hyperbolic);
+            node.addInput(++counter, "Input", hyperbolic->getInput());
+            node.addInput(++counter, "Mode", hyperbolic->getMode());
+            node.addOutput(++counter, "Output", hyperbolic->getOutput());
+            return node;
+        }
         case Type::INVERSE_FFT: {
             std::shared_ptr<dsp::InverseFFT> inverseFFT = std::make_shared<dsp::InverseFFT>();
             Node node(data, id, type, position, inverseFFT);
@@ -751,6 +763,13 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", multiplication->getInput());
             node.addInput(++counter, "Factor", multiplication->getFactor());
             node.addOutput(++counter, "Output", multiplication->getOutput());
+            return node;
+        }
+        case Type::NEGATIVE: {
+            std::shared_ptr<dsp::Negative> negative = std::make_shared<dsp::Negative>();
+            Node node(data, id, type, position, negative);
+            node.addInput(++counter, "Input", negative->getInput());
+            node.addOutput(++counter, "Output", negative->getOutput());
             return node;
         }
         case Type::NOTE_TO_FREQUENCY: {

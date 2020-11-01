@@ -187,6 +187,8 @@
                     file="Source/DSP/src/Nodes/Math/FrequencyToNote.cpp"/>
               <FILE id="crIIPI" name="FrequencyToNote.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Math/FrequencyToNote.h"/>
+              <FILE id="M40So8" name="Hyperbolic.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Hyperbolic.cpp"/>
+              <FILE id="hPIX3P" name="Hyperbolic.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Hyperbolic.h"/>
               <FILE id="XwC0l7" name="Identity.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Identity.cpp"/>
               <FILE id="dmXm6S" name="Identity.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Identity.h"/>
               <FILE id="QeqwAn" name="InverseFFT.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/InverseFFT.cpp"/>
@@ -199,6 +201,8 @@
                     file="Source/DSP/src/Nodes/Math/Multiplication.cpp"/>
               <FILE id="xt2keG" name="Multiplication.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Math/Multiplication.h"/>
+              <FILE id="RlESNS" name="Negative.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Math/Negative.cpp"/>
+              <FILE id="fkNu3X" name="Negative.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Math/Negative.h"/>
               <FILE id="LyT62d" name="NoteToFrequency.cpp" compile="1" resource="0"
                     file="Source/DSP/src/Nodes/Math/NoteToFrequency.cpp"/>
               <FILE id="F6eZGR" name="NoteToFrequency.h" compile="0" resource="0"
