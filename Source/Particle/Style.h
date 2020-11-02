@@ -36,10 +36,16 @@ public:
 
     const ImVec2 windowPadding = ImVec2(8.0f, 8.0f);
     const ImVec2 framePadding = ImVec2(4.0f, 4.0f);
+    const ImVec2 nodeFramePadding = ImVec2(4.0f, 2.0f);
 
     const float windowRounding = 0.0f;
     const float frameRounding = 0.0f;
     const float tabRounding = 0.0f;
+    const float gridSize = 300.0f;
+    const float nodeCornerRounding = 6.0f;
+    const float nodeBorderThickness = 1.25f;
+    const float linkThickness = 2.5f;
+    const float pinSize = 7.5f;
 
     Style();
 

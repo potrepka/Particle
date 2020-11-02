@@ -14,6 +14,9 @@ namespace particle {
 class NodeGraph : public Frame, public std::enable_shared_from_this<NodeGraph> {
 
 public:
+    static const int PRECISION;
+    static const float FRAME_WIDTH;
+
     union FloatInt {
         FloatInt(dsp::Type type, dsp::Sample value);
         float valueFloat;
@@ -149,6 +152,20 @@ public:
         static std::vector<Category> getCategories(bool isPlugin);
         static std::string getTypeName(Type type);
         static Node generate(Data *data, int &counter, int id, Type type, ImVec2 position);
+
+    private:
+        float getFrameHeight(float numberOfBlocks);
+        void drawPlot(std::string title,
+                      std::vector<dsp::Sample> x,
+                      std::vector<std::vector<dsp::Sample>> y,
+                      dsp::Sample x_min,
+                      dsp::Sample x_max,
+                      dsp::Sample y_min,
+                      dsp::Sample y_max,
+                      ImVec2 size = ImVec2(-1.0f, 0.0f),
+                      ImPlotAxisFlags x_flags = ImPlotAxisFlags_None,
+                      ImPlotAxisFlags y_flags = ImPlotAxisFlags_None);
+        void drawLabel(const char *text);
     };
     
     struct Link {

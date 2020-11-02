@@ -1,5 +1,8 @@
 #include "NodeGraph.h"
 
+const int particle::NodeGraph::PRECISION = 6;
+const float particle::NodeGraph::FRAME_WIDTH = 120.0f;
+
 particle::NodeGraph::FloatInt::FloatInt(dsp::Type type, dsp::Sample value) {
     switch (type) {
         case dsp::Type::RATIO:
@@ -18,23 +21,22 @@ particle::NodeGraph::Input::Input(Data *data, int id, std::string name, std::sha
         , value(input->getType(), input->getDefaultValue()) {}
 
 void particle::NodeGraph::Input::draw() {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
     imnodes::BeginInputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(190);
+    ImGui::SetNextItemWidth(FRAME_WIDTH);
     if (input->getConnections().size() == 0) {
         ImGuiIO &io = ImGui::GetIO();
         switch (input->getType()) {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
-                int precision = 16;
                 float speed = io.KeyAlt ? 0.1f : io.KeyShift ? 100.0f : 1.0f;
                 if (ImGui::DragFloat(getName().c_str(),
                                      &value.valueFloat,
                                      speed,
                                      0.0f,
                                      static_cast<float>(input->getRange()),
-                                     ("%." + std::to_string(precision) + "f").c_str(),
+                                     ("%." + std::to_string(PRECISION) + "f").c_str(),
                                      ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueFloat);
                     input->setDefaultValue(value.valueFloat);
@@ -63,22 +65,22 @@ void particle::NodeGraph::Input::draw() {
             } break;
         }
     } else {
+
+        // TODO: Make this a button
         input->lock();
-        std::vector<dsp::Sample> x(input->getNumSamples());
-        std::iota(x.begin(), x.end(), 0);
         switch (input->getType()) {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
-                int precision = 16;
                 float lastSample = input->getWrapper().getSample(0, input->getNumSamples() - 1);
                 lastSample = lastSample == 0.0 ? 0.0 : lastSample;
+                lastSample = isnan(lastSample) ? std::numeric_limits<float>::quiet_NaN() : lastSample;
                 ImGui::DragFloat(getName().c_str(),
                                  &lastSample,
                                  0.0f,
                                  0.0f,
                                  0.0f,
-                                 ("%." + std::to_string(precision) + "f").c_str(),
+                                 ("%." + std::to_string(PRECISION) + "f").c_str(),
                                  ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             } break;
             case dsp::Type::INTEGER:
@@ -93,28 +95,6 @@ void particle::NodeGraph::Input::draw() {
                                ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             } break;
         }
-
-        // TODO: remove commented code, put plots elsewhere
-
-        //ImPlot::SetNextPlotLimits(0, input->getNumSamples(), -1, 1);
-        //if (ImPlot::BeginPlot(("##" + getName()).c_str(),
-        //                      NULL,
-        //                      NULL,
-        //                      ImVec2(100, ImGui::GetFrameHeight()),
-        //                      ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
-        //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
-        //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
-        //    ImPlot::PlotLine("Channel 0",
-        //                     x.data(),
-        //                     input->getWrapper().getChannelPointer(0),
-        //                     input->getNumSamples(),
-        //                     0,
-        //                     sizeof(dsp::Sample));
-        //    ImPlot::EndPlot();
-        //}
-        //ImGui::SameLine();
-        //ImGui::Text("%s", getName().c_str());
-
         input->unlock();
     }
     imnodes::EndInputAttribute();
@@ -132,25 +112,25 @@ particle::NodeGraph::Output::Output(Data *data, int id, std::string name, std::s
         , value(output->getType(), output->getDefaultValue()) {}
 
 void particle::NodeGraph::Output::draw() {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
     imnodes::BeginOutputAttribute(id, imnodes::PinShape::PinShape_QuadFilled);
-    ImGui::SetNextItemWidth(190);
+    ImGui::SetNextItemWidth(FRAME_WIDTH);
+
+    // TODO: Make this a button
     output->lock();
-    std::vector<dsp::Sample> x(output->getNumSamples());
-    std::iota(x.begin(), x.end(), 0);
     switch (output->getType()) {
         case dsp::Type::RATIO:
         case dsp::Type::HERTZ:
         case dsp::Type::SECONDS: {
-            int precision = 16;
             float lastSample = output->getWrapper().getSample(0, output->getNumSamples() - 1);
             lastSample = lastSample == 0.0 ? 0.0 : lastSample;
+            lastSample = isnan(lastSample) ? std::numeric_limits<float>::quiet_NaN() : lastSample;
             ImGui::DragFloat(getName().c_str(),
                              &lastSample,
                              0.0f,
                              0.0f,
                              0.0f,
-                             ("%." + std::to_string(precision) + "f").c_str(),
+                             ("%." + std::to_string(PRECISION) + "f").c_str(),
                              ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             break;
         }
@@ -167,28 +147,6 @@ void particle::NodeGraph::Output::draw() {
             break;
         }
     }
-
-    // TODO: remove commented code, put plots elsewhere
-
-    //ImPlot::SetNextPlotLimits(0, output->getNumSamples(), -1, 1);
-    //if (ImPlot::BeginPlot(("##" + getName()).c_str(),
-    //                      NULL,
-    //                      NULL,
-    //                      ImVec2(100, ImGui::GetFrameHeight()),
-    //                      ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
-    //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
-    //                      ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
-    //    ImPlot::PlotLine("Channel 0",
-    //                     x.data(),
-    //                     output->getWrapper().getChannelPointer(0),
-    //                     output->getNumSamples(),
-    //                     0,
-    //                     sizeof(dsp::Sample));
-    //    ImPlot::EndPlot();
-    //}
-    //ImGui::SameLine();cd 
-    //ImGui::Text("%s", getName().c_str());
-
     output->unlock();
     imnodes::EndOutputAttribute();
     ImGui::PopStyleVar();
@@ -223,13 +181,13 @@ std::string particle::NodeGraph::Node::getTypeName() const {
 void particle::NodeGraph::Node::draw(bool selected) {
     if (selected) {
         // TODO: uncomment
-        //imnodes::PushStyleVar(imnodes::StyleVar_NodeBorderThickness, 2.5f);
+        // imnodes::PushStyleVar(imnodes::StyleVar_NodeBorderThickness, 2.5f);
         imnodes::PushColorStyle(imnodes::ColorStyle_NodeOutline,
                                 imnodes::GetStyle().colors[imnodes::ColorStyle_LinkSelected]);
     }
     imnodes::BeginNode(id);
     imnodes::BeginNodeTitleBar();
-    ImGui::Text("%s", getTypeName(type).c_str());
+    ImGui::TextUnformatted(getTypeName(type).c_str());
     imnodes::EndNodeTitleBar();
     ImGui::BeginGroup();
     for (auto &input : inputs) {
@@ -240,7 +198,7 @@ void particle::NodeGraph::Node::draw(bool selected) {
     drawContent();
     ImGui::SameLine(0);
     ImGui::BeginGroup();
-    for (auto& output : outputs) {
+    for (auto &output : outputs) {
         output.second.draw();
     }
     ImGui::EndGroup();
@@ -248,23 +206,147 @@ void particle::NodeGraph::Node::draw(bool selected) {
     if (selected) {
         imnodes::PopColorStyle();
         // TODO: uncomment
-        //imnodes::PopStyleVar();
+        // imnodes::PopStyleVar();
     }
 }
 
 void particle::NodeGraph::Node::drawContent() {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().framePadding);
-
-    // TODO: remove this comment
-    // ImGui::BeginChild("Child", ImVec2(200, 200));
-    // ImGui::EndChild();
-
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
     switch (type) {
+        case Type::RECORDER: {
+            std::shared_ptr<dsp::Recorder> resetTrigger = std::dynamic_pointer_cast<dsp::Recorder>(node);
+        } break;
+        case Type::CHANNEL_MERGER: {
+            std::shared_ptr<dsp::ChannelMerger> merger = std::dynamic_pointer_cast<dsp::ChannelMerger>(node);
+        } break;
+        case Type::CHANNEL_SPLITTER: {
+            std::shared_ptr<dsp::ChannelSplitter> splitter = std::dynamic_pointer_cast<dsp::ChannelSplitter>(node);
+        } break;
+        case Type::COMPRESSOR_GATE: {
+            std::shared_ptr<dsp::CompressorGate> compressorGate = std::dynamic_pointer_cast<dsp::CompressorGate>(node);
+            const dsp::Sample noiseFloor = 0.00390625;
+            const dsp::Sample noiseCeiling = 256.0;
+            std::vector<dsp::Sample> x;
+            std::vector<std::vector<dsp::Sample>> response(compressorGate->getNumChannels());
+            {
+                for (dsp::Sample gain = noiseFloor; gain <= noiseCeiling; gain *= 1.0115794542598986) {
+                    x.push_back(gain);
+                    for (size_t channel = 0; channel < compressorGate->getNumChannels(); ++channel) {
+                        response[channel].push_back(compressorGate->getGainResponse(channel, gain));
+                    }
+                }
+            }
+            ImGui::BeginGroup();
+            drawPlot("Log Gain",
+                     x,
+                     response,
+                     noiseFloor,
+                     noiseCeiling,
+                     noiseFloor,
+                     noiseCeiling,
+                     ImVec2(getFrameHeight(8.0f), getFrameHeight(8.0f)),
+                     ImPlotAxisFlags_LogScale,
+                     ImPlotAxisFlags_LogScale);
+            drawLabel("Log Gain");
+            ImGui::EndGroup();
+        } break;
+        case Type::ENVELOPE: {
+            std::shared_ptr<dsp::Envelope> envelope = std::dynamic_pointer_cast<dsp::Envelope>(node);
+        } break;
+        case Type::SHAPER: {
+            std::shared_ptr<dsp::Shaper> shaper = std::dynamic_pointer_cast<dsp::Shaper>(node);
+            std::vector<dsp::Sample> x;
+            std::vector<std::vector<dsp::Sample>> output(shaper->getNumChannels());
+            {
+                for (dsp::Sample input = -1.0; input <= 1.0; input += 0.015625) {
+                    x.push_back(input);
+                    for (size_t channel = 0; channel < shaper->getNumChannels(); ++channel) {
+                        output[channel].push_back(shaper->getOutputSignal(channel, input));
+                    }
+                }
+            }
+            ImGui::BeginGroup();
+            drawPlot("Gain",
+                     x,
+                     output,
+                     -1.0,
+                     1.0,
+                     -1.0,
+                     1.0,
+                     ImVec2(getFrameHeight(3.0f), getFrameHeight(3.0f)),
+                     ImPlotAxisFlags_None,
+                     ImPlotAxisFlags_None);
+            drawLabel("Gain");
+            ImGui::EndGroup();
+        } break;
+        case Type::MIDI_INPUT: {
+            std::shared_ptr<dsp::MidiInput> midiInput = std::dynamic_pointer_cast<dsp::MidiInput>(node);
+        } break;
+        case Type::MIDI_OUTPUT: {
+            std::shared_ptr<dsp::MidiOutput> midiOutput = std::dynamic_pointer_cast<dsp::MidiOutput>(node);
+        } break;
+        case Type::BIQUAD: {
+            std::shared_ptr<dsp::Biquad> biquad = std::dynamic_pointer_cast<dsp::Biquad>(node);
+            const dsp::Sample zero = 6.75;
+            const dsp::Sample nyquist = 0.5 * biquad->getSampleRate();
+            std::vector<dsp::Sample> x;
+            std::vector<std::vector<dsp::Sample>> magnitude(biquad->getNumChannels());
+            std::vector<std::vector<dsp::Sample>> phase(biquad->getNumChannels());
+            {
+                dsp::Sample m;
+                dsp::Sample p;
+                for (dsp::Sample frequency = zero; frequency <= nyquist; frequency *= 1.0594630943592953) {
+                    x.push_back(frequency);
+                    for (size_t channel = 0; channel < biquad->getNumChannels(); ++channel) {
+                        biquad->getMagnitudeAndPhaseResponse(channel, frequency, m, p);
+                        magnitude[channel].push_back(m);
+                        phase[channel].push_back(p);
+                    }
+                }
+            }
+            ImGui::BeginGroup();
+            drawPlot("Magnitude",
+                     x,
+                     magnitude,
+                     zero,
+                     nyquist,
+                     0.0625,
+                     16.0,
+                     ImVec2(2.0f * FRAME_WIDTH, getFrameHeight(3.0f)),
+                     ImPlotAxisFlags_LogScale,
+                     ImPlotAxisFlags_LogScale);
+            drawLabel("Magnitude");
+            drawPlot("Phase",
+                     x,
+                     phase,
+                     zero,
+                     nyquist,
+                     0.0,
+                     1.0,
+                     ImVec2(2.0f * FRAME_WIDTH, getFrameHeight(2.0f)),
+                     ImPlotAxisFlags_LogScale,
+                     ImPlotAxisFlags_None);
+            drawLabel("Phase");
+            ImGui::EndGroup();
+        } break;
+        case Type::ONE_POLE: {
+            std::shared_ptr<dsp::OnePole> onePole = std::dynamic_pointer_cast<dsp::OnePole>(node);
+        } break;
+        case Type::SAMPLE_PLAYER: {
+            std::shared_ptr<dsp::SamplePlayer> samplePlayer = std::dynamic_pointer_cast<dsp::SamplePlayer>(node);
+        } break;
+        case Type::TABLE_OSCILLATOR: {
+            std::shared_ptr<dsp::TableOscillator> tableOscillator =
+                    std::dynamic_pointer_cast<dsp::TableOscillator>(node);
+        } break;
         case Type::RESET_TRIGGER: {
             std::shared_ptr<dsp::ResetTrigger> resetTrigger = std::dynamic_pointer_cast<dsp::ResetTrigger>(node);
             if (ImGui::Button("Reset")) {
                 resetTrigger->reset();
             }
+        } break;
+        case Type::SEQUENCER: {
+            std::shared_ptr<dsp::Sequencer> sequencer = std::dynamic_pointer_cast<dsp::Sequencer>(node);
         } break;
     }
     ImGui::PopStyleVar();
@@ -316,11 +398,9 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::RECIPROCAL,
                                                     Type::TRIGONOMETRIC}));
     if (isPlugin) {
-        categories.push_back(Category("Plugin",
-                                      std::vector<Type>{Type::BEAT_DURATION,
-                                                        Type::BEAT_RATE,
-                                                        Type::TIME_SIGNATURE,
-                                                        Type::TRANSPORT_STATE}));
+        categories.push_back(Category(
+                "Plugin",
+                std::vector<Type>{Type::BEAT_DURATION, Type::BEAT_RATE, Type::TIME_SIGNATURE, Type::TRANSPORT_STATE}));
     }
     categories.push_back(Category("Trigger",
                                   std::vector<Type>{Type::CLOCK_TRIGGER,
@@ -343,7 +423,6 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::TAU,
                                                     Type::VARIABLE}));
     return categories;
-     
 }
 
 std::string particle::NodeGraph::Node::getTypeName(Type type) {
@@ -372,7 +451,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::BIQUAD: return "Biquad";
         case Type::CROSSOVER: return "Crossover";
         case Type::ONE_POLE: return "One-Pole";
-        case Type::MOORER_DSF: return "Moorer DSF";
+        case Type::MOORER_DSF: return "Function Oscillator";
         case Type::NOISE: return "Noise";
         case Type::PHASOR: return "Phasor";
         case Type::SAMPLE_PLAYER: return "Sample Player";
@@ -417,7 +496,6 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::SAMPLE_RATE: return "Sample Rate";
         case Type::TAU: return "Tau";
         case Type::VARIABLE: return "Variable";
-
     }
 }
 
@@ -661,13 +739,13 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             return node;
         }
         case Type::TABLE_OSCILLATOR: {
-            std::shared_ptr<dsp::TableOscillator> oscillator = std::make_shared<dsp::TableOscillator>();
-            Node node(data, id, type, position, oscillator);
-            node.addInput(++counter, "Phase", oscillator->getPhase());
-            node.addInput(++counter, "Position", oscillator->getPosition());
-            node.addInput(++counter, "Phase Interpolation", oscillator->getPhaseInterpolation());
-            node.addInput(++counter, "Position Interpolation", oscillator->getPositionInterpolation());
-            node.addOutput(++counter, "Output", oscillator->getOutput());
+            std::shared_ptr<dsp::TableOscillator> tableOscillator = std::make_shared<dsp::TableOscillator>();
+            Node node(data, id, type, position, tableOscillator);
+            node.addInput(++counter, "Phase", tableOscillator->getPhase());
+            node.addInput(++counter, "Position", tableOscillator->getPosition());
+            node.addInput(++counter, "Phase Interpolation", tableOscillator->getPhaseInterpolation());
+            node.addInput(++counter, "Position Interpolation", tableOscillator->getPositionInterpolation());
+            node.addOutput(++counter, "Output", tableOscillator->getOutput());
             return node;
         }
         case Type::ABSOLUTE_VALUE: {
@@ -972,6 +1050,48 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
     }
 }
 
+float particle::NodeGraph::Node::getFrameHeight(float numberOfBlocks) {
+    return floor(ImGui::GetFrameHeight()) * numberOfBlocks + ImGui::GetStyle().ItemSpacing.y * (numberOfBlocks - 1.0f);
+}
+
+void particle::NodeGraph::Node::drawPlot(std::string title,
+                                         std::vector<dsp::Sample> x,
+                                         std::vector<std::vector<dsp::Sample>> y,
+                                         dsp::Sample x_min,
+                                         dsp::Sample x_max,
+                                         dsp::Sample y_min,
+                                         dsp::Sample y_max,
+                                         ImVec2 size,
+                                         ImPlotAxisFlags x_flags,
+                                         ImPlotAxisFlags y_flags) {
+    ImPlot::SetNextPlotLimits(x_min, x_max, y_min, y_max);
+    if (ImPlot::BeginPlot(("##" + title).c_str(),
+                          NULL,
+                          NULL,
+                          size,
+                          ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild,
+                          x_flags | ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations,
+                          y_flags | ImPlotAxisFlags_Lock | ImPlotAxisFlags_NoDecorations)) {
+        for (size_t channel = 0; channel < y.size(); ++channel) {
+            ImPlot::PlotLine(("Channel " + std::to_string(channel)).c_str(),
+                             x.data(),
+                             y[channel].data(),
+                             x.size(),
+                             0,
+                             sizeof(dsp::Sample));
+        }
+        ImPlot::EndPlot();
+    }
+}
+
+void particle::NodeGraph::Node::drawLabel(const char *text) {
+    // TODO: Put this into external function
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImGui::GetStyle().ItemInnerSpacing);
+    ImGui::SameLine();
+    ImGui::PopStyleVar();
+    ImGui::TextUnformatted(text);
+}
+
 particle::NodeGraph::Link::Link(
         Data *data, int id, int from, int to, std::shared_ptr<dsp::Output> output, std::shared_ptr<dsp::Input> input)
         : data(data)
@@ -1080,25 +1200,25 @@ particle::NodeGraph::DestroyNodes::DestroyNodes(std::shared_ptr<NodeGraph> nodeG
         , ids(ids) {}
 
 void particle::NodeGraph::DestroyNodes::perform() {
-    for (const auto& nodeId : ids) {
-        Node& node = nodeGraph->getNodes()[nodeId];
+    for (const auto &nodeId : ids) {
+        Node &node = nodeGraph->getNodes()[nodeId];
         std::vector<int> attachedLinks;
-        for (const auto& inputPair : node.inputs) {
-            for (const auto& linkPair : nodeGraph->getLinks()) {
+        for (const auto &inputPair : node.inputs) {
+            for (const auto &linkPair : nodeGraph->getLinks()) {
                 if (inputPair.first == linkPair.second.to) {
                     attachedLinks.push_back(linkPair.first);
                 }
             }
         }
-        for (const auto& outputPair : node.outputs) {
-            for (const auto& linkPair : nodeGraph->getLinks()) {
+        for (const auto &outputPair : node.outputs) {
+            for (const auto &linkPair : nodeGraph->getLinks()) {
                 if (outputPair.first == linkPair.second.from) {
                     attachedLinks.push_back(linkPair.first);
                 }
             }
         }
-        for (const auto& linkId : attachedLinks) {
-            Link& link = nodeGraph->getLinks()[linkId];
+        for (const auto &linkId : attachedLinks) {
+            Link &link = nodeGraph->getLinks()[linkId];
             // DSP
             link.output->disconnect(link.input);
             // LOCAL
@@ -1119,7 +1239,7 @@ void particle::NodeGraph::DestroyNodes::perform() {
 }
 
 void particle::NodeGraph::DestroyNodes::undo() {
-    for (const auto& node : nodes) {
+    for (const auto &node : nodes) {
         // GUI
         nodeGraph->getNodes().emplace(node.id, node);
         imnodes::SetNodeGridSpacePos(node.id, node.position);
@@ -1128,7 +1248,7 @@ void particle::NodeGraph::DestroyNodes::undo() {
             nodeGraph->getContainer()->addChild(node.node);
         }
     }
-    for (const auto& link : links) {
+    for (const auto &link : links) {
         // GUI
         nodeGraph->getLinks().emplace(link.id, link);
         // DSP
@@ -1147,7 +1267,7 @@ particle::NodeGraph::DestroyLinks::DestroyLinks(std::shared_ptr<NodeGraph> nodeG
         , ids(ids) {}
 
 void particle::NodeGraph::DestroyLinks::perform() {
-    for (const auto& linkId : ids) {
+    for (const auto &linkId : ids) {
         Link &link = nodeGraph->getLinks()[linkId];
         // DSP
         link.output->disconnect(link.input);
@@ -1219,7 +1339,6 @@ void particle::NodeGraph::drawInternal() {
         selectedNodeSet.insert(node_id);
     }
     imnodes::BeginNodeEditor();
-    ImGui::Text("(%.0f, %.0f)", panning.x, panning.y);
     createNode();
     for (auto &nodePair : nodes) {
         nodePair.second.draw(selectedNodeSet.find(nodePair.first) != selectedNodeSet.end());
@@ -1228,6 +1347,8 @@ void particle::NodeGraph::drawInternal() {
         linkPair.second.draw();
     }
     imnodes::EndNodeEditor();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeightWithSpacing());
+    ImGui::Text("(%.0f, %.0f)", panning.x, panning.y);
     createLink();
 }
 
@@ -1261,7 +1382,8 @@ void particle::NodeGraph::createNode() {
                         for (int i = 0; i < 1; ++i) {
                             const int id = ++counter;
                             imnodes::SetNodeScreenSpacePos(id, mousePosition);
-                            nodes.push_back(Node::generate(&getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
+                            nodes.push_back(
+                                    Node::generate(&getData(), counter, id, type, imnodes::GetNodeGridSpacePos(id)));
                         }
                         getData().pushAction(std::make_shared<CreateNodes>(shared_from_this(), nodes));
                     }

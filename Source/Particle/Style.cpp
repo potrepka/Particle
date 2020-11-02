@@ -46,23 +46,29 @@ void particle::Style::dark(const float transparency) {
     theme = Theme::DARK;
     this->transparency = transparency;
 
-    ImVec4 background = ImVec4(GRAY_1, GRAY_1, GRAY_1, transparency);
-    ImVec4 background_active = ImVec4(GRAY_3, GRAY_3, GRAY_3, transparency);
+    float bg = GRAY_0;
+    float fr = GRAY_4;
+    float it = GRAY_8;
+    float ac = GRAY_14;
+    float txt = GRAY_16;
 
-    ImVec4 frame = ImVec4(GRAY_4, GRAY_4, GRAY_4, transparency);
-    ImVec4 frame_hover = ImVec4(GRAY_3, GRAY_3, GRAY_3, transparency);
-    ImVec4 frame_active = ImVec4(GRAY_2, GRAY_2, GRAY_2, transparency);
+    ImVec4 background = ImVec4(bg, bg, bg, transparency);
+    ImVec4 background_active = ImVec4(fr, fr, fr, transparency);
 
-    ImVec4 item = ImVec4(GRAY_7, GRAY_7, GRAY_7, transparency);
-    ImVec4 item_hover = ImVec4(GRAY_6, GRAY_6, GRAY_6, transparency);
-    ImVec4 item_active = ImVec4(GRAY_5, GRAY_5, GRAY_5, transparency);
+    ImVec4 frame = ImVec4(fr, fr, fr, transparency);
+    ImVec4 frame_hover = ImVec4(fr - GRAY_1, fr - GRAY_1, fr - GRAY_1, transparency);
+    ImVec4 frame_active = ImVec4(fr - GRAY_2, fr - GRAY_2, fr - GRAY_2, transparency);
 
-    ImVec4 accent = ImColor(GRAY_14, GRAY_0, GRAY_0, transparency);
-    ImVec4 accent_hover = ImColor(GRAY_13, GRAY_0, GRAY_0, transparency);
-    ImVec4 accent_active = ImColor(GRAY_12, GRAY_0, GRAY_0, transparency);
+    ImVec4 item = ImVec4(it, it, it, transparency);
+    ImVec4 item_hover = ImVec4(it - GRAY_1, it - GRAY_1, it - GRAY_1, transparency);
+    ImVec4 item_active = ImVec4(it - GRAY_2, it - GRAY_2, it - GRAY_2, transparency);
 
-    ImVec4 text = ImVec4(GRAY_16, GRAY_16, GRAY_16, GRAY_16);
-    ImVec4 text_disabled = ImVec4(GRAY_10, GRAY_10, GRAY_10, GRAY_16);
+    ImVec4 accent = ImColor(ac, GRAY_0, GRAY_0, transparency);
+    ImVec4 accent_hover = ImColor(ac - GRAY_1, GRAY_0, GRAY_0, transparency);
+    ImVec4 accent_active = ImColor(ac - GRAY_2, GRAY_0, GRAY_0, transparency);
+
+    ImVec4 text = ImVec4(txt, txt, txt, GRAY_16);
+    ImVec4 text_disabled = ImVec4(txt - GRAY_6, txt - GRAY_6, txt - GRAY_6, GRAY_16);
 
     setColors(background,
               background_active,
@@ -83,23 +89,29 @@ void particle::Style::light(const float transparency) {
     theme = Theme::LIGHT;
     this->transparency = transparency;
 
-    ImVec4 background = ImColor(GRAY_15, GRAY_15, GRAY_15, transparency);
-    ImVec4 background_active = ImColor(GRAY_13, GRAY_13, GRAY_13, transparency);
+    float bg = GRAY_16;
+    float fr = GRAY_12;
+    float it = GRAY_8;
+    float ac = GRAY_16;
+    float txt = GRAY_0;
 
-    ImVec4 frame = ImColor(GRAY_12, GRAY_12, GRAY_12, transparency);
-    ImVec4 frame_hover = ImColor(GRAY_13, GRAY_13, GRAY_13, transparency);
-    ImVec4 frame_active = ImColor(GRAY_14, GRAY_14, GRAY_14, transparency);
+    ImVec4 background = ImVec4(bg, bg, bg, transparency);
+    ImVec4 background_active = ImVec4(fr, fr, fr, transparency);
 
-    ImVec4 item = ImColor(GRAY_9, GRAY_9, GRAY_9, transparency);
-    ImVec4 item_hover = ImColor(GRAY_10, GRAY_10, GRAY_10, transparency);
-    ImVec4 item_active = ImColor(GRAY_11, GRAY_11, GRAY_11, transparency);
+    ImVec4 frame = ImVec4(fr, fr, fr, transparency);
+    ImVec4 frame_hover = ImVec4(fr + GRAY_1, fr + GRAY_1, fr + GRAY_1, transparency);
+    ImVec4 frame_active = ImVec4(fr + GRAY_2, fr + GRAY_2, fr + GRAY_2, transparency);
 
-    ImVec4 accent = ImColor(GRAY_16, GRAY_0, GRAY_0, transparency);
-    ImVec4 accent_hover = ImColor(GRAY_15, GRAY_0, GRAY_0, transparency);
-    ImVec4 accent_active = ImColor(GRAY_14, GRAY_0, GRAY_0, transparency);
+    ImVec4 item = ImVec4(it, it, it, transparency);
+    ImVec4 item_hover = ImVec4(it + GRAY_1, it + GRAY_1, it + GRAY_1, transparency);
+    ImVec4 item_active = ImVec4(it + GRAY_2, it + GRAY_2, it + GRAY_2, transparency);
 
-    ImVec4 text = ImColor(GRAY_0, GRAY_0, GRAY_0, GRAY_16);
-    ImVec4 text_disabled = ImColor(GRAY_6, GRAY_6, GRAY_6, GRAY_16);
+    ImVec4 accent = ImColor(ac, GRAY_0, GRAY_0, transparency);
+    ImVec4 accent_hover = ImColor(ac - GRAY_1, GRAY_0, GRAY_0, transparency);
+    ImVec4 accent_active = ImColor(ac - GRAY_2, GRAY_0, GRAY_0, transparency);
+
+    ImVec4 text = ImVec4(txt, txt, txt, GRAY_16);
+    ImVec4 text_disabled = ImVec4(txt + GRAY_6, txt + GRAY_6, txt + GRAY_6, GRAY_16);
 
     setColors(background,
               background_active,
@@ -258,6 +270,7 @@ void particle::Style::setColors(const ImColor &background,
         style.Colors[ImPlotCol_Fill] = item;
         style.Colors[ImPlotCol_FrameBg] = frame;
         style.Colors[ImPlotCol_PlotBg] = frame;
+        style.Colors[ImPlotCol_LegendBg] = TRANSPARENT;
         style.Colors[ImPlotCol_Selection] = accent_active;
         style.Colors[ImPlotCol_Query] = ImColor(1.0f, 0.0f, 1.0f, 1.0f);  
     }
@@ -274,13 +287,13 @@ void particle::Style::setSizes() {
     }
     {
         imnodes::Style &style = imnodes::GetStyle();
-        style.grid_spacing = 300.0f;
-        style.node_corner_rounding = 6.0f;
+        style.grid_spacing = gridSize;
+        style.node_corner_rounding = nodeCornerRounding;
         // TODO: uncomment below
-        // style.node_border_thickness = 1.25f;
-        style.link_thickness = 2.5f;
+        // style.node_border_thickness = nodeBorderThickness;
+        style.link_thickness = linkThickness;
         style.link_line_segments_per_length = 0.5f;
-        style.pin_quad_side_length = 7.5f;
+        style.pin_quad_side_length = pinSize;
         style.pin_offset = 0.0f;
     }
     {

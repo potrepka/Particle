@@ -50,7 +50,7 @@ void particle::View::setup() {
     for (int i = 0; i < numFonts; ++i) {
         fontData[i] = IM_ALLOC(ttfSize[i]);
         std::memcpy(fontData[i], ttf[i], ttfSize[i]);
-        font[i] = io.Fonts->AddFontFromMemoryTTF(fontData[i], ttfSize[i], 12.0f * 1.2f);
+        font[i] = io.Fonts->AddFontFromMemoryTTF(fontData[i], ttfSize[i], 15.2666666f);
     }
 }
 
