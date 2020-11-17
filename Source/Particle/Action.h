@@ -8,6 +8,7 @@ class Action : public Named {
 
 public:
     Action(std::string name);
+    virtual ~Action() {}
 
     virtual void perform() = 0;
     virtual void undo() = 0;
