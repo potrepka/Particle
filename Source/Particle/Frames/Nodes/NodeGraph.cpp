@@ -619,7 +619,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", compressorGate->getInput());
             node.addInput(++counter, "Control", compressorGate->getControl());
             node.addInput(++counter, "Threshold", compressorGate->getThreshold());
-            node.addInput(++counter, "Hardness", compressorGate->getHardness());
+            node.addInput(++counter, "Softness", compressorGate->getSoftness());
             node.addInput(++counter, "Compression Ratio", compressorGate->getCompressionRatio());
             node.addInput(++counter, "Gate Ratio", compressorGate->getGateRatio());
             node.addInput(++counter, "Attack", compressorGate->getAttack());
@@ -768,7 +768,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Phasor> phasor = std::make_shared<dsp::Phasor>();
             Node node(data, id, type, position, phasor);
             node.addInput(++counter, "Frequency", phasor->getFrequency());
-            node.addInput(++counter, "Mode", phasor->getMode(), std::vector<std::string>{"UNBOUNDED", "WRAPPED"});
+            node.addInput(++counter, "Mode", phasor->getMode(), std::vector<std::string>{"WRAPPED", "UNBOUNDED"});
             node.addInput(++counter, "Reset", phasor->getReset());
             node.addOutput(++counter, "Output", phasor->getOutput());
             return node;

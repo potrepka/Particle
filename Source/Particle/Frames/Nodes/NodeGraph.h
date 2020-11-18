@@ -153,11 +153,11 @@ public:
         void addInput(int id,
                       std::string name,
                       std::shared_ptr<dsp::Input> input,
-                      std::vector<std::string> values = std::vector<std::string>());
+                      std::vector<std::string> values = std::vector<std::string>{});
         void addOutput(int id,
                        std::string name,
                        std::shared_ptr<dsp::Output> output,
-                       std::vector<std::string> values = std::vector<std::string>());
+                       std::vector<std::string> values = std::vector<std::string>{});
 
         std::string getTypeName() const;
 
