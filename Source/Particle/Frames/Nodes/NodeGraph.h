@@ -27,9 +27,14 @@ public:
         Data *data;
         int id;
         std::shared_ptr<dsp::Input> input;
+        std::vector<std::string> values;
         FloatInt value;
 
-        Input(Data *data = nullptr, int id = 0, std::string name = "", std::shared_ptr<dsp::Input> input = nullptr);
+        Input(Data *data = nullptr,
+              int id = 0,
+              std::string name = "",
+              std::shared_ptr<dsp::Input> input = nullptr,
+              std::vector<std::string> values = std::vector<std::string>());
 
         void draw();
         void drawInspector();
@@ -39,9 +44,14 @@ public:
         Data *data;
         int id;
         std::shared_ptr<dsp::Output> output;
+        std::vector<std::string> values;
         FloatInt value;
     
-        Output(Data *data = nullptr, int id = 0, std::string name = "", std::shared_ptr<dsp::Output> output = nullptr);
+        Output(Data *data = nullptr,
+               int id = 0,
+               std::string name = "",
+               std::shared_ptr<dsp::Output> output = nullptr,
+               std::vector<std::string> values = std::vector<std::string>());
 
         void draw();
         void drawInspector();
@@ -60,7 +70,7 @@ public:
             VARIABLE_DELAY,
             CLIPPER,
             COMPRESSOR_GATE,
-            CROSSFADER,
+            DRY_WET,
             ENVELOPE,
             LAG,
             SHAPER,
@@ -140,8 +150,14 @@ public:
              ImVec2 position = ImVec2(0, 0),
              std::shared_ptr<dsp::Node> node = nullptr);
 
-        void addInput(int id, std::string name, std::shared_ptr<dsp::Input> input);
-        void addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output);
+        void addInput(int id,
+                      std::string name,
+                      std::shared_ptr<dsp::Input> input,
+                      std::vector<std::string> values = std::vector<std::string>());
+        void addOutput(int id,
+                       std::string name,
+                       std::shared_ptr<dsp::Output> output,
+                       std::vector<std::string> values = std::vector<std::string>());
 
         std::string getTypeName() const;
 

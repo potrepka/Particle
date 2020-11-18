@@ -289,8 +289,7 @@ void particle::Style::setSizes() {
         imnodes::Style &style = imnodes::GetStyle();
         style.grid_spacing = gridSize;
         style.node_corner_rounding = nodeCornerRounding;
-        // TODO: uncomment below
-        // style.node_border_thickness = nodeBorderThickness;
+        style.node_border_thickness = nodeBorderThickness;
         style.link_thickness = linkThickness;
         style.link_line_segments_per_length = 0.5f;
         style.pin_quad_side_length = pinSize;

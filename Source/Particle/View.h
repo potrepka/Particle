@@ -19,6 +19,7 @@ public:
 
 private:
     Data data;
+    bool showFrames;
     std::vector<std::shared_ptr<Frame>> frames;
 
     std::shared_ptr<dsp::Node> projectContainer;

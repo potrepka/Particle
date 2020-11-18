@@ -125,8 +125,8 @@
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.cpp"/>
               <FILE id="xh4OvT" name="CompressorGate.h" compile="0" resource="0"
                     file="Source/DSP/src/Nodes/Dynamics/CompressorGate.h"/>
-              <FILE id="Qq2QIb" name="Crossfader.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Crossfader.cpp"/>
-              <FILE id="wBtdtE" name="Crossfader.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Crossfader.h"/>
+              <FILE id="DJZJlv" name="DryWet.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.cpp"/>
+              <FILE id="cixJLi" name="DryWet.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/DryWet.h"/>
               <FILE id="tcJ9qP" name="Envelope.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.cpp"/>
               <FILE id="QuKqWu" name="Envelope.h" compile="0" resource="0" file="Source/DSP/src/Nodes/Dynamics/Envelope.h"/>
               <FILE id="dGobot" name="Lag.cpp" compile="1" resource="0" file="Source/DSP/src/Nodes/Dynamics/Lag.cpp"/>

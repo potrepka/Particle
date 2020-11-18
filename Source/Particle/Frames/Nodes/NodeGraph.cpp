@@ -13,12 +13,14 @@ particle::NodeGraph::FloatInt::FloatInt(dsp::Type type, dsp::Sample value) {
     }
 }
 
-particle::NodeGraph::Input::Input(Data *data, int id, std::string name, std::shared_ptr<dsp::Input> input)
+particle::NodeGraph::Input::Input(
+        Data *data, int id, std::string name, std::shared_ptr<dsp::Input> input, std::vector<std::string> values)
         : Named(name)
         , data(data)
         , id(id)
         , input(input)
-        , value(input->getType(), input->getDefaultValue()) {}
+        , value(input->getType(), input->getDefaultValue())
+        , values(values) {}
 
 void particle::NodeGraph::Input::draw() {
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
@@ -30,10 +32,9 @@ void particle::NodeGraph::Input::draw() {
             case dsp::Type::RATIO:
             case dsp::Type::HERTZ:
             case dsp::Type::SECONDS: {
-                float speed = io.KeyAlt ? 0.1f : io.KeyShift ? 100.0f : 1.0f;
                 if (ImGui::DragFloat(getName().c_str(),
                                      &value.valueFloat,
-                                     speed,
+                                     io.KeyAlt ? 0.1f : io.KeyShift ? 100.0f : 1.0f,
                                      0.0f,
                                      static_cast<float>(input->getRange()),
                                      ("%." + std::to_string(PRECISION) + "f").c_str(),
@@ -43,22 +44,25 @@ void particle::NodeGraph::Input::draw() {
                 }
             } break;
             case dsp::Type::INTEGER: {
-                float speed = io.KeyAlt ? 1.0f : 0.1f;
                 if (ImGui::DragInt(getName().c_str(),
                                    &value.valueInt,
-                                   speed,
+                                   io.KeyAlt ? 1.0f : 0.1f,
                                    0,
                                    static_cast<int>(input->getRange()),
-                                   "%d",
+                                   values.empty() ? "%d" : values[value.valueInt].c_str(),
                                    ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueInt);
                     input->setDefaultValue(value.valueInt);
                 }
             } break;
             case dsp::Type::BOOLEAN: {
-                float speed = io.KeyAlt ? 100.0f : io.KeyShift ? 0.1f : 1.0f;
-                if (ImGui::DragInt(
-                            getName().c_str(), &value.valueInt, speed, 0, 1, "%d", ImGuiSliderFlags_AlwaysClamp)) {
+                if (ImGui::DragInt(getName().c_str(),
+                                   &value.valueInt,
+                                   io.KeyAlt ? 100.0f : io.KeyShift ? 0.1f : 1.0f,
+                                   0,
+                                   1,
+                                   "%d",
+                                   ImGuiSliderFlags_AlwaysClamp)) {
                     input->setAllChannelValues(value.valueInt);
                     input->setDefaultValue(value.valueInt);
                 }
@@ -83,7 +87,16 @@ void particle::NodeGraph::Input::draw() {
                                  ("%." + std::to_string(PRECISION) + "f").c_str(),
                                  ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             } break;
-            case dsp::Type::INTEGER:
+            case dsp::Type::INTEGER: {
+                int lastSample = input->getWrapper().getSample(0, input->getNumSamples() - 1);
+                ImGui::DragInt(getName().c_str(),
+                               &lastSample,
+                               0.0f,
+                               0,
+                               0,
+                               values.empty() ? "%d" : values[value.valueInt].c_str(),
+                               ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
+            } break;
             case dsp::Type::BOOLEAN: {
                 int lastSample = input->getWrapper().getSample(0, input->getNumSamples() - 1);
                 ImGui::DragInt(getName().c_str(),
@@ -104,12 +117,14 @@ void particle::NodeGraph::Input::draw() {
 void particle::NodeGraph::Input::drawInspector() {}
 
 // TODO: Set can edit
-particle::NodeGraph::Output::Output(Data *data, int id, std::string name, std::shared_ptr<dsp::Output> output)
+particle::NodeGraph::Output::Output(
+        Data *data, int id, std::string name, std::shared_ptr<dsp::Output> output, std::vector<std::string> values)
         : Named(name)
         , data(data)
         , id(id)
         , output(output)
-        , value(output->getType(), output->getDefaultValue()) {}
+        , value(output->getType(), output->getDefaultValue())
+        , values(values) {}
 
 void particle::NodeGraph::Output::draw() {
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
@@ -134,7 +149,17 @@ void particle::NodeGraph::Output::draw() {
                              ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
             break;
         }
-        case dsp::Type::INTEGER:
+        case dsp::Type::INTEGER: {
+            int lastSample = output->getWrapper().getSample(0, output->getNumSamples() - 1);
+            ImGui::DragInt(getName().c_str(),
+                           &lastSample,
+                           0.0f,
+                           0,
+                           0,
+                           values.empty() ? "%d" : values[value.valueInt].c_str(),
+                           ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoInput);
+            break;
+        }
         case dsp::Type::BOOLEAN: {
             int lastSample = output->getWrapper().getSample(0, output->getNumSamples() - 1);
             ImGui::DragInt(getName().c_str(),
@@ -166,12 +191,18 @@ particle::NodeGraph::Node::Node(Data *data, int id, Type type, ImVec2 position, 
         , position(position)
         , node(node) {}
 
-void particle::NodeGraph::Node::addInput(int id, std::string name, std::shared_ptr<dsp::Input> input) {
-    inputs.emplace(id, Input(data, id, name, input));
+void particle::NodeGraph::Node::addInput(int id,
+                                         std::string name,
+                                         std::shared_ptr<dsp::Input> input,
+                                         std::vector<std::string> values) {
+    inputs.emplace(id, Input(data, id, name, input, values));
 }
 
-void particle::NodeGraph::Node::addOutput(int id, std::string name, std::shared_ptr<dsp::Output> output) {
-    outputs.emplace(id, Output(data, id, name, output));
+void particle::NodeGraph::Node::addOutput(int id,
+                                          std::string name,
+                                          std::shared_ptr<dsp::Output> output,
+                                          std::vector<std::string> values) {
+    outputs.emplace(id, Output(data, id, name, output, values));
 }
 
 std::string particle::NodeGraph::Node::getTypeName() const {
@@ -181,7 +212,7 @@ std::string particle::NodeGraph::Node::getTypeName() const {
 void particle::NodeGraph::Node::draw(bool selected) {
     if (selected) {
         // TODO: uncomment
-        // imnodes::PushStyleVar(imnodes::StyleVar_NodeBorderThickness, 2.5f);
+        //imnodes::PushStyleVar(imnodes::StyleVar_NodeBorderThickness, 2.5f);
         imnodes::PushColorStyle(imnodes::ColorStyle_NodeOutline,
                                 imnodes::GetStyle().colors[imnodes::ColorStyle_LinkSelected]);
     }
@@ -206,7 +237,7 @@ void particle::NodeGraph::Node::draw(bool selected) {
     if (selected) {
         imnodes::PopColorStyle();
         // TODO: uncomment
-        // imnodes::PopStyleVar();
+        //imnodes::PopStyleVar();
     }
 }
 
@@ -365,7 +396,7 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
     categories.push_back(Category(
             "Dynamics",
             std::vector<Type>{
-                    Type::CLIPPER, Type::COMPRESSOR_GATE, Type::CROSSFADER, Type::ENVELOPE, Type::LAG, Type::SHAPER}));
+                    Type::CLIPPER, Type::COMPRESSOR_GATE, Type::DRY_WET, Type::ENVELOPE, Type::LAG, Type::SHAPER}));
     categories.push_back(Category("External",
                                   std::vector<Type>{Type::AUDIO_INPUT,
                                                     Type::AUDIO_INPUT_CLIPPING,
@@ -438,7 +469,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::VARIABLE_DELAY: return "Variable Delay";
         case Type::CLIPPER: return "Clipper";
         case Type::COMPRESSOR_GATE: return "Compressor/Gate";
-        case Type::CROSSFADER: return "Crossfader";
+        case Type::DRY_WET: return "Dry/Wet";
         case Type::ENVELOPE: return "Envelope";
         case Type::LAG: return "Lag";
         case Type::SHAPER: return "Shaper";
@@ -541,7 +572,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             Node node(data, id, type, position, spread);
             node.addInput(++counter, "Input", spread->getInput());
             node.addInput(++counter, "Spread", spread->getSpread());
-            node.addInput(++counter, "Mode", spread->getMode());
+            node.addInput(++counter, "Mode", spread->getMode(), std::vector<std::string>{"UNIPOLAR", "BIPOLAR"});
             node.addOutput(++counter, "Output", spread->getOutput());
             return node;
         }
@@ -578,7 +609,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addInput(++counter, "Input", clipper->getInput());
             node.addInput(++counter, "Minimum", clipper->getMinimum());
             node.addInput(++counter, "Maximum", clipper->getMaximum());
-            node.addInput(++counter, "Mode", clipper->getMode());
+            node.addInput(++counter, "Mode", clipper->getMode(), std::vector<std::string>{"CLIP", "WRAP", "MIRROR"});
             node.addOutput(++counter, "Output", clipper->getOutput());
             return node;
         }
@@ -597,13 +628,14 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addOutput(++counter, "Gain", compressorGate->getGain());
             return node;
         }
-        case Type::CROSSFADER: {
-            std::shared_ptr<dsp::Crossfader> crossfader = std::make_shared<dsp::Crossfader>();
-            Node node(data, id, type, position, crossfader);
-            node.addInput(++counter, "Input", crossfader->getInput());
-            node.addInput(++counter, "Position", crossfader->getPosition());
-            node.addOutput(++counter, "A", crossfader->getA());
-            node.addOutput(++counter, "B", crossfader->getB());
+        case Type::DRY_WET: {
+            std::shared_ptr<dsp::DryWet> dryWet = std::make_shared<dsp::DryWet>();
+            Node node(data, id, type, position, dryWet);
+            node.addInput(++counter, "Dry", dryWet->getDry());
+            node.addInput(++counter, "Wet", dryWet->getWet());
+            node.addInput(++counter, "Mix Amount", dryWet->getMixAmount());
+            node.addOutput(++counter, "A", dryWet->getA());
+            node.addOutput(++counter, "B", dryWet->getB());
             return node;
         }
         case Type::ENVELOPE: {
@@ -611,8 +643,14 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             Node node(data, id, type, position, envelope);
             node.addInput(++counter, "Attack", envelope->getAttack());
             node.addInput(++counter, "Release", envelope->getRelease());
-            node.addInput(++counter, "Attack Shape", envelope->getAttackShape());
-            node.addInput(++counter, "Release Shape", envelope->getReleaseShape());
+            node.addInput(++counter,
+                          "Attack Shape",
+                          envelope->getAttackShape(),
+                          std::vector<std::string>{"LINEAR", "EXPONENTIAL"});
+            node.addInput(++counter,
+                          "Release Shape",
+                          envelope->getReleaseShape(),
+                          std::vector<std::string>{"LINEAR", "EXPONENTIAL"});
             node.addInput(++counter, "Gate", envelope->getGate());
             node.addInput(++counter, "Reset", envelope->getReset());
             node.addOutput(++counter, "Output", envelope->getOutput());
@@ -631,7 +669,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             Node node(data, id, type, position, shaper);
             node.addInput(++counter, "Input", shaper->getInput());
             node.addInput(++counter, "Drive", shaper->getDrive());
-            node.addInput(++counter, "Mode", shaper->getMode());
+            node.addInput(++counter, "Mode", shaper->getMode(), std::vector<std::string>{"HYPERBOLIC", "RATIONAL"});
             node.addOutput(++counter, "Output", shaper->getOutput());
             return node;
         }
@@ -676,7 +714,17 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addInput(++counter, "Frequency", biquad->getFrequency());
             node.addInput(++counter, "Resonance", biquad->getResonance());
             node.addInput(++counter, "Amplitude", biquad->getAmplitude());
-            node.addInput(++counter, "Mode", biquad->getMode());
+            node.addInput(++counter,
+                          "Mode",
+                          biquad->getMode(),
+                          std::vector<std::string>{"LOW PASS",
+                                                   "HIGH PASS",
+                                                   "BAND PASS",
+                                                   "BAND STOP",
+                                                   "LOW SHELF",
+                                                   "HIGH SHELF",
+                                                   "PEAK EQ",
+                                                   "ALL PASS"});
             node.addOutput(++counter, "Output", biquad->getOutput());
             return node;
         }
@@ -694,7 +742,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             Node node(data, id, type, position, onePole);
             node.addInput(++counter, "Input", onePole->getInput());
             node.addInput(++counter, "Frequency", onePole->getFrequency());
-            node.addInput(++counter, "Mode", onePole->getMode());
+            node.addInput(++counter, "Mode", onePole->getMode(), std::vector<std::string>{"LOW PASS", "HIGH PASS"});
             node.addOutput(++counter, "Output", onePole->getOutput());
             return node;
         }
@@ -712,7 +760,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
         case Type::NOISE: {
             std::shared_ptr<dsp::Noise> noise = std::make_shared<dsp::Noise>();
             Node node(data, id, type, position, noise);
-            node.addInput(++counter, "Mode", noise->getMode());
+            node.addInput(++counter, "Mode", noise->getMode(), std::vector<std::string>{"WHITE", "PINK"});
             node.addOutput(++counter, "Output", noise->getOutput());
             return node;
         }
@@ -720,7 +768,7 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Phasor> phasor = std::make_shared<dsp::Phasor>();
             Node node(data, id, type, position, phasor);
             node.addInput(++counter, "Frequency", phasor->getFrequency());
-            node.addInput(++counter, "Mode", phasor->getMode());
+            node.addInput(++counter, "Mode", phasor->getMode(), std::vector<std::string>{"UNBOUNDED", "WRAPPED"});
             node.addInput(++counter, "Reset", phasor->getReset());
             node.addOutput(++counter, "Output", phasor->getOutput());
             return node;
@@ -731,7 +779,10 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addInput(++counter, "Speed", samplePlayer->getSpeed());
             node.addInput(++counter, "Start Time", samplePlayer->getStartTime());
             node.addInput(++counter, "Sample Index", samplePlayer->getSampleIndex());
-            node.addInput(++counter, "Interpolation", samplePlayer->getInterpolation());
+            node.addInput(++counter,
+                          "Interpolation",
+                          samplePlayer->getInterpolation(),
+                          std::vector<std::string>{"NONE", "LINEAR", "SMOOTH"});
             node.addInput(++counter, "Gate", samplePlayer->getGate());
             node.addInput(++counter, "Reset", samplePlayer->getReset());
             node.addOutput(++counter, "Output", samplePlayer->getOutput());
@@ -743,8 +794,14 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             Node node(data, id, type, position, tableOscillator);
             node.addInput(++counter, "Phase", tableOscillator->getPhase());
             node.addInput(++counter, "Position", tableOscillator->getPosition());
-            node.addInput(++counter, "Phase Interpolation", tableOscillator->getPhaseInterpolation());
-            node.addInput(++counter, "Position Interpolation", tableOscillator->getPositionInterpolation());
+            node.addInput(++counter,
+                          "Phase Interpolation",
+                          tableOscillator->getPhaseInterpolation(),
+                          std::vector<std::string>{"NONE", "LINEAR", "SMOOTH"});
+            node.addInput(++counter,
+                          "Position Interpolation",
+                          tableOscillator->getPositionInterpolation(),
+                          std::vector<std::string>{"NONE", "LINEAR", "SMOOTH"});
             node.addOutput(++counter, "Output", tableOscillator->getOutput());
             return node;
         }
@@ -807,7 +864,8 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Hyperbolic> hyperbolic = std::make_shared<dsp::Hyperbolic>();
             Node node(data, id, type, position, hyperbolic);
             node.addInput(++counter, "Input", hyperbolic->getInput());
-            node.addInput(++counter, "Mode", hyperbolic->getMode());
+            node.addInput(
+                    ++counter, "Mode", hyperbolic->getMode(), std::vector<std::string>{"SINE", "COSINE", "TANGENT"});
             node.addOutput(++counter, "Output", hyperbolic->getOutput());
             return node;
         }
@@ -884,7 +942,8 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             std::shared_ptr<dsp::Trigonometric> trigonometric = std::make_shared<dsp::Trigonometric>();
             Node node(data, id, type, position, trigonometric);
             node.addInput(++counter, "Input", trigonometric->getInput());
-            node.addInput(++counter, "Mode", trigonometric->getMode());
+            node.addInput(
+                    ++counter, "Mode", trigonometric->getMode(), std::vector<std::string>{"SINE", "COSINE", "TANGENT"});
             node.addOutput(++counter, "Output", trigonometric->getOutput());
             return node;
         }
@@ -1168,6 +1227,7 @@ void particle::NodeGraph::CreateNodes::undo() {
         // GUI
         nodeGraph->getNodes().erase(node.id);
     }
+    imnodes::ClearNodeSelection();
 }
 
 particle::NodeGraph::CreateLinks::CreateLinks(std::shared_ptr<NodeGraph> nodeGraph, std::vector<Link> links)
@@ -1192,6 +1252,7 @@ void particle::NodeGraph::CreateLinks::undo() {
         // GUI
         nodeGraph->getLinks().erase(link.id);
     }
+    imnodes::ClearLinkSelection();
 }
 
 particle::NodeGraph::DestroyNodes::DestroyNodes(std::shared_ptr<NodeGraph> nodeGraph, std::vector<int> ids)
@@ -1236,6 +1297,8 @@ void particle::NodeGraph::DestroyNodes::perform() {
         // GUI
         nodeGraph->getNodes().erase(node.id);
     }
+    imnodes::ClearNodeSelection();
+    imnodes::ClearLinkSelection();
 }
 
 void particle::NodeGraph::DestroyNodes::undo() {
@@ -1276,6 +1339,7 @@ void particle::NodeGraph::DestroyLinks::perform() {
         // GUI
         nodeGraph->getLinks().erase(linkId);
     }
+    imnodes::ClearLinkSelection();
 }
 
 void particle::NodeGraph::DestroyLinks::undo() {
