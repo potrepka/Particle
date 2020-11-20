@@ -83,7 +83,7 @@ public:
             BIQUAD,
             CROSSOVER,
             ONE_POLE,
-            MOORER_DSF,
+            FUNCTION_OSCILLATOR,
             NOISE,
             PHASOR,
             SAMPLE_PLAYER,
@@ -153,11 +153,11 @@ public:
         void addInput(int id,
                       std::string name,
                       std::shared_ptr<dsp::Input> input,
-                      std::vector<std::string> values = std::vector<std::string>{});
+                      std::vector<std::string> values = {});
         void addOutput(int id,
                        std::string name,
                        std::shared_ptr<dsp::Output> output,
-                       std::vector<std::string> values = std::vector<std::string>{});
+                       std::vector<std::string> values = {});
 
         std::string getTypeName() const;
 
@@ -170,6 +170,9 @@ public:
         static Node generate(Data *data, int &counter, int id, Type type, ImVec2 position);
 
     private:
+        static std::vector<std::string> functionNames;
+        static std::unordered_map<std::string, std::shared_ptr<std::function<dsp::Sample(dsp::Sample)>>> functions;
+
         float getFrameHeight(float numberOfBlocks);
         void drawPlot(std::string title,
                       std::vector<dsp::Sample> x,

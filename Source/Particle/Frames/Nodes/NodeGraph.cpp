@@ -242,14 +242,18 @@ void particle::NodeGraph::Node::draw(bool selected) {
 }
 
 void particle::NodeGraph::Node::drawContent() {
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, data->getStyle().windowPadding);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, data->getStyle().nodeFramePadding);
     switch (type) {
+        // TODO: this node
         case Type::RECORDER: {
             std::shared_ptr<dsp::Recorder> resetTrigger = std::dynamic_pointer_cast<dsp::Recorder>(node);
         } break;
+        // TODO: this node
         case Type::CHANNEL_MERGER: {
             std::shared_ptr<dsp::ChannelMerger> merger = std::dynamic_pointer_cast<dsp::ChannelMerger>(node);
         } break;
+        // TODO: this node
         case Type::CHANNEL_SPLITTER: {
             std::shared_ptr<dsp::ChannelSplitter> splitter = std::dynamic_pointer_cast<dsp::ChannelSplitter>(node);
         } break;
@@ -310,9 +314,11 @@ void particle::NodeGraph::Node::drawContent() {
             drawLabel("Gain");
             ImGui::EndGroup();
         } break;
+        // TODO: this node
         case Type::MIDI_INPUT: {
             std::shared_ptr<dsp::MidiInput> midiInput = std::dynamic_pointer_cast<dsp::MidiInput>(node);
         } break;
+        // TODO: this node
         case Type::MIDI_OUTPUT: {
             std::shared_ptr<dsp::MidiOutput> midiOutput = std::dynamic_pointer_cast<dsp::MidiOutput>(node);
         } break;
@@ -360,12 +366,39 @@ void particle::NodeGraph::Node::drawContent() {
             drawLabel("Phase");
             ImGui::EndGroup();
         } break;
+        // TODO: this node
         case Type::ONE_POLE: {
             std::shared_ptr<dsp::OnePole> onePole = std::dynamic_pointer_cast<dsp::OnePole>(node);
         } break;
+        case Type::FUNCTION_OSCILLATOR: {
+            std::shared_ptr<dsp::FunctionOscillator> functionOscillator =
+                    std::dynamic_pointer_cast<dsp::FunctionOscillator>(node);
+            std::string currentName;
+            for (const auto &pair : functions) {
+                if (pair.second == functionOscillator->getFunction()) {
+                    currentName = pair.first;
+                    break;
+                }
+            }
+            ImGui::SetNextItemWidth(90.0f);
+            if (ImGui::BeginCombo("Function", currentName.c_str())) {
+                for (const auto &name : functionNames) {
+                    bool is_selected = currentName == name;
+                    if (ImGui::Selectable(name.c_str(), is_selected)) {
+                        functionOscillator->setFunction(functions[name]);
+                    }
+                    if (is_selected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        } break;
+        // TODO: this node
         case Type::SAMPLE_PLAYER: {
             std::shared_ptr<dsp::SamplePlayer> samplePlayer = std::dynamic_pointer_cast<dsp::SamplePlayer>(node);
         } break;
+        // TODO: this node
         case Type::TABLE_OSCILLATOR: {
             std::shared_ptr<dsp::TableOscillator> tableOscillator =
                     std::dynamic_pointer_cast<dsp::TableOscillator>(node);
@@ -376,10 +409,12 @@ void particle::NodeGraph::Node::drawContent() {
                 resetTrigger->reset();
             }
         } break;
+        // TODO: this node
         case Type::SEQUENCER: {
             std::shared_ptr<dsp::Sequencer> sequencer = std::dynamic_pointer_cast<dsp::Sequencer>(node);
         } break;
     }
+    ImGui::PopStyleVar();
     ImGui::PopStyleVar();
 }
 
@@ -405,10 +440,12 @@ std::vector<particle::NodeGraph::Node::Category> particle::NodeGraph::Node::getC
                                                     Type::MIDI_INPUT,
                                                     Type::MIDI_OUTPUT}));
     categories.push_back(Category("Filters", std::vector<Type>{Type::BIQUAD, Type::CROSSOVER, Type::ONE_POLE}));
-    categories.push_back(Category(
-            "Generators",
-            std::vector<Type>{
-                    Type::MOORER_DSF, Type::NOISE, Type::PHASOR, Type::SAMPLE_PLAYER, Type::TABLE_OSCILLATOR}));
+    categories.push_back(Category("Generators",
+                                  std::vector<Type>{Type::FUNCTION_OSCILLATOR,
+                                                    Type::NOISE,
+                                                    Type::PHASOR,
+                                                    Type::SAMPLE_PLAYER,
+                                                    Type::TABLE_OSCILLATOR}));
     categories.push_back(Category("Math",
                                   std::vector<Type>{Type::ABSOLUTE_VALUE,
                                                     Type::BOOLEAN_MASK,
@@ -482,7 +519,7 @@ std::string particle::NodeGraph::Node::getTypeName(Type type) {
         case Type::BIQUAD: return "Biquad";
         case Type::CROSSOVER: return "Crossover";
         case Type::ONE_POLE: return "One-Pole";
-        case Type::MOORER_DSF: return "Function Oscillator";
+        case Type::FUNCTION_OSCILLATOR: return "Function Oscillator";
         case Type::NOISE: return "Noise";
         case Type::PHASOR: return "Phasor";
         case Type::SAMPLE_PLAYER: return "Sample Player";
@@ -746,15 +783,12 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             node.addOutput(++counter, "Output", onePole->getOutput());
             return node;
         }
-        case Type::MOORER_DSF: {
-            std::shared_ptr<dsp::MoorerOscillator> moorer = std::make_shared<dsp::MoorerOscillator>();
-            Node node(data, id, type, position, moorer);
-            node.addInput(++counter, "Phase", moorer->getPhase());
-            node.addInput(++counter, "Intensity", moorer->getIntensity());
-            node.addInput(++counter, "Modulation Index", moorer->getModulationIndex());
-            node.addInput(++counter, "Harmonics", moorer->getHarmonics());
-            node.addInput(++counter, "Mode", moorer->getMode());
-            node.addOutput(++counter, "Output", moorer->getOutput());
+        case Type::FUNCTION_OSCILLATOR: {
+            std::shared_ptr<dsp::FunctionOscillator> functionOscillator = std::make_shared<dsp::FunctionOscillator>();
+            Node node(data, id, type, position, functionOscillator);
+            node.addInput(++counter, "Phase", functionOscillator->getPhase());
+            node.addOutput(++counter, "Output", functionOscillator->getOutput());
+            functionOscillator->setFunction(functions[functionNames[0]]);
             return node;
         }
         case Type::NOISE: {
@@ -1108,6 +1142,23 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
         }
     }
 }
+
+std::vector<std::string> particle::NodeGraph::Node::functionNames = {"Sine", "Sawtooth", "Square", "Triangle"};
+std::unordered_map<std::string, std::shared_ptr<std::function<dsp::Sample(dsp::Sample)>>>
+        particle::NodeGraph::Node::functions = {
+                {"Sine", std::make_shared<std::function<dsp::Sample(dsp::Sample)>>(std::move([](dsp::Sample x) {
+                     return sin(dsp::TAU * x);
+                 }))},
+                {"Sawtooth", std::make_shared<std::function<dsp::Sample(dsp::Sample)>>(std::move([](dsp::Sample x) {
+                     return dsp::wrap(x + 0.5, 1.0) * 2.0 - 1.0;
+                 }))},
+                {"Square", std::make_shared<std::function<dsp::Sample(dsp::Sample)>>(std::move([](dsp::Sample x) {
+                     return x < 0.5 ? 1.0 : -1.0;
+                 }))},
+                {"Triangle", std::make_shared<std::function<dsp::Sample(dsp::Sample)>>(std::move([](dsp::Sample x) {
+                     dsp::Sample z = dsp::wrap(x + 0.25, 1.0);
+                     return (z < 0.5 ? z : 1.0 - z) * 4.0 - 1.0;
+                 }))}};
 
 float particle::NodeGraph::Node::getFrameHeight(float numberOfBlocks) {
     return floor(ImGui::GetFrameHeight()) * numberOfBlocks + ImGui::GetStyle().ItemSpacing.y * (numberOfBlocks - 1.0f);
