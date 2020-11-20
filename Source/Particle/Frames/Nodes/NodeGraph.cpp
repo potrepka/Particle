@@ -584,15 +584,23 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
             return node;
         }
         case Type::CHANNEL_MERGER: {
+            // TODO: handle more than 2 channels
             std::shared_ptr<dsp::ChannelMerger> merger = std::make_shared<dsp::ChannelMerger>();
+            merger->setNumOutputChannels(2);
             Node node(data, id, type, position, merger);
+            node.addInput(++counter, "Channel 1", merger->getInput(0));
+            node.addInput(++counter, "Channel 2", merger->getInput(1));
             node.addOutput(++counter, "Output", merger->getOutput());
             return node;
         }
         case Type::CHANNEL_SPLITTER: {
+            // TODO: handle more than 2 channels
             std::shared_ptr<dsp::ChannelSplitter> splitter = std::make_shared<dsp::ChannelSplitter>();
+            splitter->setNumInputChannels(2);
             Node node(data, id, type, position, splitter);
             node.addInput(++counter, "Input", splitter->getInput());
+            node.addOutput(++counter, "Channel 1", splitter->getOutput(0));
+            node.addOutput(++counter, "Channel 2", splitter->getOutput(1));
             return node;
         }
         case Type::MID_SIDE: {
@@ -785,10 +793,10 @@ particle::NodeGraph::Node::generate(Data *data, int &counter, int id, Type type,
         }
         case Type::FUNCTION_OSCILLATOR: {
             std::shared_ptr<dsp::FunctionOscillator> functionOscillator = std::make_shared<dsp::FunctionOscillator>();
+            functionOscillator->setFunction(functions[functionNames[0]]);
             Node node(data, id, type, position, functionOscillator);
             node.addInput(++counter, "Phase", functionOscillator->getPhase());
             node.addOutput(++counter, "Output", functionOscillator->getOutput());
-            functionOscillator->setFunction(functions[functionNames[0]]);
             return node;
         }
         case Type::NOISE: {
